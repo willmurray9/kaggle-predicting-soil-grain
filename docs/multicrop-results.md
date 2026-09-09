@@ -57,3 +57,6 @@ by Git.
 Validation: all 37 tests pass, including shuffled-ID alignment, duplicate and
 missing component rejection, curve constraints, and scoring after averaging.
 The generated ten-row candidate passes the submission validator.
+
+Kaggle submission `56131658` completed with public EMD **76.75797**. See the
+[submission log](submissions.md) for exact provenance and interpretation.

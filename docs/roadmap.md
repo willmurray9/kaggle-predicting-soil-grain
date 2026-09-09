@@ -49,13 +49,24 @@ The user has authorized submissions when they make sense and regular remote
 updates. Commit and push completed, tested milestones using the personal Git
 identity. CI runs on `main` and `codex/**` pushes. No generated data goes into Git.
 
-Kaggle access checked on 2026-09-09: account entered, no existing submissions;
+Kaggle access checked before the first submission on 2026-09-09: account entered;
 the competition API lists a 2026-11-30 deadline.
 
 Audit and blend complete: [audit findings](error-audit.md) and
 [multi-crop results](multicrop-results.md). The blend scores 40.1178 local EMD
 and 31.5259 paired-camera disagreement, beating the original reference on both
-predeclared criteria. It is the selected first-submission candidate.
+predeclared criteria. Its [first Kaggle submission](submissions.md) completed with
+public EMD 76.75797. The audit, blend, submission, and provenance record are complete.
+
+## Next controlled comparison
+
+The audit identified unequal photo counts per camera within a soil. Compare
+equal-per-camera feature averaging with the current equal-per-photo averaging:
+average each camera's photos first, then average the camera means. Keep the
+three grayscale crop models, 3-NN settings, and equal prediction blend fixed.
+Use the same 24 held-out soils and 21 paired-camera diagnostics, and report
+per-soil changes. This isolates one observed source of representation imbalance
+before adding kernel ridge. The public score does not choose settings or weights.
 
 ## First experiment batch: fixed before seeing results
 

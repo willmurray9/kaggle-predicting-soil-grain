@@ -98,3 +98,14 @@ See [first-batch results](docs/first-experiments.md) for accuracy and camera
 sensitivity. Detailed outputs are in `artifacts/experiments/first_batch/`, with
 candidate submissions in `artifacts/submissions/experiments/`. The original
 baseline outputs are preserved.
+
+Run the fixed grayscale crop blend and visual error audit after that batch:
+
+```bash
+make multicrop
+make audit
+```
+
+The [multi-crop results](docs/multicrop-results.md) record the submission decision;
+the [error audit](docs/error-audit.md) documents the difficult soils. The blend
+scores 40.12 local EMD versus the original reference's 45.24.

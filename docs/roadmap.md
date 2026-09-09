@@ -52,6 +52,11 @@ identity. CI runs on `main` and `codex/**` pushes. No generated data goes into G
 Kaggle access checked on 2026-09-09: account entered, no existing submissions;
 the competition API lists a 2026-11-30 deadline.
 
+Audit and blend complete: [audit findings](error-audit.md) and
+[multi-crop results](multicrop-results.md). The blend scores 40.1178 local EMD
+and 31.5259 paired-camera disagreement, beating the original reference on both
+predeclared criteria. It is the selected first-submission candidate.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

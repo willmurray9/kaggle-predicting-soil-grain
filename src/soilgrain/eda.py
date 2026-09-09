@@ -66,7 +66,8 @@ def _write_contact_sheet(photo_index: pd.DataFrame, out_path: Path, max_images: 
         return
 
     readable: list[tuple[Image.Image, str]] = []
-    for row in photo_index[photo_index["is_matched"]].head(max_images).itertuples(index=False):
+    selected = photo_index[photo_index["is_matched"]].drop_duplicates(["split", "sample_id"])
+    for row in selected.head(max_images).itertuples(index=False):
         try:
             image = Image.open(row.path).convert("RGB")
             image.thumbnail((180, 140))
@@ -131,7 +132,9 @@ def write_eda_reports(config_path: str | Path = "configs/data.yaml") -> dict[str
     photo_index = _load_or_build_photo_index(cfg, train, test, ppm)
 
     contact_sheet = cfg.reports_dir / "photo_contact_sheet.png"
-    _write_contact_sheet(photo_index, contact_sheet)
+    _write_contact_sheet(photo_index[photo_index["split"] == "train"], contact_sheet)
+    test_contact_sheet = cfg.reports_dir / "test_photo_contact_sheet.png"
+    _write_contact_sheet(photo_index[photo_index["split"] == "test"], test_contact_sheet)
 
     train_values = curve_array(train)
     equal_score = emd_score(train_values, np.tile(equal_bin_curve(), (len(train), 1)))
@@ -152,6 +155,7 @@ def write_eda_reports(config_path: str | Path = "configs/data.yaml") -> dict[str
     report_paths.update(
         {
             "photo_contact_sheet": contact_sheet,
+            "test_photo_contact_sheet": test_contact_sheet,
             "dataset_summary": summary_path,
             "go_no_go": go_no_go_path,
         }

@@ -8,11 +8,10 @@ paths:
   submissions_dir: artifacts/submissions
 
 files:
-  train: train.csv
-  test: test.csv
+  train: Training_labels_updated.csv
   sample_submission: sample_submission.csv
-  ppm: ppm.csv
+  ppm: ppm_updated.csv
 
 photo_dirs:
-  training: All_Photos_training
-  test: All_Photos_test
+  training: Training-All_Photos_updated
+  test: Test_All_Photos

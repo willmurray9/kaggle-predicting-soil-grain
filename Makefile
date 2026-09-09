@@ -1,7 +1,7 @@
 PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 PYTHONPATH := src
 
-.PHONY: download data labels baselines eda validate test
+.PHONY: download data labels baselines eda image-model validate test
 
 download:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli download
@@ -17,6 +17,9 @@ baselines:
 
 eda:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli eda
+
+image-model:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli image-model
 
 validate:
 	@if [ -z "$(SUBMISSION)" ]; then echo "Usage: make validate SUBMISSION=path/to/submission.csv"; exit 2; fi

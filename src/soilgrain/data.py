@@ -15,7 +15,8 @@ from soilgrain.io import ensure_dir, read_csv, write_csv, write_json
 
 
 def _normalize_token(value: object) -> str:
-    return "".join(ch for ch in str(value).lower() if ch.isalnum())
+    folded = str(value).casefold().translate(str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}))
+    return "".join(ch for ch in folded if ch.isalnum())
 
 
 def _match_value_in_filename(filename: str, values: Iterable[object]) -> str:
@@ -29,10 +30,21 @@ def _match_value_in_filename(filename: str, values: Iterable[object]) -> str:
     return ""
 
 
+def _match_sample_id(filename: str, values: Iterable[object]) -> str:
+    compact = _normalize_token(filename)
+    matches = [str(value) for value in values if str(value) and _normalize_token(value) in compact]
+    if len(matches) > 1:
+        raise ValueError(f"{filename!r} has ambiguous sample ID matches: {matches}")
+    return matches[0] if matches else ""
+
+
 def _camera_column(ppm: pd.DataFrame) -> str | None:
     for col in ppm.columns:
+        if str(col).lower() == "phone":
+            return str(col)
+    for col in ppm.columns:
         lower = str(col).lower()
-        if "camera" in lower or "device" in lower or "phone" in lower:
+        if "camera" in lower or "device" in lower:
             return str(col)
     object_cols = [str(c) for c in ppm.columns if ppm[c].dtype == "object"]
     return object_cols[0] if object_cols else None
@@ -88,7 +100,7 @@ def index_photos(
         ("test", Path(test_photo_dir), list(test_ids)),
     ]:
         for path in _image_files(root):
-            sample_id = _match_value_in_filename(path.name, ids)
+            sample_id = _match_sample_id(path.name, ids)
             camera, ppm_value = _infer_camera(path.name, ppm)
             rows.append(
                 {
@@ -99,7 +111,13 @@ def index_photos(
                     "camera": camera,
                     "ppm": ppm_value,
                     "is_matched": bool(sample_id),
-                    "issue": "" if sample_id else "unmatched_sample_id",
+                    "issue": (
+                        "unmatched_sample_id"
+                        if not sample_id
+                        else "unknown_camera"
+                        if not camera
+                        else ""
+                    ),
                 }
             )
     return pd.DataFrame(
@@ -120,29 +138,26 @@ def _find_photo_dir(raw_dir: Path, expected_name: str) -> Path:
 
 
 def _require_raw_files(cfg: ProjectConfig) -> None:
-    missing = [str(cfg.raw_file(key)) for key in ["train", "test", "sample_submission", "ppm"] if not cfg.raw_file(key).exists()]
+    keys = ["train", "sample_submission", "ppm"]
+    if "test" in cfg.files:
+        keys.append("test")
+    missing = [str(cfg.raw_file(key)) for key in keys if not cfg.raw_file(key).exists()]
     if missing:
         raise FileNotFoundError("Missing required Kaggle files:\n" + "\n".join(f"- {m}" for m in missing))
 
 
 def load_raw_tables(cfg: ProjectConfig) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     _require_raw_files(cfg)
-    return (
-        read_csv(cfg.raw_file("train")),
-        read_csv(cfg.raw_file("test")),
-        read_csv(cfg.raw_file("sample_submission")),
-        read_csv(cfg.raw_file("ppm")),
-    )
+    sample = read_csv(cfg.raw_file("sample_submission"))
+    test = read_csv(cfg.raw_file("test")) if "test" in cfg.files else sample[["sample_id"]].copy()
+    return read_csv(cfg.raw_file("train")), test, sample, read_csv(cfg.raw_file("ppm"))
 
 
 def load_working_tables(cfg: ProjectConfig) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     source = cfg.curated_dir if cfg.curated_file("train").exists() else cfg.raw_dir
-    return (
-        read_csv(source / cfg.files["train"]),
-        read_csv(source / cfg.files["test"]),
-        read_csv(source / cfg.files["sample_submission"]),
-        read_csv(source / cfg.files["ppm"]),
-    )
+    sample = read_csv(source / cfg.files["sample_submission"])
+    test = read_csv(source / cfg.files["test"]) if "test" in cfg.files else sample[["sample_id"]].copy()
+    return read_csv(source / cfg.files["train"]), test, sample, read_csv(source / cfg.files["ppm"])
 
 
 def prepare_data(config_path: str | Path = "configs/data.yaml") -> pd.DataFrame:
@@ -153,13 +168,18 @@ def prepare_data(config_path: str | Path = "configs/data.yaml") -> pd.DataFrame:
             raise ValueError(f"{name} must contain sample_id.")
 
     ensure_dir(cfg.curated_dir)
-    for key, df in [("train", train), ("test", test), ("sample_submission", sample), ("ppm", ppm)]:
+    tables = [("train", train), ("sample_submission", sample), ("ppm", ppm)]
+    if "test" in cfg.files:
+        tables.append(("test", test))
+    for key, df in tables:
         write_csv(df, cfg.curated_file(key))
 
     train_dir = _find_photo_dir(cfg.raw_dir, cfg.photo_dirs["training"])
     test_dir = _find_photo_dir(cfg.raw_dir, cfg.photo_dirs["test"])
     photo_index = index_photos(train_dir, test_dir, train["sample_id"], test["sample_id"], ppm)
     write_csv(photo_index, cfg.reports_dir / "photo_index.csv")
+    matched_train_ids = set(photo_index.loc[(photo_index["split"] == "train") & photo_index["is_matched"], "sample_id"])
+    matched_test_ids = set(photo_index.loc[(photo_index["split"] == "test") & photo_index["is_matched"], "sample_id"])
     write_json(
         {
             "train_rows": int(len(train)),
@@ -167,6 +187,9 @@ def prepare_data(config_path: str | Path = "configs/data.yaml") -> pd.DataFrame:
             "photo_rows": int(len(photo_index)),
             "matched_photo_rows": int(photo_index["is_matched"].sum()) if not photo_index.empty else 0,
             "unmatched_photo_rows": int((~photo_index["is_matched"]).sum()) if not photo_index.empty else 0,
+            "unknown_camera_photo_rows": int(photo_index["camera"].eq("").sum()) if not photo_index.empty else 0,
+            "missing_train_sample_ids": sorted(set(train["sample_id"].astype(str)) - matched_train_ids),
+            "missing_test_sample_ids": sorted(set(test["sample_id"].astype(str)) - matched_test_ids),
         },
         cfg.reports_dir / "data_summary.json",
     )

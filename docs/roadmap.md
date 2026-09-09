@@ -27,6 +27,31 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 
 Results and the next decision are recorded in [first-experiments.md](first-experiments.md).
 
+## Current follow-up: error audit and equal-weight multi-crop blend
+
+Declared before computing the blend or looking at a public Kaggle score:
+
+- Audit F827, H038, and H374 with actual photos, physical crops, labels, and
+  held-out predictions. Treat possible explanations as hypotheses; do not edit
+  labels or exclude difficult samples based on poor model fit.
+- Average the existing 50, 100, and 150 mm grayscale 3-NN predictions with equal
+  one-third weights. Align soil IDs and camera IDs before averaging, keep each
+  soil's original held-out fold, and recompute EMD from the averaged curves.
+- Record source artifact fingerprints and preserve the existing baseline files.
+- Use the multi-crop candidate for one initial Kaggle submission if its local
+  EMD and paired-camera disagreement both beat the original reference. Otherwise
+  use the existing ridge candidate. The visual audit can reveal a concrete data
+  or implementation problem that must be resolved first.
+- Record the exact submitted file hash, code commit, submission ID, and public
+  result. Treat the public score as an external check, not a new tuning target.
+
+The user has authorized submissions when they make sense and regular remote
+updates. Commit and push completed, tested milestones using the personal Git
+identity. CI runs on `main` and `codex/**` pushes. No generated data goes into Git.
+
+Kaggle access checked on 2026-09-09: account entered, no existing submissions;
+the competition API lists a 2026-11-30 deadline.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

@@ -84,3 +84,17 @@ constraints. Crop size, features, and neighbor count are fixed, with no tuning.
 This baseline uses the existing NumPy/Pillow dependencies and no pretrained weights.
 
 See [the first-run results](docs/baseline-results.md) for scores and limitations.
+
+## Experiments
+
+The [roadmap](docs/roadmap.md) records the model progression and validation rules.
+Run the fixed camera/grayscale/ridge comparisons with:
+
+```bash
+make experiments
+```
+
+See [first-batch results](docs/first-experiments.md) for accuracy and camera
+sensitivity. Detailed outputs are in `artifacts/experiments/first_batch/`, with
+candidate submissions in `artifacts/submissions/experiments/`. The original
+baseline outputs are preserved.

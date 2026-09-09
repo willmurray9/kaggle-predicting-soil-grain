@@ -60,6 +60,42 @@ def test_sample_features_aggregate_photos_in_requested_id_order(tmp_path: Path) 
     np.testing.assert_allclose(values[1, :9], 0.5)
 
 
+def test_grayscale_features_ignore_channel_color_cast(tmp_path: Path) -> None:
+    pixels = np.zeros((256, 256, 3), dtype=np.uint8)
+    pixels[:, :, 0] = np.arange(256, dtype=np.uint8)
+    camera = pd.Series({"ppm": 2.56, "width": 256, "height": 256})
+    features = []
+    for name, rgb in [("red", pixels), ("blue", pixels[:, :, ::-1])]:
+        path = tmp_path / f"{name}.png"
+        Image.fromarray(rgb).save(path)
+        features.append(photo_features(path, camera, color_mode="gray"))
+    assert features[0].shape == (7,)
+    np.testing.assert_allclose(features[0], features[1])
+
+
+def test_normalized_grayscale_is_invariant_to_affine_brightness(tmp_path: Path) -> None:
+    pixels = np.tile(np.arange(256, dtype=np.uint8) % 64 + 30, (256, 1))
+    camera = pd.Series({"ppm": 2.56, "width": 256, "height": 256})
+    features = []
+    for name, gray in [("dark", pixels), ("bright", 2 * pixels + 20)]:
+        path = tmp_path / f"{name}.png"
+        Image.fromarray(gray).save(path)
+        features.append(photo_features(path, camera, color_mode="normalized_gray"))
+    np.testing.assert_allclose(features[0], features[1], atol=1e-12)
+
+
+def test_crop_size_changes_the_physical_area_sampled(tmp_path: Path) -> None:
+    pixels = np.full((256, 256, 3), 255, dtype=np.uint8)
+    pixels[64:192, 64:192] = 0
+    path = tmp_path / "soil.png"
+    Image.fromarray(pixels).save(path)
+    camera = pd.Series({"ppm": 2.56, "width": 256, "height": 256})
+    small = photo_features(path, camera, crop_mm=50, color_mode="gray")
+    large = photo_features(path, camera, crop_mm=100, color_mode="gray")
+    np.testing.assert_allclose(small, 0)
+    assert large[1] == 1.0
+
+
 def test_leave_one_out_excludes_entire_held_out_sample() -> None:
     # With four physical samples, each prediction must average the other three.
     features = np.arange(4, dtype=float).reshape(-1, 1)

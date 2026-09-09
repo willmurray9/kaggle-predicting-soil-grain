@@ -15,22 +15,29 @@ from soilgrain.submission import validate_submission
 from soilgrain.targets import curve_array, ordered_grain_columns, validate_cumulative_curves
 
 
-def photo_features(path: str | Path, camera: pd.Series) -> np.ndarray:
-    """Color and texture of a central 100 mm square, rendered at 256 pixels."""
+def photo_features(
+    path: str | Path, camera: pd.Series, *, crop_mm: float = 100, color_mode: str = "rgb"
+) -> np.ndarray:
+    """Color and texture of a physical center crop, rendered at 256 pixels."""
+    if color_mode not in ("rgb", "gray", "normalized_gray"):
+        raise ValueError(f"Unknown color mode: {color_mode}")
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source).convert("RGB")
     # PPM describes the native camera resolution; many training JPGs are smaller.
     ppm = float(camera["ppm"]) * max(image.size) / max(camera["width"], camera["height"])
     if not np.isfinite(ppm) or ppm <= 0:
         raise ValueError(f"Invalid pixel scale for {path}: {ppm}.")
-    side = round(100 * ppm)
+    side = round(crop_mm * ppm)
     if side < 1 or side > min(image.size):
-        raise ValueError(f"Cannot extract a 100 mm crop from {path} with PPM={ppm}.")
+        raise ValueError(f"Cannot extract a {crop_mm} mm crop from {path} with PPM={ppm}.")
     left, top = (image.width - side) // 2, (image.height - side) // 2
     crop = image.crop((left, top, left + side, top + side)).resize((256, 256), Image.Resampling.LANCZOS)
     rgb = np.asarray(crop, dtype=float) / 255.0
     gray = rgb.mean(axis=2)
-    color = np.quantile(rgb, [0.1, 0.5, 0.9], axis=(0, 1)).ravel()
+    if color_mode == "normalized_gray":
+        low, high = np.quantile(gray, [0.05, 0.95])
+        gray = np.clip((gray - low) / (high - low), 0, 1) if high > low else np.zeros_like(gray)
+    color = np.quantile(rgb if color_mode == "rgb" else gray, [0.1, 0.5, 0.9], axis=(0, 1)).ravel()
     texture = [gray.std()]
     for lag in (1, 4, 16):
         texture.append((np.abs(gray[lag:] - gray[:-lag]).mean() + np.abs(gray[:, lag:] - gray[:, :-lag]).mean()) / 2)

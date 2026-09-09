@@ -7,11 +7,11 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 
 ## Model progression
 
-1. **Camera and feature robustness — in progress.** Compare color, grayscale,
+1. **Camera and feature robustness — first batch complete.** Compare color, grayscale,
    lighting normalization, and physical crop sizes with the same 3-neighbor model.
    Measure whether different cameras produce different predictions for the same
    held-out soil. Investigate H374, which appears in 9/10 test neighborhoods.
-2. **Ridge regression — in progress.** Learn a regularized linear relationship
+2. **Ridge regression — first batch complete.** Learn a regularized linear relationship
    from the original 13 features to the grain curve. Keep image processing fixed
    so the comparison isolates the prediction model.
 3. **Kernel ridge — later, if justified.** Test a small nonlinear model if the
@@ -24,6 +24,8 @@ The fixed starting point is the [first image baseline](baseline-results.md):
    not a priority with 24 labeled samples.
 6. **Blend complementary models — optional.** Consider a simple blend only when
    held-out predictions show that the models make different errors.
+
+Results and the next decision are recorded in [first-experiments.md](first-experiments.md).
 
 ## First experiment batch: fixed before seeing results
 
@@ -66,14 +68,14 @@ outer training fold. Keep the current baseline and submission files unchanged.
 
 ## First-batch implementation and acceptance
 
-- [ ] Commit the verified existing baseline and this roadmap.
-- [ ] Add focused tests for ridge scaling, curve validity, and held-out isolation;
+- [x] Commit the verified existing baseline and this roadmap (`a4da8c7`).
+- [x] Add focused tests for ridge scaling, curve validity, and held-out isolation;
   implement a small NumPy ridge predictor without adding dependencies.
-- [ ] Add grayscale/contrast/crop controls with defaults that reproduce the old
+- [x] Add grayscale/contrast/crop controls with defaults that reproduce the old
   features, plus regression tests for their actual image behavior.
-- [ ] Add one fixed experiment command that writes scores, held-out predictions,
+- [x] Add one fixed experiment command that writes scores, held-out predictions,
   camera diagnostics, and separately named candidate submissions under artifacts.
-- [ ] Run the full batch, validate outputs, and verify the original baseline files
+- [x] Run the full batch, validate outputs, and verify the original baseline files
   and 45.24084370102147 score remain unchanged.
-- [ ] Review the implementation, record results in `docs/first-experiments.md`,
+- [x] Review the implementation, record results in `docs/first-experiments.md`,
   and recommend the next step based on both accuracy and camera sensitivity.

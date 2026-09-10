@@ -68,6 +68,19 @@ Use the same 24 held-out soils and 21 paired-camera diagnostics, and report
 per-soil changes. This isolates one observed source of representation imbalance
 before adding kernel ridge. The public score does not choose settings or weights.
 
+Execution rule recorded on 2026-09-10, before running this comparison: reuse the
+saved grayscale photo features and existing grouped evaluator; average features
+within `(split, sample_id, camera)` before averaging cameras within a soil. This
+applies to both training and test soils. Write separate artifacts, including
+per-soil changes and input hashes, while preserving previous outputs. Submit
+once only if the fixed blend improves both local EMD (40.11781628387224) and
+camera disagreement (31.52594710152303) over the submitted blend, and produces
+different test predictions. Otherwise record the result without submitting.
+
+After verification, merge this work into `main`, push, and delete fully merged
+development branches. Preserve any branch with unique work and any active
+worktree. Use the personal Git identity for all new commits.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

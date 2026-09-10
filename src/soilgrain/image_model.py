@@ -15,8 +15,17 @@ from soilgrain.submission import validate_submission
 from soilgrain.targets import curve_array, ordered_grain_columns, validate_cumulative_curves
 
 
-def physical_crop(path: str | Path, camera: pd.Series, *, crop_mm: float = 100) -> Image.Image:
-    """Return the calibrated physical center crop, rendered at 256 pixels."""
+SPATIAL_POSITIONS = ((0.5, 0.5), (0.25, 0.25), (0.25, 0.75), (0.75, 0.25), (0.75, 0.75))
+
+
+def physical_crop(
+    path: str | Path, camera: pd.Series, *, crop_mm: float = 100,
+    position: tuple[float, float] = (0.5, 0.5),
+) -> Image.Image:
+    """Return a calibrated crop at fractions of the available margins, rendered at 256 pixels."""
+    coordinates = np.asarray(position, dtype=float)
+    if coordinates.shape != (2,) or not np.all(np.isfinite(coordinates) & (coordinates >= 0) & (coordinates <= 1)):
+        raise ValueError("Crop position must contain two finite fractions between 0 and 1.")
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source).convert("RGB")
     # PPM describes the native camera resolution; many training JPGs are smaller.
@@ -26,17 +35,18 @@ def physical_crop(path: str | Path, camera: pd.Series, *, crop_mm: float = 100) 
     side = round(crop_mm * ppm)
     if side < 1 or side > min(image.size):
         raise ValueError(f"Cannot extract a {crop_mm} mm crop from {path} with PPM={ppm}.")
-    left, top = (image.width - side) // 2, (image.height - side) // 2
+    left, top = int(coordinates[0] * (image.width - side)), int(coordinates[1] * (image.height - side))
     return image.crop((left, top, left + side, top + side)).resize((256, 256), Image.Resampling.LANCZOS)
 
 
 def photo_features(
-    path: str | Path, camera: pd.Series, *, crop_mm: float = 100, color_mode: str = "rgb"
+    path: str | Path, camera: pd.Series, *, crop_mm: float = 100, color_mode: str = "rgb",
+    position: tuple[float, float] = (0.5, 0.5),
 ) -> np.ndarray:
-    """Color and texture of a physical center crop, rendered at 256 pixels."""
+    """Color and texture of a physical crop, rendered at 256 pixels."""
     if color_mode not in ("rgb", "gray", "normalized_gray"):
         raise ValueError(f"Unknown color mode: {color_mode}")
-    crop = physical_crop(path, camera, crop_mm=crop_mm)
+    crop = physical_crop(path, camera, crop_mm=crop_mm, position=position)
     rgb = np.asarray(crop, dtype=float) / 255.0
     gray = rgb.mean(axis=2)
     if color_mode == "normalized_gray":
@@ -47,6 +57,14 @@ def photo_features(
     for lag in (1, 4, 16):
         texture.append((np.abs(gray[lag:] - gray[:-lag]).mean() + np.abs(gray[:, lag:] - gray[:, :-lag]).mean()) / 2)
     return np.concatenate([color, texture])
+
+
+def spatial_photo_features(path: str | Path, camera: pd.Series, *, crop_mm: float = 100) -> np.ndarray:
+    """Average seven grayscale features equally over five fixed crop positions."""
+    return np.mean([
+        photo_features(path, camera, crop_mm=crop_mm, color_mode="gray", position=position)
+        for position in SPATIAL_POSITIONS
+    ], axis=0)
 
 
 def sample_features(photo_index: pd.DataFrame, sample_ids: list[str], ppm: pd.DataFrame) -> np.ndarray:

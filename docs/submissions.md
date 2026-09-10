@@ -3,6 +3,49 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-10 — predeclared transfer comparisons
+
+The user authorized informative submissions even when local validation is worse.
+The [three-candidate batch](roadmap.md#spatial-coverage-and-informative-submissions--declared-2026-09-10)
+was committed as `59620634594795ec8f2037b2d2f3ecb3a0429920` before any new upload.
+Both existing candidates reproduced from their feature caches within 7e-14 and
+passed schema, ID, ordering, and cumulative-curve checks before submission.
+
+| Model | Local EMD | Camera disagreement | Public EMD | Submission ID |
+| --- | ---: | ---: | ---: | --- |
+| Original grayscale crop blend | 40.11782 | 31.52595 | 76.75797 | `56131658` |
+| RGB ridge, fixed alpha 10 | 41.20591 | 28.89103 | **61.87967** | `56152621` |
+| Nested ResNet ridge | 49.91991 | 21.19103 | **63.01764** | `56152632` |
+
+The first two new submissions are complete; private scores remain unavailable.
+RGB ridge reduces public EMD by 19.4% and nested ResNet ridge by 17.9% relative
+to the original submission. Their worse local scores did not imply worse public
+performance. This is evidence that our local ranking transfers imperfectly,
+without establishing whether cameras, soil composition, or selection effects
+cause the difference. The smallest camera disagreement also did not identify
+the better of these two public scores. These few public results do not justify
+discarding whole-soil validation or tuning against the leaderboard.
+
+RGB ridge provenance:
+
+- Uploaded `2026-09-10 22:34:15.953000 UTC`, file `artifacts/submissions/experiments/ridge_rgb_100.csv`.
+- Producing code: `75cd6ae6eb66c1b3e5f2c5ff430968b0c7aa4daf`.
+- SHA-256: `afc7edc28793a322038c806b988fa62e8c0683c909dc72dd14d2e8618183608a`.
+- API receipt: `artifacts/experiments/informative_submissions/2026-09-10_ridge_rgb_100.json`.
+
+Nested ResNet ridge provenance:
+
+- Uploaded `2026-09-10 22:34:52.737000 UTC`, file `artifacts/submissions/frozen_resnet18_nested_ridge.csv`.
+- Producing code: `f7fa0b2fc0b105f3deec7a02361f3b9f49c45272`.
+- SHA-256: `cb62d4b0c8e03a8e306e697900cedcd00379ac6751d77d2d0a549e83c1a85838`.
+- API receipt: `artifacts/experiments/informative_submissions/2026-09-10_nested_resnet_ridge.json`.
+
+At the preflight check, Kaggle reported five submissions per day and zero today;
+we are honoring the user's three-upload budget. The third declared candidate is
+the fixed spatial-coverage model. It will be submitted after testing regardless
+of whether it beats the earlier local metrics, provided its predictions are valid
+and distinct. No settings or batch choices change in response to these scores.
+
 ## 2026-09-09 — equal-weight grayscale multi-crop
 
 | Field | Value |

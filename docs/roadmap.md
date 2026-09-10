@@ -287,6 +287,12 @@ Use the user's more conservative budget of three today. Commit and push the
 declaration, then tested implementation/results; finish on clean synchronized
 `main` and remove the completed branch.
 
+Spatial result: 42.5306 local EMD and 25.2083 paired-camera disagreement; nine
+soils improve, fourteen worsen, and one is unchanged. See the
+[spatial report](spatial-coverage-results.md) and [submission log](submissions.md).
+The next modeling step is a small, predeclared set of physical-scale texture
+measurements with the same grouped evaluation.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

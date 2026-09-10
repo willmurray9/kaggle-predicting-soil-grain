@@ -5,7 +5,75 @@ import pandas as pd
 import pytest
 from PIL import Image
 
-from soilgrain.image_model import leave_one_out_predictions, nearest_curves, photo_features, sample_features
+from soilgrain.image_model import (
+    leave_one_out_predictions,
+    nearest_curves,
+    photo_features,
+    physical_crop,
+    sample_features,
+    spatial_photo_features,
+)
+
+
+def test_default_crop_preserves_existing_center_pixels(tmp_path: Path) -> None:
+    pixels = np.random.default_rng(0).integers(0, 256, (241, 321, 3), dtype=np.uint8)
+    path = tmp_path / "center.png"
+    Image.fromarray(pixels).save(path)
+    camera = pd.Series({"ppm": 1.0, "width": 321, "height": 241})
+    expected = Image.fromarray(pixels[70:170, 110:210]).resize((256, 256), Image.Resampling.LANCZOS)
+    np.testing.assert_array_equal(np.asarray(physical_crop(path, camera)), np.asarray(expected))
+    np.testing.assert_array_equal(
+        np.asarray(physical_crop(path, camera, position=(0.5, 0.5))), np.asarray(expected)
+    )
+
+
+def test_shifted_crop_uses_calibrated_image_dimensions(tmp_path: Path) -> None:
+    pixels = np.full((240, 320, 3), [0, 0, 255], dtype=np.uint8)
+    pixels[120:200, 60:140] = [255, 0, 0]
+    path = tmp_path / "shifted.png"
+    Image.fromarray(pixels).save(path)
+    camera = pd.Series({"ppm": 2.0, "width": 640, "height": 480})
+    crop = physical_crop(path, camera, crop_mm=80, position=(0.25, 0.75))
+    np.testing.assert_array_equal(np.asarray(crop), np.broadcast_to([255, 0, 0], (256, 256, 3)))
+    features = photo_features(path, camera, crop_mm=80, position=(0.25, 0.75))
+    np.testing.assert_allclose(features[:9], [1, 0, 0] * 3)
+    np.testing.assert_allclose(features[9:], 0, atol=1e-12)
+
+
+def test_crop_positions_follow_exif_orientation(tmp_path: Path) -> None:
+    oriented = np.zeros((320, 240, 3), dtype=np.uint8)
+    oriented[180:260, 40:120] = 255
+    image = Image.fromarray(np.rot90(oriented))
+    exif = Image.Exif()
+    exif[274] = 6  # The displayed image is rotated 90 degrees clockwise.
+    path = tmp_path / "oriented.png"
+    image.save(path, exif=exif)
+    camera = pd.Series({"ppm": 2.0, "width": 640, "height": 480})
+    crop = physical_crop(path, camera, crop_mm=80, position=(0.25, 0.75))
+    np.testing.assert_array_equal(np.asarray(crop), 255)
+
+
+@pytest.mark.parametrize("position", [(-0.1, 0.5), (0.5, 1.1), (np.nan, 0.5), (0.5, np.inf), (0.5,), (0.5, 0.5, 0.5)])
+def test_crop_positions_must_be_two_finite_fractions(tmp_path: Path, position) -> None:
+    path = tmp_path / "soil.png"
+    Image.new("RGB", (100, 100)).save(path)
+    camera = pd.Series({"ppm": 1.0, "width": 100, "height": 100})
+    with pytest.raises(ValueError, match="position"):
+        physical_crop(path, camera, position=position)
+
+
+def test_spatial_features_average_five_grayscale_patches_equally(tmp_path: Path) -> None:
+    pixels = np.full((1280, 1280, 3), 17, dtype=np.uint8)
+    for (left, top), value in zip(
+        [(512, 512), (256, 256), (256, 768), (768, 256), (768, 768)],
+        [0, 50, 100, 150, 250], strict=True,
+    ):
+        pixels[top:top + 256, left:left + 256] = value
+    path = tmp_path / "five_patches.png"
+    Image.fromarray(pixels).save(path)
+    camera = pd.Series({"ppm": 1.0, "width": 1280, "height": 1280})
+    features = spatial_photo_features(path, camera, crop_mm=256)
+    np.testing.assert_allclose(features, [110 / 255] * 3 + [0] * 4, atol=1e-12)
 
 
 def test_photo_features_use_physical_center_crop(tmp_path: Path) -> None:

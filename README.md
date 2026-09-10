@@ -142,4 +142,16 @@ not accuracy, so it also retains the current submission.
 ridge predictions. `make nested-neighbors` chooses one shared neighbor count
 inside each outer training fold. [Both comparisons are complete](docs/blend-and-neighbors-results.md):
 the blend worsened accuracy, while neighbor tuning selected the existing count
-of three in every fold. The next experiment will test broader spatial coverage.
+of three in every fold.
+
+`make spatial-coverage` extracts five fixed positions per photo at each existing
+crop size and averages their grayscale features. It retains three neighbors and
+whole-soil validation. Outputs live in `artifacts/experiments/spatial_coverage/`
+and `artifacts/submissions/spatial_multicrop.csv`.
+The [spatial results](docs/spatial-coverage-results.md) show 42.53062 local EMD
+and 25.20834 camera disagreement.
+
+The [latest submission comparisons](docs/submissions.md) test candidates even
+when their local scores are worse: RGB ridge reached **61.87967 public EMD**
+and nested ResNet ridge **63.01764**, both improving on the original 76.75797.
+The [roadmap](docs/roadmap.md) records the batch before those uploads.

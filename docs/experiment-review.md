@@ -1,5 +1,13 @@
 **Experiment review — 10 September 2026**
 
+**Later update:** [informative Kaggle submissions](submissions.md) changed the
+public ranking: RGB ridge scored 61.87967 and nested ResNet ridge 63.01764,
+both better than the original crop blend's 76.75797 despite worse local scores.
+The [fixed spatial experiment](spatial-coverage-results.md) is also complete:
+42.5306 local EMD and 25.2083 camera disagreement. The report below preserves the
+earlier decision point; its conservative submission gate has since been superseded
+by the user's authorization to submit informative comparisons.
+
 We have beaten the original image model. The first RGB/texture nearest-neighbor
 baseline scored 45.24 local EMD; our submitted grayscale crop blend scores 40.12,
 an 11.32% reduction. The 50 mm grayscale model has the lowest local error at

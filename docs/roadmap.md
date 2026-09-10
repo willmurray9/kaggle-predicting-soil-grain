@@ -161,6 +161,33 @@ criteria failed, so retain the current Kaggle submission. See
 regularization grid and select alpha only inside each outer training fold,
 keeping the cached encoder features and physical crops fixed.
 
+## Nested ridge regularization — declared comparison
+
+Declared on 2026-09-10 before computing this comparison:
+
+- Reuse the cached 512 frozen ResNet-18 features and equal photo averaging.
+  Compare only ridge penalties **10, 100, and 1000**. Keep crops, encoder,
+  scaling, intercept, and cumulative-curve repair unchanged.
+- Hold out each of the 24 physical soils. On its other 23 soils, choose alpha
+  by mean leave-one-soil-out EMD, fitting scaling and ridge afresh on the 22
+  inner training soils. Break exact score ties in favor of the larger alpha.
+  Refit on all 23 outer training soils and use that same alpha for both the
+  held-out soil's pooled prediction and its separate camera predictions.
+- Report the outer held-out EMD and paired-camera disagreement as validation
+  diagnostics. Record every inner alpha score and chosen alpha. For the final
+  test candidate, select alpha by leave-one-soil-out EMD on all 24 training
+  soils and refit on all 24. Its tuning score is a selection score, not another
+  validation estimate. Test features and labels never choose alpha.
+- Use the mathematically equivalent dual ridge solve when there are more
+  features than training soils, with a numerical equivalence test. This keeps
+  the nested calculation small without changing the model or adding packages.
+- Save separate artifacts and input hashes; preserve previous files. Submit
+  once only if outer EMD and camera disagreement both improve on the submitted
+  blend (40.11781628387224 and 31.52594710152303), and test predictions differ.
+  Repeated model comparisons remain exploratory even with nested tuning.
+- Review and test, integrate into `main`, push with the personal Git identity,
+  and delete the completed branch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

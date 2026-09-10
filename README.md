@@ -130,3 +130,8 @@ make frozen-model
 The first run downloads the official pretrained checkpoint. See
 [frozen-feature results](docs/frozen-resnet-results.md) for the checked competition
 rules, reproducibility details, and the decision to retain the current submission.
+
+`make nested-ridge` reuses that feature cache to select regularization inside
+each training fold. It needs no vision packages once the cache exists. The
+[nested comparison](docs/nested-ridge-results.md) improved camera agreement but
+not accuracy, so it also retains the current submission.

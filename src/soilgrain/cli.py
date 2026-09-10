@@ -12,7 +12,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Soil grain Kaggle scaffold")
     parser.add_argument(
         "command",
-        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "validate"],
+        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "validate"],
     )
     parser.add_argument("--config", default="configs/data.yaml")
     parser.add_argument("--submission", help="Submission CSV to validate.")
@@ -85,6 +85,12 @@ def main() -> None:
         from soilgrain.frozen_experiment import write_frozen_experiment
 
         paths = write_frozen_experiment(args.config)
+        for path in paths.values():
+            print(path)
+    elif args.command == "nested-ridge":
+        from soilgrain.nested_experiment import write_nested_experiment
+
+        paths = write_nested_experiment(args.config)
         for path in paths.values():
             print(path)
     elif args.command == "validate":

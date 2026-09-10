@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from soilgrain.ridge import ridge_curves
 
@@ -41,3 +42,41 @@ def test_ridge_curves_repairs_extrapolated_predictions() -> None:
     assert np.all((0.0 <= predictions) & (predictions <= 100.0))
     assert np.all(np.diff(predictions, axis=1) >= 0.0)
     np.testing.assert_array_equal(predictions[:, -1], 100.0)
+
+
+@pytest.mark.parametrize("alpha", [10.0, 100.0, 1000.0])
+def test_wide_ridge_matches_primal_solution(alpha: float) -> None:
+    rng = np.random.default_rng(42)
+    train_features = rng.normal(size=(5, 12))
+    train_features[:, -1] = 3.0
+    query_features = rng.normal(size=(3, 12))
+    train_curves = np.column_stack(
+        [np.sort(rng.uniform(0.0, 100.0, size=(5, 10)), axis=1), np.full(5, 100.0)]
+    )
+    mean = train_features.mean(axis=0)
+    scale = train_features.std(axis=0)
+    scale[scale == 0.0] = 1.0
+    train = (train_features - mean) / scale
+    query = (query_features - mean) / scale
+    target_mean = train_curves[:, :10].mean(axis=0)
+    coefficients = np.linalg.solve(
+        train.T @ train + alpha * np.eye(train.shape[1]),
+        train.T @ (train_curves[:, :10] - target_mean),
+    )
+    expected = np.maximum.accumulate(np.clip(query @ coefficients + target_mean, 0.0, 100.0), axis=1)
+
+    predictions = ridge_curves(train_features, train_curves, query_features, alpha=alpha)
+
+    np.testing.assert_allclose(predictions[:, :10], expected, rtol=1e-12, atol=1e-12)
+    np.testing.assert_array_equal(predictions[:, -1], 100.0)
+
+
+def test_wide_ridge_predictions_do_not_depend_on_other_queries() -> None:
+    train_features = np.array([[0.0, 2.0, 5.0], [1.0, -2.0, 5.0]])
+    train_curves = np.array([[20.0] * 10 + [100.0], [80.0] * 10 + [100.0]])
+    query = np.array([[0.25, 1.0, 5.0]])
+
+    alone = ridge_curves(train_features, train_curves, query)
+    with_extreme_query = ridge_curves(train_features, train_curves, np.vstack([query, [1e9, -1e9, 0.0]]))
+
+    np.testing.assert_allclose(alone[0], with_extreme_query[0])

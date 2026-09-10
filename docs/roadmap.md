@@ -17,8 +17,8 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 3. **Kernel ridge — fixed comparison complete.** The RBF candidate scores 52.55
    local EMD and does not replace the submitted blend.
 4. **Frozen pretrained image features + ridge — fixed comparison complete.**
-   ResNet-18 plus alpha-10 ridge scores 49.65 local EMD. Next test regularization
-   within nested soil-grouped validation before considering encoder fine-tuning.
+   ResNet-18 plus alpha-10 ridge scores 49.65 local EMD; nested regularization
+   selection scores 49.92. Neither replaces the submitted blend.
 5. **Light fine-tuning — optional.** Adapt a small part of the encoder only if
    frozen features show stable value. Training a large network from scratch is
    not a priority with 24 labeled samples.
@@ -161,7 +161,7 @@ criteria failed, so retain the current Kaggle submission. See
 regularization grid and select alpha only inside each outer training fold,
 keeping the cached encoder features and physical crops fixed.
 
-## Nested ridge regularization — declared comparison
+## Nested ridge regularization — complete
 
 Declared on 2026-09-10 before computing this comparison:
 
@@ -187,6 +187,13 @@ Declared on 2026-09-10 before computing this comparison:
   Repeated model comparisons remain exploratory even with nested tuning.
 - Review and test, integrate into `main`, push with the personal Git identity,
   and delete the completed branch.
+
+Result: outer EMD 49.9199 and paired-camera disagreement 21.1910. Camera
+sensitivity improved, but accuracy failed the submission criterion. Keep the
+current submission. See [nested-ridge results](nested-ridge-results.md) for
+selection details and checks. Next: one fixed 50/50 blend of the submitted
+multi-crop predictions and nested ridge, with aligned outer folds and camera
+views, the same submission criteria, and no weight search.
 
 ## First experiment batch: fixed before seeing results
 

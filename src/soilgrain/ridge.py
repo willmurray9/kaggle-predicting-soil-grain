@@ -35,10 +35,16 @@ def ridge_curves(
     targets = train_curves[:, :10]
     target_mean = targets.mean(axis=0)
     centered_targets = targets - target_mean
-    coefficients = np.linalg.solve(
-        scaled_train.T @ scaled_train + alpha * np.eye(scaled_train.shape[1]),
-        scaled_train.T @ centered_targets,
-    )
+    if scaled_train.shape[1] > scaled_train.shape[0]:
+        coefficients = scaled_train.T @ np.linalg.solve(
+            scaled_train @ scaled_train.T + alpha * np.eye(scaled_train.shape[0]),
+            centered_targets,
+        )
+    else:
+        coefficients = np.linalg.solve(
+            scaled_train.T @ scaled_train + alpha * np.eye(scaled_train.shape[1]),
+            scaled_train.T @ centered_targets,
+        )
     predictions = scaled_query @ coefficients + target_mean
     predictions = np.maximum.accumulate(np.clip(predictions, 0.0, 100.0), axis=1)
     return np.column_stack([predictions, np.full(query_features.shape[0], 100.0)])

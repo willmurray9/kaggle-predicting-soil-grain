@@ -36,6 +36,9 @@ soil-grouped comparison can test whether the fixed alpha was unsuitable without
 selecting it on the outer held-out label or the public leaderboard. Keep the
 encoder and crops fixed and declare the small candidate grid before running it.
 
+That [nested comparison is now complete](nested-ridge-results.md): outer EMD
+49.9199 and camera disagreement 21.1910. It was not submitted.
+
 ## Inputs and reproducibility
 
 The official [competition rules](https://www.kaggle.com/competitions/soil-grain-size-from-photos/rules)

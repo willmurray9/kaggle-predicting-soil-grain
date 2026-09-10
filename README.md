@@ -137,3 +137,9 @@ rules, reproducibility details, and the decision to retain the current submissio
 each training fold. It needs no vision packages once the cache exists. The
 [nested comparison](docs/nested-ridge-results.md) improved camera agreement but
 not accuracy, so it also retains the current submission.
+
+`make model-blend` evaluates the fixed 50/50 blend of multi-crop and nested
+ridge predictions. `make nested-neighbors` chooses one shared neighbor count
+inside each outer training fold. [Both comparisons are complete](docs/blend-and-neighbors-results.md):
+the blend worsened accuracy, while neighbor tuning selected the existing count
+of three in every fold. The next experiment will test broader spatial coverage.

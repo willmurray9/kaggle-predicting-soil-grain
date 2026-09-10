@@ -7,8 +7,12 @@ an 11.32% reduction. The 50 mm grayscale model has the lowest local error at
 the subsequent camera-weighting, kernel, and frozen-image-feature experiments
 have not displaced the submitted blend under our two-part selection rule.
 
-This report covers completed experiments through code commit `f7fa0b2`. No new
-model or proposed 50/50 blend was evaluated while preparing it. Numerical results
+This report covers completed experiments through code commit `f7fa0b2`. The
+[subsequent blend and neighbor-count comparisons](blend-and-neighbors-results.md)
+are now complete: the blend scores 43.74, while nested neighbor selection retains
+three in every fold and reproduces the submitted model. The review below records
+the earlier decision point. No new model or proposed 50/50 blend was evaluated
+while preparing that review. Numerical results
 come from the repository's saved predictions and experiment reports.
 
 **What we are predicting and how we measure progress.** Each soil has an

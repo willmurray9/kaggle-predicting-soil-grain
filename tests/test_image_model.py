@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 from PIL import Image
 
 from soilgrain.image_model import leave_one_out_predictions, nearest_curves, photo_features, sample_features
@@ -111,3 +112,22 @@ def test_neighbors_do_not_fit_scaling_on_query_samples() -> None:
     together = nearest_curves(features, curves, np.array([[0.0, 0.0], [1e9, 0.0]]))
     np.testing.assert_allclose(alone[0], [30, 100])
     np.testing.assert_allclose(alone[0], together[0])
+
+
+def test_requested_neighbor_count_and_default_behavior() -> None:
+    features = np.array([[0], [1], [4], [9]], dtype=float)
+    curves = np.array([[0, 100], [20, 100], [60, 100], [100, 100]], dtype=float)
+    query = np.array([[0.0]])
+    np.testing.assert_array_equal(nearest_curves(features, curves, query, n_neighbors=1), curves[:1])
+    np.testing.assert_allclose(nearest_curves(features, curves, query, n_neighbors=2), [[10, 100]])
+    np.testing.assert_array_equal(
+        nearest_curves(features, curves, query),
+        nearest_curves(features, curves, query, n_neighbors=3),
+    )
+    np.testing.assert_allclose(nearest_curves(features[:2], curves[:2], query), [[10, 100]])
+
+
+@pytest.mark.parametrize("count", [0, -1, 1.5, True])
+def test_neighbor_count_requires_a_positive_integer(count) -> None:
+    with pytest.raises(ValueError, match="positive integer"):
+        nearest_curves(np.zeros((1, 1)), np.zeros((1, 2)), np.zeros((1, 1)), n_neighbors=count)

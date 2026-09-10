@@ -62,14 +62,19 @@ def sample_features(photo_index: pd.DataFrame, sample_ids: list[str], ppm: pd.Da
     return np.vstack(features)
 
 
-def nearest_curves(train_features: np.ndarray, train_curves: np.ndarray, query_features: np.ndarray) -> np.ndarray:
-    """Average three neighbors after scaling features using training samples only."""
+def nearest_curves(
+    train_features: np.ndarray, train_curves: np.ndarray, query_features: np.ndarray,
+    *, n_neighbors: int = 3,
+) -> np.ndarray:
+    """Average nearest curves after scaling features using training samples only."""
+    if isinstance(n_neighbors, (bool, np.bool_)) or not isinstance(n_neighbors, (int, np.integer)) or n_neighbors < 1:
+        raise ValueError("n_neighbors must be a positive integer.")
     if len(train_features) == 0:
         raise ValueError("At least one training sample is required.")
     scale = train_features.std(axis=0)
     scale[scale < 1e-12] = 1.0
     distances = np.square((query_features[:, None, :] - train_features[None, :, :]) / scale).sum(axis=2)
-    neighbors = np.argsort(distances, axis=1, kind="stable")[:, :3]
+    neighbors = np.argsort(distances, axis=1, kind="stable")[:, :n_neighbors]
     return train_curves[neighbors].mean(axis=1)
 
 

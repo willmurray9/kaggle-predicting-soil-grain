@@ -22,10 +22,11 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 5. **Light fine-tuning — optional.** Adapt a small part of the encoder only if
    frozen features show stable value. Training a large network from scratch is
    not a priority with 24 labeled samples.
-6. **Blend complementary models — optional.** Consider a simple blend only when
-   held-out predictions show that the models make different errors.
+6. **Blend complementary models — fixed comparison complete.** The equal blend
+   of multi-crop and nested ridge scores 43.74 and does not replace the submission.
 
-Results and the next decision are recorded in [first-experiments.md](first-experiments.md).
+The [latest comparison report](blend-and-neighbors-results.md) records the
+blend result, nested neighbor selection, and the next spatial-coverage experiment.
 
 ## Current follow-up: error audit and equal-weight multi-crop blend
 
@@ -195,7 +196,7 @@ selection details and checks. Next: one fixed 50/50 blend of the submitted
 multi-crop predictions and nested ridge, with aligned outer folds and camera
 views, the same submission criteria, and no weight search.
 
-## Fixed model blend and nested neighbor count — declared comparisons
+## Fixed model blend and nested neighbor count — complete
 
 Declared on 2026-09-10 before computing either comparison:
 
@@ -230,6 +231,14 @@ comparisons; no soils are excluded because of their errors.
 Commit and push tested milestones with the personal Git identity, then merge
 completed work into `main` and remove the development branch. Spatial coverage
 and new feature/model comparisons remain separate later experiments.
+
+Results: the fixed blend scores 43.7447 EMD and 20.6841 camera disagreement;
+accuracy fails the promotion criterion. Nested neighbor selection chooses
+three in all 24 outer folds and for the final candidate, reproducing 40.1178
+EMD and 31.5259 camera disagreement with unchanged test predictions. Neither
+candidate is submitted. See [the comparison report](blend-and-neighbors-results.md).
+Next: declare fixed spatial crop locations and aggregation, keeping the
+grayscale features, crop sizes, three neighbors, and whole-soil validation.
 
 ## First experiment batch: fixed before seeing results
 

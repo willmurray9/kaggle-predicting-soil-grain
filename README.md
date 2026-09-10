@@ -111,3 +111,7 @@ the [error audit](docs/error-audit.md) documents the difficult soils. The blend
 scores 40.12 local EMD versus the original reference's 45.24.
 Its first Kaggle submission scored 76.75797 public EMD; the
 [submission log](docs/submissions.md) records the file hash, code commit, and result.
+
+`make camera-balance` runs the next controlled comparison using those saved
+features. [Equal camera weighting](docs/camera-balance-results.md) worsened both
+local measures, so the existing submission remains our reference.

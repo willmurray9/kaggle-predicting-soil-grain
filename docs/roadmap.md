@@ -58,7 +58,7 @@ and 31.5259 paired-camera disagreement, beating the original reference on both
 predeclared criteria. Its [first Kaggle submission](submissions.md) completed with
 public EMD 76.75797. The audit, blend, submission, and provenance record are complete.
 
-## Next controlled comparison
+## Camera weighting comparison — complete
 
 The audit identified unequal photo counts per camera within a soil. Compare
 equal-per-camera feature averaging with the current equal-per-photo averaging:
@@ -80,6 +80,12 @@ different test predictions. Otherwise record the result without submitting.
 After verification, merge this work into `main`, push, and delete fully merged
 development branches. Preserve any branch with unique work and any active
 worktree. Use the personal Git identity for all new commits.
+
+Result: local EMD worsened to 42.4228 and camera disagreement to 38.3402. Retain
+the photo-weighted blend and make no submission for this candidate. See
+[camera-balance results](camera-balance-results.md) for the full comparison.
+Next, compare a fixed kernel-ridge model using the same grouped validation;
+record its settings before running it.
 
 ## First experiment batch: fixed before seeing results
 

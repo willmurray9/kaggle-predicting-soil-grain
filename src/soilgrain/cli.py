@@ -12,7 +12,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Soil grain Kaggle scaffold")
     parser.add_argument(
         "command",
-        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "validate"],
+        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "validate"],
     )
     parser.add_argument("--config", default="configs/data.yaml")
     parser.add_argument("--submission", help="Submission CSV to validate.")
@@ -67,6 +67,12 @@ def main() -> None:
         from soilgrain.audit import write_audit
 
         paths = write_audit(args.config)
+        for path in paths.values():
+            print(path)
+    elif args.command == "camera-balance":
+        from soilgrain.camera_balance import write_camera_balance
+
+        paths = write_camera_balance(args.config)
         for path in paths.values():
             print(path)
     elif args.command == "validate":

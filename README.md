@@ -87,6 +87,8 @@ See [the first-run results](docs/baseline-results.md) for scores and limitations
 
 ## Experiments
 
+The [experiment review](docs/experiment-review.md) explains all completed results,
+the likely limits of the current models, and the remaining experiments.
 The [roadmap](docs/roadmap.md) records the model progression and validation rules.
 Run the fixed camera/grayscale/ridge comparisons with:
 

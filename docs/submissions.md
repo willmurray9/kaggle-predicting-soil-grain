@@ -16,8 +16,9 @@ passed schema, ID, ordering, and cumulative-curve checks before submission.
 | Original grayscale crop blend | 40.11782 | 31.52595 | 76.75797 | `56131658` |
 | RGB ridge, fixed alpha 10 | 41.20591 | 28.89103 | **61.87967** | `56152621` |
 | Nested ResNet ridge | 49.91991 | 21.19103 | **63.01764** | `56152632` |
+| Five-position grayscale crop blend | 42.53062 | 25.20834 | 82.91954 | `56152697` |
 
-The first two new submissions are complete; private scores remain unavailable.
+All three new submissions are complete; private scores remain unavailable.
 RGB ridge reduces public EMD by 19.4% and nested ResNet ridge by 17.9% relative
 to the original submission. Their worse local scores did not imply worse public
 performance. This is evidence that our local ranking transfers imperfectly,
@@ -25,6 +26,8 @@ without establishing whether cameras, soil composition, or selection effects
 cause the difference. The smallest camera disagreement also did not identify
 the better of these two public scores. These few public results do not justify
 discarding whole-soil validation or tuning against the leaderboard.
+The spatial blend worsens public EMD by 8.0% relative to the original despite
+improving camera agreement. RGB ridge is our best public submission so far.
 
 RGB ridge provenance:
 
@@ -40,11 +43,19 @@ Nested ResNet ridge provenance:
 - SHA-256: `cb62d4b0c8e03a8e306e697900cedcd00379ac6751d77d2d0a549e83c1a85838`.
 - API receipt: `artifacts/experiments/informative_submissions/2026-09-10_nested_resnet_ridge.json`.
 
+Spatial crop blend provenance:
+
+- Uploaded `2026-09-10 22:39:42.180000 UTC`, file `artifacts/submissions/spatial_multicrop.csv`.
+- Producing code: `e7c75db8bdc0f27bb25c5b94b31367f9e0d0a8ea`.
+- SHA-256: `9f9b9f20135404110d2fcb6910b3580977dd6549ad80269947ee50d5c36c1e41`.
+- API receipt: `artifacts/experiments/informative_submissions/2026-09-10_spatial_multicrop.json`.
+- All 98 local tests and both [remote CI jobs](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/34538447525) passed before upload.
+
 At the preflight check, Kaggle reported five submissions per day and zero today;
-we are honoring the user's three-upload budget. The third declared candidate is
-the fixed spatial-coverage model. It will be submitted after testing regardless
-of whether it beats the earlier local metrics, provided its predictions are valid
-and distinct. No settings or batch choices change in response to these scores.
+we honored the user's three-upload budget. This batch used exactly three
+submissions, for four lifetime uploads. No settings or batch choices changed in
+response to intermediate public scores. The original submission and all previous
+artifacts remain intact.
 
 ## 2026-09-09 — equal-weight grayscale multi-crop
 

@@ -290,6 +290,9 @@ declaration, then tested implementation/results; finish on clean synchronized
 Spatial result: 42.5306 local EMD and 25.2083 paired-camera disagreement; nine
 soils improve, fourteen worsen, and one is unchanged. See the
 [spatial report](spatial-coverage-results.md) and [submission log](submissions.md).
+All three declared uploads completed: RGB ridge 61.87967 public EMD, nested
+ResNet ridge 63.01764, and spatial coverage 82.91954. The original scored 76.75797;
+RGB ridge is now the best public submission. No further uploads in this batch.
 The next modeling step is a small, predeclared set of physical-scale texture
 measurements with the same grouped evaluation.
 

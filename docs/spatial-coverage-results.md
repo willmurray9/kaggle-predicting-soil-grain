@@ -4,6 +4,9 @@ Five positions per photo produce **42.53062 local EMD**, versus **40.11782**
 for the submitted center-only crop blend. Paired-camera disagreement improves
 from **31.52595 to 25.20834**. Broader coverage helped camera agreement but did
 not improve local accuracy. Lower is better for both measures.
+The planned Kaggle submission completed at **82.91954 public EMD**, worse than
+the original blend's **76.75797**. It does not replace RGB ridge, our current
+best public submission at **61.87967**.
 
 The [declaration](roadmap.md#spatial-coverage-and-informative-submissions--declared-2026-09-10)
 was committed as `5962063` before scoring this experiment or making today's
@@ -69,12 +72,14 @@ photo index, reference predictions, every input photo, and the candidate CSV.
 
 - Candidate: `artifacts/submissions/spatial_multicrop.csv`.
 - SHA-256: `9f9b9f20135404110d2fcb6910b3580977dd6549ad80269947ee50d5c36c1e41`.
-- All 98 tests pass, including calibrated shifted crops, EXIF orientation,
+- All 98 tests and both remote CI jobs pass, including calibrated shifted crops, EXIF orientation,
   unchanged default pixels, equal patch/photo weighting, held-out isolation,
   and output alignment. Independent review found no actionable issues.
 - All 82 pre-existing artifact files were checked and remain byte-identical.
 - Candidate passes the submission validator and changes all ten test curves
   relative to each previously submitted model.
+- Fifteen original center-crop feature checks spanning all five cameras and
+  three crop sizes reproduce their saved features within 9.72e-17.
 
 ## Next comparison
 

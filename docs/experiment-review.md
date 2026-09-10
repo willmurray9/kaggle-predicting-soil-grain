@@ -4,7 +4,8 @@
 public ranking: RGB ridge scored 61.87967 and nested ResNet ridge 63.01764,
 both better than the original crop blend's 76.75797 despite worse local scores.
 The [fixed spatial experiment](spatial-coverage-results.md) is also complete:
-42.5306 local EMD and 25.2083 camera disagreement. The report below preserves the
+42.5306 local EMD, 25.2083 camera disagreement, and 82.91954 public EMD.
+RGB ridge is now our best public submission. The report below preserves the
 earlier decision point; its conservative submission gate has since been superseded
 by the user's authorization to submit informative comparisons.
 

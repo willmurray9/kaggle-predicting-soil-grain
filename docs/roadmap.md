@@ -14,8 +14,8 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 2. **Ridge regression — first batch complete.** Learn a regularized linear relationship
    from the original 13 features to the grain curve. Keep image processing fixed
    so the comparison isolates the prediction model.
-3. **Kernel ridge — later, if justified.** Test a small nonlinear model if the
-   first comparisons suggest the relationship needs more flexibility.
+3. **Kernel ridge — fixed comparison complete.** The RBF candidate scores 52.55
+   local EMD and does not replace the submitted blend.
 4. **Frozen pretrained image features + ridge — later.** Confirm the competition's
    pretrained-weight rules, then try one visual encoder with sample-level feature
    aggregation. Keep the encoder frozen initially.
@@ -87,7 +87,7 @@ the photo-weighted blend and make no submission for this candidate. See
 Next, compare a fixed kernel-ridge model using the same grouped validation;
 record its settings before running it.
 
-## Kernel ridge — fixed comparison
+## Kernel ridge — fixed comparison complete
 
 Declared before computing predictions on 2026-09-10:
 
@@ -117,6 +117,11 @@ provides the centered feature-space representation. The implementation uses
 NumPy; no new package or external training data is needed. Kernel and linear
 ridge penalties act on different representations, so their alpha values do not
 imply matched effective regularization.
+
+Result: local EMD 52.5486 and paired-camera disagreement 25.4766. The accuracy
+criterion failed, so retain the submitted blend and make no new submission.
+See [kernel-ridge results](kernel-ridge-results.md). Next: confirm pretrained
+weight/external-data rules, then declare one frozen image-encoder comparison.
 
 ## First experiment batch: fixed before seeing results
 

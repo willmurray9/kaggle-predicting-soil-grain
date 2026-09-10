@@ -115,3 +115,7 @@ Its first Kaggle submission scored 76.75797 public EMD; the
 `make camera-balance` runs the next controlled comparison using those saved
 features. [Equal camera weighting](docs/camera-balance-results.md) worsened both
 local measures, so the existing submission remains our reference.
+
+`make kernel-ridge` compares one fixed RBF kernel model on the original RGB
+features. [Kernel-ridge results](docs/kernel-ridge-results.md) show worse local
+accuracy despite improved camera agreement; this candidate was not submitted.

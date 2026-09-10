@@ -240,6 +240,53 @@ candidate is submitted. See [the comparison report](blend-and-neighbors-results.
 Next: declare fixed spatial crop locations and aggregation, keeping the
 grayscale features, crop sizes, three neighbors, and whole-soil validation.
 
+## Spatial coverage and informative submissions — declared 2026-09-10
+
+Before computing spatial scores or viewing new public results:
+
+- Extract five patches per photo at each existing 50/100/150 mm crop size:
+  center plus four positions at (0.25, 0.25), (0.25, 0.75), (0.75, 0.25),
+  (0.75, 0.75). Coordinates are fractions of the available crop-origin travel
+  after EXIF orientation: left = floor(x × (width − side)), likewise top.
+  Thus all crops fit without padding; the default center remains unchanged.
+  A geometry check found only 3.26 mm of half-margin for the largest crop on
+  some Motorola photos, making a common 25 mm shift infeasible. A montage of
+  one image per camera was inspected without scoring positions. Physical
+  displacement varies with field of view; this is a limitation of this test.
+- Average the same seven grayscale features across the five patches within
+  each photo, then equally across photos within a soil. Keep 256-pixel rendering,
+  three uniform neighbors, training-fold feature scaling, and the equal blend
+  across the three crop sizes. Do not tune positions or counts in this batch.
+- Hold out every photo and patch of one physical soil together. Save component
+  and blended OOF/camera predictions, per-soil changes, photo features, source
+  hashes, and a separately named spatial submission. Preserve previous files.
+- Test crop location/calibration, unchanged default behavior, equal patch/photo
+  weighting, whole-soil exclusion, and submission alignment; run the full suite.
+
+The user's new instruction supersedes the earlier requirement that submissions
+beat both local metrics. Use up to **three informative submissions** in this
+batch, selected now, irrespective of their relative local scores:
+
+1. Existing RGB ridge (fixed alpha 10): does learning a linear mapping from the
+   original simple features transfer better than nearest-neighbor averaging?
+2. Existing nested ResNet ridge: does the learned representation and stronger
+   regularization transfer better despite its worse outer validation score?
+3. New five-position grayscale multi-crop: does broader spatial coverage help
+   on the unseen test cameras?
+
+Submit each valid, numerically distinct candidate once after validating its
+provenance and recording its producing code. Do not change this batch based on
+intermediate public scores, search blend weights, or resubmit the duplicate
+nested-neighbor candidate. Public results are external comparisons, not unbiased
+validation or a basis for declaring a private-test winner. Record all outcomes,
+including regressions. Keep the original submission intact.
+
+At 2026-09-10 22:31 UTC, authenticated Kaggle metadata reported a daily limit of
+five and submission history showed one completed upload, dated 2026-09-09.
+Use the user's more conservative budget of three today. Commit and push the
+declaration, then tested implementation/results; finish on clean synchronized
+`main` and remove the completed branch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

@@ -123,6 +123,38 @@ criterion failed, so retain the submitted blend and make no new submission.
 See [kernel-ridge results](kernel-ridge-results.md). Next: confirm pretrained
 weight/external-data rules, then declare one frozen image-encoder comparison.
 
+## Frozen ResNet-18 — fixed comparison
+
+Declared on 2026-09-10 before extracting features or evaluating this model:
+
+- Use torchvision `ResNet18_Weights.IMAGENET1K_V1`, remove the classifier, and
+  keep all encoder parameters frozen in evaluation mode. Extract 512 pooled
+  features on CPU under inference mode; no fine-tuning or batch-normalization
+  updates, including during test-image extraction.
+- Reuse the existing calibrated 100 mm center crop resized to 256 × 256 with
+  Lanczos. Normalize RGB with the weight recipe's ImageNet mean/std. Preserve
+  the full physical crop instead of applying the recipe's additional 224-pixel
+  center crop; this is a deliberate preprocessing difference from that recipe.
+- Average features equally across each soil's photos and use the existing
+  linear ridge predictor with fixed alpha 10. Fit feature scaling and ridge
+  only on the other 23 soils in every outer fold. No PCA, feature selection,
+  hyperparameter search, crop search, or blending in this comparison.
+- Report all 24 held-out soils, the 21 paired-camera diagnostic soils, per-soil
+  changes, and a valid ten-row candidate. Record input and weight hashes plus
+  package versions; preserve prior artifacts. Keep vision packages optional.
+- Submit once if both local EMD and camera disagreement improve on the submitted
+  blend (40.11781628387224 and 31.52594710152303) and test predictions differ.
+  Otherwise record the result without submitting. Review and test before
+  merging to `main`, pushing, and deleting the completed branch.
+
+The [official competition rules](https://www.kaggle.com/competitions/soil-grain-size-from-photos/rules),
+retrieved through Kaggle's authenticated competition-page API on 2026-09-10,
+allow external models unless the host specifically prohibits them (§2.6.b),
+with public-access conditions for external data (§2.6.a). The freely available
+[torchvision ResNet-18 weights](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html)
+fit that allowance. The full read-only receipt stays in ignored artifacts at
+`artifacts/reports/pretrained_rules_official_2026-09-10.json`.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

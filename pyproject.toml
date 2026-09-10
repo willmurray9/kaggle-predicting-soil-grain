@@ -21,6 +21,10 @@ dependencies = [
 dev = [
   "pytest>=8.0",
 ]
+vision = [
+  "torch>=2.6",
+  "torchvision>=0.21",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

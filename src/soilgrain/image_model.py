@@ -15,12 +15,8 @@ from soilgrain.submission import validate_submission
 from soilgrain.targets import curve_array, ordered_grain_columns, validate_cumulative_curves
 
 
-def photo_features(
-    path: str | Path, camera: pd.Series, *, crop_mm: float = 100, color_mode: str = "rgb"
-) -> np.ndarray:
-    """Color and texture of a physical center crop, rendered at 256 pixels."""
-    if color_mode not in ("rgb", "gray", "normalized_gray"):
-        raise ValueError(f"Unknown color mode: {color_mode}")
+def physical_crop(path: str | Path, camera: pd.Series, *, crop_mm: float = 100) -> Image.Image:
+    """Return the calibrated physical center crop, rendered at 256 pixels."""
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source).convert("RGB")
     # PPM describes the native camera resolution; many training JPGs are smaller.
@@ -31,7 +27,16 @@ def photo_features(
     if side < 1 or side > min(image.size):
         raise ValueError(f"Cannot extract a {crop_mm} mm crop from {path} with PPM={ppm}.")
     left, top = (image.width - side) // 2, (image.height - side) // 2
-    crop = image.crop((left, top, left + side, top + side)).resize((256, 256), Image.Resampling.LANCZOS)
+    return image.crop((left, top, left + side, top + side)).resize((256, 256), Image.Resampling.LANCZOS)
+
+
+def photo_features(
+    path: str | Path, camera: pd.Series, *, crop_mm: float = 100, color_mode: str = "rgb"
+) -> np.ndarray:
+    """Color and texture of a physical center crop, rendered at 256 pixels."""
+    if color_mode not in ("rgb", "gray", "normalized_gray"):
+        raise ValueError(f"Unknown color mode: {color_mode}")
+    crop = physical_crop(path, camera, crop_mm=crop_mm)
     rgb = np.asarray(crop, dtype=float) / 255.0
     gray = rgb.mean(axis=2)
     if color_mode == "normalized_gray":

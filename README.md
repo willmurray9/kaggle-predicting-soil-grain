@@ -119,3 +119,14 @@ local measures, so the existing submission remains our reference.
 `make kernel-ridge` compares one fixed RBF kernel model on the original RGB
 features. [Kernel-ridge results](docs/kernel-ridge-results.md) show worse local
 accuracy despite improved camera agreement; this candidate was not submitted.
+
+For the optional frozen ResNet-18 baseline:
+
+```bash
+uv sync --extra dev --extra vision
+make frozen-model
+```
+
+The first run downloads the official pretrained checkpoint. See
+[frozen-feature results](docs/frozen-resnet-results.md) for the checked competition
+rules, reproducibility details, and the decision to retain the current submission.

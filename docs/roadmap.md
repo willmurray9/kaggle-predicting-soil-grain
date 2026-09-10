@@ -16,9 +16,9 @@ The fixed starting point is the [first image baseline](baseline-results.md):
    so the comparison isolates the prediction model.
 3. **Kernel ridge — fixed comparison complete.** The RBF candidate scores 52.55
    local EMD and does not replace the submitted blend.
-4. **Frozen pretrained image features + ridge — later.** Confirm the competition's
-   pretrained-weight rules, then try one visual encoder with sample-level feature
-   aggregation. Keep the encoder frozen initially.
+4. **Frozen pretrained image features + ridge — fixed comparison complete.**
+   ResNet-18 plus alpha-10 ridge scores 49.65 local EMD. Next test regularization
+   within nested soil-grouped validation before considering encoder fine-tuning.
 5. **Light fine-tuning — optional.** Adapt a small part of the encoder only if
    frozen features show stable value. Training a large network from scratch is
    not a priority with 24 labeled samples.
@@ -123,7 +123,7 @@ criterion failed, so retain the submitted blend and make no new submission.
 See [kernel-ridge results](kernel-ridge-results.md). Next: confirm pretrained
 weight/external-data rules, then declare one frozen image-encoder comparison.
 
-## Frozen ResNet-18 — fixed comparison
+## Frozen ResNet-18 — fixed comparison complete
 
 Declared on 2026-09-10 before extracting features or evaluating this model:
 
@@ -154,6 +154,12 @@ with public-access conditions for external data (§2.6.a). The freely available
 [torchvision ResNet-18 weights](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html)
 fit that allowance. The full read-only receipt stays in ignored artifacts at
 `artifacts/reports/pretrained_rules_official_2026-09-10.json`.
+
+Result: local EMD 49.6530 and paired-camera disagreement 46.9890. Both submission
+criteria failed, so retain the current Kaggle submission. See
+[frozen-feature results](frozen-resnet-results.md). Next: declare a small ridge
+regularization grid and select alpha only inside each outer training fold,
+keeping the cached encoder features and physical crops fixed.
 
 ## First experiment batch: fixed before seeing results
 

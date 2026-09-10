@@ -87,6 +87,37 @@ the photo-weighted blend and make no submission for this candidate. See
 Next, compare a fixed kernel-ridge model using the same grouped validation;
 record its settings before running it.
 
+## Kernel ridge — fixed comparison
+
+Declared before computing predictions on 2026-09-10:
+
+- Reuse the original 13 RGB/texture features from the 100 mm crop and equal
+  photo averaging. This matches the existing linear ridge inputs.
+- Fit one RBF kernel ridge model with `alpha = 1` and `gamma = 1 / 13`, without
+  tuning. Standardize features from training soils only; center the training
+  kernel and transform each query using those training statistics. Center the
+  first ten targets and restore their mean to retain an unpenalized intercept.
+- Clip predictions to [0,100], enforce a non-decreasing curve, and set the last
+  support to 100, matching linear ridge. Use the existing 24-soil grouped
+  evaluator and the same 21 paired-camera diagnostics.
+- Compare against linear ridge and the submitted multi-crop blend. Save separate
+  predictions, per-soil changes, a candidate submission, and input fingerprints.
+  No crop changes, feature additions, or model blends in this comparison.
+- Submit once only if both local EMD and camera disagreement improve over the
+  submitted blend (40.11781628387224 and 31.52594710152303), with different test
+  predictions. Otherwise record the result without a new Kaggle submission.
+- Review, verify, merge into `main`, push, and remove the completed branch using
+  the personal Git identity.
+
+The fixed settings follow the documented defaults for
+[kernel ridge regularization](https://scikit-learn.org/stable/modules/generated/sklearn.kernel_ridge.KernelRidge.html)
+and [RBF gamma](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.rbf_kernel.html).
+[Kernel centering](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.KernelCenterer.html)
+provides the centered feature-space representation. The implementation uses
+NumPy; no new package or external training data is needed. Kernel and linear
+ridge penalties act on different representations, so their alpha values do not
+imply matched effective regularization.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

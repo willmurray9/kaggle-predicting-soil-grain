@@ -195,6 +195,42 @@ selection details and checks. Next: one fixed 50/50 blend of the submitted
 multi-crop predictions and nested ridge, with aligned outer folds and camera
 views, the same submission criteria, and no weight search.
 
+## Fixed model blend and nested neighbor count — declared comparisons
+
+Declared on 2026-09-10 before computing either comparison:
+
+1. Average the submitted grayscale multi-crop curve and nested ResNet-ridge
+   curve with fixed 50/50 weights. Reuse saved outer held-out predictions,
+   separate camera predictions, and final test candidates. Align full soil or
+   soil/camera keys, require identical coverage, and recompute EMD from the
+   averaged curves. Do not search weights or refit either component.
+2. On the original grayscale 50/100/150 mm feature caches, compare neighbor
+   counts **1, 3, 5, and 7**. Choose one shared count for all three crops by
+   mean inner leave-one-soil-out EMD of their equal prediction blend. Within
+   each outer fold, select using only the other 23 soils; each inner fit uses
+   22 soils and fits its own feature scaling. Exact ties prefer the larger
+   count. Refit on the 23 outer training soils and use that same chosen count
+   for the held-out soil's pooled and separate camera predictions. Keep equal
+   photo averaging, uniform neighbor weights, crop sizes, and features fixed.
+3. For the neighbor-count test candidate, select on all 24 labeled soils using
+   inner leave-one-soil-out scoring, then refit on all 24. Record that score as
+   a selection score; use the outer held-out score for validation. Record every
+   candidate count's score and the chosen count in each fold. Test data never
+   selects the count. Verify that fixed count 3 reproduces the existing blend.
+
+Both comparisons write separate artifacts, per-soil changes, and input hashes,
+preserving earlier outputs. Compare against the original submitted crop blend
+(40.11781628387224 EMD; 31.52594710152303 camera disagreement). A candidate is
+eligible for one Kaggle submission only if it improves both measures and changes
+test predictions. If an earlier candidate is promoted during this batch, a
+later submission must also improve both measures over that new incumbent.
+Do not select settings using the public score. These remain exploratory model
+comparisons; no soils are excluded because of their errors.
+
+Commit and push tested milestones with the personal Git identity, then merge
+completed work into `main` and remove the development branch. Spatial coverage
+and new feature/model comparisons remain separate later experiments.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

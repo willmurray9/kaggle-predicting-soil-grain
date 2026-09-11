@@ -296,6 +296,58 @@ RGB ridge is now the best public submission. No further uploads in this batch.
 The next modeling step is a small, predeclared set of physical-scale texture
 measurements with the same grouped evaluation.
 
+## Physical texture with a color control — declared 2026-09-11
+
+Before computing new validation scores or viewing any new public score, run one
+small factorial comparison on the existing center 100 mm crop at 256 pixels:
+
+| Configuration | Inputs | Predictor |
+| --- | --- | --- |
+| RGB reference | Existing 13 RGB/texture features | Ridge, alpha 10 |
+| RGB + physical texture | Existing 13 plus four new measurements | Ridge, alpha 10 |
+| Grayscale control | Existing seven grayscale features | Ridge, alpha 10 |
+| Grayscale + physical texture | Existing seven plus four new measurements | Ridge, alpha 10 |
+
+The four measurements are the mean squared grayscale difference over horizontal
+and vertical offsets, divided by twice the crop's grayscale variance. Use nominal
+offsets **1, 2, 4, 8 mm**, rounded to **3, 5, 10, 20 pixels** at this crop scale
+(actual 1.171875, 1.953125, 3.90625, 7.8125 mm). Average the two directional means
+equally; do not wrap or pad pixels. If variance is below 1e-12, return four zeros.
+This descriptor measures contrast-normalized spatial variation, not particle
+diameters or counts. It is invariant to unclipped affine brightness changes.
+Some distances overlap existing texture lags; the new information is squared,
+contrast-normalized variation, not access to a wholly new range of grain sizes.
+
+Keep center cropping, PPM correction, EXIF orientation, equal photo averaging,
+ridge regularization, and curve projection fixed. Reuse the existing RGB and
+grayscale photo caches after exact split/soil/camera/path alignment and finite
+feature checks. Compute new texture features from the same original photos and
+calibration. Fit scaling and ridge only on the other 23 soils in each held-out
+fold. Each soil's camera views and patches remain excluded together. This is a
+fixed exploratory comparison, with no selection of lags or regularization.
+
+Reconstruct the RGB reference's OOF, camera, and test predictions within 1e-10
+before any upload. Preserve all older files. Save per-photo features, all four
+OOF/camera predictions, paired per-soil comparisons for each feature addition
+and color removal, candidate submissions, settings, and source hashes. Test
+descriptor values on known patterns, constant images and brightness transforms;
+test cache alignment, equal photo weighting, whole-soil exclusion, and the
+reference reconstruction gate. Use the existing NumPy/Pillow stack.
+
+Today's three submission candidates are fixed now: RGB + texture, grayscale
+control, and grayscale + texture. Submit each valid, distinct candidate once
+after tests, review, and code push, regardless of whether it beats local EMD or
+camera disagreement. Skip numerical duplicates of existing submissions. Do not
+change the batch or tune against intermediate public results. The best public
+reference is RGB ridge at 61.87967; the historical crop blend remains the local
+reference at 40.11782 EMD. Record all results without claiming that a public
+ranking proves private-test performance.
+
+Authenticated preflight at 2026-09-11 14:14 UTC confirmed four completed lifetime
+submissions, zero today, and an API limit of five per day. Use our conservative
+three-upload budget. Commit/push the declaration and tested milestones with the
+personal Git identity, then merge into `main` and remove the finished branch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

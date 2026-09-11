@@ -160,6 +160,8 @@ The [roadmap](docs/roadmap.md) records the batch before those uploads.
 `make physical-texture` runs the fixed RGB/grayscale comparison with and without
 four contrast-normalized texture measurements at physical offsets. It reuses
 the first-batch feature caches, retains ridge alpha 10, and verifies the original
-RGB predictions before producing three new candidates. See the
+RGB predictions before producing three new candidates. **RGB + texture is now
+our best public submission at 61.11357 EMD**, a 1.24% improvement over RGB ridge.
+Grayscale and grayscale + texture scored 70.83530 and 71.34901. See the
 [texture results](docs/physical-texture-results.md) for the controlled comparisons
 and `artifacts/experiments/physical_texture/` for detailed outputs.

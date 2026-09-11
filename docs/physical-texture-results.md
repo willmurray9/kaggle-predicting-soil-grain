@@ -1,5 +1,11 @@
 # Physical texture and color control — 2026-09-11
 
+**New best public result: RGB + texture scores 61.11357**, improving on RGB ridge's
+61.87967 by 0.76610 EMD, or 1.24%, despite worse local validation. Grayscale scores
+70.83530 and grayscale + texture 71.34901. All three planned submissions completed;
+private scores remain unavailable. This small public gain is an external result,
+not evidence of a reliable private-test improvement.
+
 Four contrast-normalized texture measurements did not improve local validation:
 RGB ridge rises from **41.20591 to 43.40571 EMD**, and grayscale ridge rises from
 **43.15793 to 45.34803**. Lower is better. Removing color improves agreement
@@ -35,12 +41,12 @@ changes the crop coverage nor tunes scales, regularization, or blend weights.
 
 ## Local results
 
-| Inputs | Features | Held-out EMD | Camera disagreement (21 pairs) |
-| --- | ---: | ---: | ---: |
-| Original RGB reference | 13 | **41.20591** | 28.89103 |
-| RGB + physical texture | 17 | 43.40571 | 29.11306 |
-| Grayscale control | 7 | 43.15793 | 22.74678 |
-| Grayscale + physical texture | 11 | 45.34803 | **22.32622** |
+| Inputs | Features | Held-out EMD | Camera disagreement (21 pairs) | Public EMD |
+| --- | ---: | ---: | ---: | ---: |
+| Original RGB reference | 13 | **41.20591** | 28.89103 | 61.87967 |
+| RGB + physical texture | 17 | 43.40571 | 29.11306 | **61.11357** |
+| Grayscale control | 7 | 43.15793 | 22.74678 | 70.83530 |
+| Grayscale + physical texture | 11 | 45.34803 | **22.32622** | 71.34901 |
 
 Adding texture worsens local error by **2.19980 EMD with RGB** and **2.19010 with
 grayscale**. Ten soils improve and fourteen worsen in the RGB comparison;
@@ -64,6 +70,13 @@ relationships even when their definitions are physically interpretable. That
 is a possible explanation, not proof that useful texture information is absent.
 These four descriptors and this fixed ridge model are one bounded test.
 
+A post-run descriptive check supports the redundancy hypothesis: the new 1 and
+2 mm descriptors correlate **0.987** across the 24 training-soil means. RGB and
+grayscale per-soil texture effects correlate **0.971**; H666 and H372 contribute
+58% and 61% of the net additional RGB/grayscale error. These associations explain
+where the regressions occur, without establishing their cause or justifying
+removing a feature or soil after seeing its error. No model settings changed.
+
 ## Reproduction and validation
 
 Run `make physical-texture` after `make data` and `make experiments`. No new
@@ -76,7 +89,7 @@ caches are aligned by complete split, soil, camera, and path keys.
 - The original RGB reference reconstructs saved OOF predictions within
   4.27e-14, camera predictions within 5.69e-14, and test predictions within
   4.98e-14. The driver rejects differences above 1e-10 before writing candidates.
-- All 109 tests pass, including analytic texture patterns, brightness/rotation
+- All 109 tests and both remote CI jobs pass, including analytic texture patterns, brightness/rotation
   invariance, invalid caches, whole-soil exclusion, equal photo weighting,
   submission alignment, and the reference reconstruction gate.
 - Independent review found no actionable issues. All 93 earlier artifact files

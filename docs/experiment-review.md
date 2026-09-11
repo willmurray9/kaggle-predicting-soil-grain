@@ -1,9 +1,11 @@
 **Experiment review — 10 September 2026**
 
 **11 September update:** the [physical texture and color control](physical-texture-results.md)
-is complete locally. Adding four normalized texture measurements worsened ridge
-EMD by about 2.2 with either RGB or grayscale inputs. The RGB reference reproduces
-the earlier predictions; three informative submissions were declared in advance.
+is complete. Adding four normalized texture measurements worsened local ridge
+EMD by about 2.2 with either RGB or grayscale inputs, but RGB + texture reached a
+new best public score of **61.11357**. Grayscale scored 70.83530 and grayscale +
+texture 71.34901. The RGB reference reproduces the earlier predictions; all three
+informative submissions were declared in advance and completed without changes.
 See the [submission log](submissions.md) for the latest public outcomes.
 
 **Later update:** [informative Kaggle submissions](submissions.md) changed the

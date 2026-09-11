@@ -351,8 +351,11 @@ personal Git identity, then merge into `main` and remove the finished branch.
 Local results: RGB reference 41.20591, RGB + texture 43.40571, grayscale control
 43.15793, grayscale + texture 45.34803 EMD. The RGB reference reproduces all
 saved prediction sets within 5.69e-14. See the
-[texture report](physical-texture-results.md); the declared uploads proceed
-without changing settings. Next: controlled learned-feature preprocessing.
+[texture report](physical-texture-results.md). All three declared uploads completed
+without changing settings: RGB + texture **61.11357** public EMD (new best),
+grayscale 70.83530, grayscale + texture 71.34901. This uses three submissions
+today; no further uploads in this batch. Next: controlled learned-feature
+preprocessing, with dimensionality reduction fitted inside every training fold.
 
 ## First experiment batch: fixed before seeing results
 

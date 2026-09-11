@@ -3,6 +3,53 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-11 — physical texture and color control
+
+The [four-configuration comparison](physical-texture-results.md) fixes ridge
+alpha 10 and the original center 100 mm crop. It separates removing color from
+adding four contrast-normalized physical texture measurements. The three new
+uploads were declared in `34a0bfb83340f5504fcf48a219d011b7565b3e3c` before any
+new validation or public score, with no requirement to improve local metrics.
+
+Producing code: `b3da3cf6533c4faf7b451c5e4be827c0556e157d`. All 109 local tests
+and both [remote CI jobs](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/34609779482)
+passed before upload. The RGB reference reconstructed OOF, camera, and test
+predictions within 5.69e-14. All 172 input fingerprints matched; each candidate
+passed schema and curve checks and differed from every prior submission and
+each other at absolute tolerance 1e-9.
+
+| Model | Local EMD | Camera disagreement | Public EMD | Submission ID |
+| --- | ---: | ---: | ---: | --- |
+| RGB ridge reference (September 10) | 41.20591 | 28.89103 | 61.87967 | `56152621` |
+| RGB + physical texture | 43.40571 | 29.11306 | **61.11357** | `56167133` |
+| Grayscale ridge | 43.15793 | 22.74678 | 70.83530 | `56167136` |
+| Grayscale + physical texture | 45.34803 | 22.32622 | 71.34901 | `56167137` |
+
+All three submissions are complete; private scores remain unavailable. RGB +
+texture is the new best public submission, improving by **0.76610 EMD (1.24%)**
+over RGB ridge despite its worse local score. Adding texture to grayscale instead
+worsens public EMD by 0.51371. Removing color worsens both local and public
+accuracy in this fixed comparison, despite better camera agreement. The small
+public gain does not establish a private-test improvement or a universal value
+for these descriptors. No settings were selected using intermediate scores.
+
+| Candidate file in `artifacts/submissions/` | Uploaded UTC | SHA-256 |
+| --- | --- | --- |
+| `ridge_rgb_texture_100.csv` | `2026-09-11 14:24:55.030000` | `f1a63c3591ac93d938f5ed64947be8cd481e62895c71febd5e365a004675911b` |
+| `ridge_gray_100.csv` | `2026-09-11 14:25:00.667000` | `dc0bead104b134795a2c5c6011a283c4ae241c44fa38ed3d1e7afd59963c5d63` |
+| `ridge_gray_texture_100.csv` | `2026-09-11 14:25:02.827000` | `f6e61138d27731d2641157c9e6dde81a85c89cc946eb7e4494f9be2faa522fad` |
+
+Final API receipts are in `artifacts/experiments/informative_submissions/`, named
+`2026-09-11_ridge_rgb_texture_100.json`, `2026-09-11_ridge_gray_100.json`, and
+`2026-09-11_ridge_gray_texture_100.json`. Each records the producing/declaration
+commits, exact file hash, local metrics, request time, API reference, and final
+server timestamp, status, and scores.
+
+Authenticated preflight confirmed zero uploads today and a daily API limit of
+five. The completed batch used the conservative budget of three: seven lifetime
+uploads, three today. Candidate choices and settings remained unchanged regardless
+of intermediate public outcomes. No further uploads in this batch.
+
 ## 2026-09-10 — predeclared transfer comparisons
 
 The user authorized informative submissions even when local validation is worse.

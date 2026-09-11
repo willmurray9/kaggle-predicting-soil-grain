@@ -1,5 +1,11 @@
 **Experiment review — 10 September 2026**
 
+**11 September update:** the [physical texture and color control](physical-texture-results.md)
+is complete locally. Adding four normalized texture measurements worsened ridge
+EMD by about 2.2 with either RGB or grayscale inputs. The RGB reference reproduces
+the earlier predictions; three informative submissions were declared in advance.
+See the [submission log](submissions.md) for the latest public outcomes.
+
 **Later update:** [informative Kaggle submissions](submissions.md) changed the
 public ranking: RGB ridge scored 61.87967 and nested ResNet ridge 63.01764,
 both better than the original crop blend's 76.75797 despite worse local scores.

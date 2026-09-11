@@ -348,6 +348,12 @@ submissions, zero today, and an API limit of five per day. Use our conservative
 three-upload budget. Commit/push the declaration and tested milestones with the
 personal Git identity, then merge into `main` and remove the finished branch.
 
+Local results: RGB reference 41.20591, RGB + texture 43.40571, grayscale control
+43.15793, grayscale + texture 45.34803 EMD. The RGB reference reproduces all
+saved prediction sets within 5.69e-14. See the
+[texture report](physical-texture-results.md); the declared uploads proceed
+without changing settings. Next: controlled learned-feature preprocessing.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

@@ -154,7 +154,7 @@ and 25.20834 camera disagreement.
 The [latest submission comparisons](docs/submissions.md) test candidates even
 when their local scores are worse: RGB ridge reached **61.87967 public EMD**
 and nested ResNet ridge **63.01764**, both improving on the original 76.75797.
-Spatial coverage scored **82.91954**, so RGB ridge remains our best public result.
+Spatial coverage scored **82.91954**, leaving RGB ridge best at the end of that batch.
 The [roadmap](docs/roadmap.md) records the batch before those uploads.
 
 `make physical-texture` runs the fixed RGB/grayscale comparison with and without

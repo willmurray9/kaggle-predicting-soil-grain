@@ -424,6 +424,50 @@ there are no follow-up uploads in this batch. See [the PCA report](pca-ridge-res
 and [submission log](submissions.md). Next: a separate official encoder
 preprocessing comparison, with the same grouped validation.
 
+## Official ResNet preprocessing — declared 2026-09-14
+
+Before extracting new features or calculating new scores, compare the official
+`ResNet18_Weights.IMAGENET1K_V1.transforms()` recipe with the current encoder
+preprocessing. Apply it to the same calibrated 100 mm center crop, already
+rendered to 256 × 256 with Lanczos. The recipe's shorter-side resize to 256
+(bilinear, antialias enabled) is therefore a no-op; its center crop retains
+224 × 224 pixels, a nominal **87.5 mm** field of view. Its normalization matches
+the existing ImageNet mean/std. This tests the full recipe and smaller field of
+view together; it cannot separate their effects. Use the same frozen checkpoint,
+CPU inference, equal float32 photo aggregation, eight PCA components, and nested
+ridge grid 10/100/1000, refitting scaling/PCA/ridge in every training fold.
+
+Evaluate exactly two candidates: official-preprocessing PCA ridge and its fixed
+50/50 prediction blend with RGB + physical texture. Align whole-soil and camera
+keys exactly. Compare each with its corresponding saved legacy-preprocessing
+candidate (PCA 45.02758096092745 EMD / 14.669811083041479 camera disagreement;
+blend 42.0284318338925 / 17.90373798556798). Keep all 24 soils and the same 21
+paired-camera diagnostics. No crop, component-count, alpha-grid, or weight search.
+
+For at most **one additional upload** in this batch, require all four incumbent
+criteria above (gain >= 1 EMD over RGB + texture, at least 12 soils improve,
+no worse camera disagreement, positive gain without the largest beneficiary),
+plus **at least 1 EMD improvement over the corresponding legacy candidate** and
+**no worse camera disagreement than that candidate**. Choose lower outer EMD
+among eligible candidates; an exact tie prefers standalone PCA. Validate the
+candidate and reject numerical duplicates of previous uploads. These are
+conservative budget screens, not statistical significance or guarantees. If
+neither qualifies, submit none; do not change the screen after seeing results.
+
+Preserve old defaults and artifacts. Save separate features, OOF/camera curves,
+per-soil comparisons, inner/final alpha scores, candidate CSVs, source/photo and
+checkpoint hashes, and the decision. Test the exact official transform on a
+known image, legacy behavior, inference mode, grouped evaluation, alignment, and
+the strengthened screen. Review and run tests before any upload; commit/push
+using the personal identity, merge to main, and remove the completed branch.
+
+Authenticated preflight at 2026-09-14 20:31 UTC confirmed eight completed lifetime
+uploads, one today, and four remaining under the API limit of five. The current
+best is RGB + texture at 61.11357. All seven published competition pages remain
+unchanged from the saved September 10 receipts, including external-model
+permission; this comparison uses the existing verified checkpoint. See the
+[official ResNet-18 recipe](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html).
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

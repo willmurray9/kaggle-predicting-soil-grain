@@ -477,6 +477,58 @@ keep RGB + texture as the public incumbent, and retain four daily slots. See the
 separately declared bounded regressor comparison on compact RGB + texture inputs;
 a second encoder remains a later option. No thresholds or settings change here.
 
+## Nested kernel ridge on RGB + texture — declared 2026-09-14
+
+Before any new predictions or scores, revisit the existing NumPy RBF kernel
+regressor using the incumbent's **17 RGB + physical-texture features**. Rebuild
+those photo rows from the original RGB and four-texture caches with exact
+split/soil/camera/path alignment. Preserve float64 aggregation, 100 mm center
+crops, equal photo weighting, and cumulative-curve repair. Reconstruct the
+incumbent alpha-10 linear ridge's OOF, camera, and test predictions within 1e-10
+before scoring the new models; validate saved source fingerprints.
+
+Evaluate a fixed diagnostic kernel (`alpha=1`, `gamma=1/17`) and one nested
+selection procedure. The nested grid has exactly six pairs: **alpha 0.1, 1, 10**
+crossed with **gamma 0.1/17, 1/17**. Lower gamma gives a broader similarity
+function on standardized features. Choose one shared pair for all ten modeled
+target values by mean inner whole-soil LOO EMD after curve repair; exact ties
+prefer larger alpha, then smaller gamma. Keep the unpenalized intercept and
+fit standardization and kernel centering only on the current training soils.
+
+Every outer fold holds out all photos of one soil and selects on the other 23;
+each inner fit uses 22. Refit the selected pair on the 23 outer training soils
+for both pooled and separate-camera predictions. Select the final pair on all
+24 labeled soils and refit for the test candidate. Record full-training tuning
+scores as selection diagnostics, separate from outer validation. No additional
+grid, feature change, blend, or adaptation to public scores in this batch.
+
+Only the **nested procedure** is an upload candidate; the fixed kernel is a
+diagnostic, even if its outer score happens to be lower. Submit at most **one**
+valid candidate, numerically distinct from previous uploads, if all four
+incumbent criteria pass: mean gain >= 1 EMD against 43.40570546697441; at least
+12/24 soils improve by >1e-9; camera disagreement no worse than the reconstructed
+incumbent (approximately 29.113056428926008); positive mean gain after omitting
+the single largest beneficiary. Keep every soil in fitting and primary scoring.
+The matched-recipe camera condition in the previous batch applied to that
+preprocessing comparison. Here the comparator is the same-input linear ridge.
+These are conservative submission screens, not significance tests or guarantees.
+
+Preserve old defaults and artifacts. Save the combined photo feature cache,
+fixed/nested OOF and camera curves, per-soil comparisons, all inner and final
+selection scores, candidate CSV, source hashes, and decision. Test nondefault
+gamma against an independent intercept-block-system solution, unchanged default,
+invalid gamma, inner/outer soil exclusion, camera reuse of the selected model,
+deterministic ties, source alignment, reference reconstruction, and test-data
+independence. Reuse the current solver and packages; no new dependency is needed.
+See the official [kernel ridge](https://scikit-learn.org/stable/modules/generated/sklearn.kernel_ridge.KernelRidge.html)
+and [RBF kernel](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.rbf_kernel.html)
+definitions; the earlier fixed 13-feature kernel scored 52.54864 local EMD.
+
+Keep the selective daily budget and record any upload's producing commit, file
+hash, receipt, and score. Review and test, commit/push using the personal identity,
+merge to main, and remove the completed branch. The current public incumbent is
+RGB + texture at 61.11357; today's last check showed one of five uploads used.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

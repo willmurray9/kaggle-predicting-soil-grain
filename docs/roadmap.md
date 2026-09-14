@@ -538,6 +538,58 @@ beneficiary. **No submission**; one of today's five slots remains used. See
 linear SVR comparison on the same compact inputs, testing an absolute-error-like
 loss. Do not expand this kernel grid or choose the fixed diagnostic for upload.
 
+## Linear SVR on RGB + texture — declared 2026-09-14
+
+Before calculating any new model scores, compare one nested linear support-vector
+regressor with the same-input alpha-10 ridge incumbent. Reuse the verified combined
+17-feature float64 photo cache from the nested kernel experiment, with exact
+photo-index alignment and equal photo averaging. Reconstruct incumbent OOF,
+camera, and test predictions within 1e-10 before evaluating SVR. Preserve all
+crops, descriptors, targets, and old artifacts.
+
+Use scikit-learn `SVR(kernel="linear")` separately for the first ten cumulative
+percentage targets, with a single shared **C from 0.1, 1, 10**, fixed **epsilon=1
+percentage point**, **tol=1e-6**, **max_iter=1,000,000**, and shrinking enabled.
+Fit train-only mean/std scaling, leaving constant-feature scale at one. Fit raw
+percentage targets with the solver's unpenalized intercept; no target scaling,
+centering, PCA, or blending. Keep clipping, monotone accumulation, and the final
+100% endpoint unchanged. Raise on convergence warnings or unsuccessful fit
+status, and reject nonfinite predictions. No fallback model or solver-setting
+search after scoring.
+
+For each outer held-out soil, choose C by mean repaired-curve EMD across inner
+LOO on the other 23 soils; every inner fit sees only 22 soils. Exact score ties
+prefer smaller C (stronger regularization). Refit on the 23 outer training soils
+and use the same C/model for pooled and separate-camera queries. For the ten-row
+test candidate, select C using all 24 training soils and refit. Keep full-training
+selection scores separate from outer validation. Test data and public scores
+never fit or select C. The epsilon-insensitive loss is closer to absolute error
+than squared loss, but is not identical to the competition's EMD objective.
+See the official [SVR API](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
+and [loss formulation](https://scikit-learn.org/stable/modules/svm.html#svr).
+
+Only this nested procedure is a candidate. Submit **at most one** valid,
+numerically distinct file if all four incumbent screens pass: >=1 EMD gain
+against 43.40570546697441; >=12/24 soils improve by >1e-9; camera disagreement
+no greater than the reconstructed incumbent (~29.113056428926008); positive
+mean gain without the single largest beneficiary. These are practical evidence
+screens, not significance or guarantees. Keep every soil in fitting and primary
+scoring. Do not expand the C grid, change epsilon, or add a blend after results.
+
+Add scikit-learn and its required runtime dependencies through the lockfile,
+retaining existing locked versions and installed vision extras where compatible.
+Record resolved numerical-library versions in the new manifest. Test analytical
+two-soil solutions, epsilon/regularization behavior, target translation, constant
+targets, query independence, solver failure, nested soil isolation, aligned cache
+loading, reference reconstruction, and candidate validation. Save OOF/camera
+curves, inner/final selections, per-soil comparisons, candidate, input hashes,
+and the decision under separate paths. Review and test before any upload;
+commit/push with the personal identity, merge to main, and remove the branch.
+
+The current public best remains RGB + texture at 61.11357. The previous batch
+made no upload; today's latest check showed one of five slots used. Keep the
+remaining daily budget unless this candidate supplies the declared evidence.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

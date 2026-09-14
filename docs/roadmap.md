@@ -652,6 +652,57 @@ are preserved, and today's count stays at one of five. Next: the planned second
 frozen-encoder comparison, with settings declared separately before scoring;
 no tree tuning or blending is added to this completed batch.
 
+## Second frozen encoder and one informative upload — declared 2026-09-14
+
+The user requested one more experiment followed by one submission today. This
+explicitly supersedes the earlier all-criteria-must-pass upload policy for this
+batch. Preserve those diagnostic scores and the historical no-upload decisions.
+
+Before extracting features or scoring, declare one new candidate: frozen
+`torchvision.models.mobilenet_v3_large` with the exact
+`MobileNet_V3_Large_Weights.IMAGENET1K_V1` checkpoint. Remove its full classifier
+to obtain **960 pooled features**. Use CPU evaluation/inference mode, no learned
+updates, batches of eight, the same calibrated 100 mm center crops rendered to
+256 pixels, and the official V1 transform (bilinear resize 256, center crop 224,
+ImageNet normalization). This matches the official ResNet-18 recipe and its
+nominal 87.5 mm retained field. The architecture, weights, and resulting feature
+dimension change together; no architecture or weight-version search follows.
+See [the official MobileNet documentation](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v3_large.html).
+
+Retain equal float32 photo means per soil, fold-fitted feature standardization,
+eight PCA components with no whitening/rescaling, and nested ridge selection
+from **10, 100, 1000**, with exact ties preferring larger alpha. Each outer fit
+excludes every photo of one soil; each inner fit refits scaling, PCA, and ridge.
+Use the existing curve repair and fixed final 100% endpoint. Select final alpha
+on all 24 labeled soils and refit for the ten test soils. Compare the new encoder
+against saved official ResNet PCA (40.80177 local EMD) with the same head and
+preprocessing. No new blend is computed in this batch.
+
+For exactly **one additional upload**, choose the lower whole-soil outer EMD
+between the new standalone MobileNet candidate and the already saved official
+ResNet/RGB-texture 50/50 blend (**40.25637519242575 EMD**). Exact ties prefer the
+saved blend. Its path is `artifacts/submissions/rgb_texture_official_pca8_blend.csv`,
+SHA-256 `ff75b009ae1025bd90264fd95a961ee4b5def5c62d3e2afde20d2f3cbcb2c4fb`.
+Report camera disagreement and the four incumbent screens as diagnostics;
+they do not veto this explicitly requested informative submission. Validate
+the selected CSV, verify exact source fingerprints, and reject numerical
+duplicates of previous uploads. Do not alter settings or upload again based on
+the public result. If the new experiment cannot yield a valid distinct candidate,
+use the verified saved blend and record the reason.
+
+Verify source photos, calibration, reference keys, checkpoint hashes, current
+competition rules, and daily quota before uploading. Preserve all **142** existing
+artifacts. Write separate feature/OOF/camera/selection/comparison/candidate files
+and provenance under `artifacts/experiments/mobilenet_pca/`; record the submission
+request before calling Kaggle, then its server ID and completed public score.
+If upload status is ambiguous, inspect submission history before any retry.
+
+Reuse the installed vision dependencies and existing grouped evaluator. Test the
+fixed encoder/recipe/head behavior, frozen inference, photo alignment, fold
+isolation, reference integrity, candidate selection including the fallback, and
+submission validity. Review and verify, commit/push with the personal identity,
+merge to clean synchronized main, and delete the completed branch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

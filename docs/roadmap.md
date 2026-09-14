@@ -357,6 +357,64 @@ grayscale 70.83530, grayscale + texture 71.34901. This uses three submissions
 today; no further uploads in this batch. Next: controlled learned-feature
 preprocessing, with dimensionality reduction fitted inside every training fold.
 
+## Fixed PCA and selective submissions — declared 2026-09-14
+
+The user's latest instruction supersedes automatic three-candidate submission
+batches: upload only with a good reason to expect improvement over the current
+public best, RGB + texture at 61.11357. Preserve slots rather than use the quota.
+
+Before calculating new validation scores, declare two candidates:
+
+1. **Eight-component PCA + nested ridge.** Reuse the existing 512-dimensional
+   ResNet photo features and equal photo averaging. In every inner and outer
+   fit, standardize from its training soils, fit SVD on those standardized rows,
+   and project training/query vectors onto the first eight principal components.
+   Do not whiten or restandardize the component scores. This preserves ridge's
+   penalty in the retained directions; keeping all components should reproduce
+   ordinary ridge. Fix eight components without searching a count.
+2. **Fixed 50/50 blend of PCA ridge and RGB + texture.** Align whole-soil OOF,
+   camera, and test predictions exactly before averaging the two curves. Do not
+   search blend weights. This separately tests whether their errors compensate.
+
+Keep the existing alpha grid 10/100/1000 and exact-tie preference for stronger
+regularization. Each outer fold selects alpha using only the other 23 soils;
+every inner PCA/scaler/regressor sees only 22 soils. Fit again on the 23 outer
+training soils to predict the pooled held-out soil and its separate camera views.
+Select the final alpha with all 24 training soils and refit for test predictions.
+Record full-training selection scores separately from outer validation scores.
+Preserve float32 photo aggregation from the frozen cache. Test labels and public
+scores never fit or select the representation, alpha, or blend weight.
+
+Reconstruct the unchanged nested 512-feature reference, including OOF, camera,
+alpha selections, and final test predictions. Save new OOF/camera predictions,
+per-soil comparisons, all inner/final selection scores, candidate CSVs, provenance,
+and the submission decision. Preserve all previous artifacts. Tests must cover
+full-rank equivalence, unchanged ridge defaults, no second component scaling,
+query independence, inner-fold PCA fitting, held-out label isolation, alignment,
+and the submission screen.
+
+For this round, a candidate passes the submission screen only if, relative to
+the current RGB + texture model's held-out predictions, it meets **all** of:
+
+- Mean EMD improves by at least **1.0** (reference 43.40570546697441).
+- At least **12 of 24 soils** improve by more than 1e-9.
+- Paired-camera disagreement does not increase (reference 29.113056428926008).
+- Mean improvement stays positive after omitting its single largest beneficiary
+  from the comparison. This is a sensitivity diagnostic; no soil is excluded
+  from model fitting or the primary score.
+
+Submit **at most one** valid, distinct candidate that passes. If both pass, use
+lower outer EMD, with an exact tie preferring standalone PCA. If neither passes,
+submit none. These are practical evidence thresholds, not a significance test or
+a guarantee of better public/private performance. Do not retry with new counts,
+weights, or thresholds after seeing these results.
+
+Authenticated preflight at 2026-09-14 19:08 UTC confirmed seven completed lifetime
+uploads, zero today, and a daily API limit of five. The best submission and cached
+ResNet artifacts match their recorded hashes. Commit/push tested milestones with
+the personal Git identity; finish on synchronized clean `main`, deleting the
+completed branch. No automatic follow-up submissions are authorized by this batch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

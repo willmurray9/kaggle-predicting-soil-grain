@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from soilgrain.kernel_ridge import kernel_ridge_curves
 
@@ -16,7 +17,8 @@ def test_kernel_ridge_matches_two_soil_shrinkage() -> None:
     assert prediction[0, 10] == 100.0
 
 
-def test_kernel_ridge_matches_unpenalized_intercept_block_system() -> None:
+@pytest.mark.parametrize("gamma", [None, 0.07])
+def test_kernel_ridge_matches_unpenalized_intercept_block_system(gamma) -> None:
     train_features = np.array([[0.0, 0.0], [2.0, 1.0], [3.0, -2.0], [7.0, 4.0]])
     train_curves = np.array(
         [
@@ -29,11 +31,12 @@ def test_kernel_ridge_matches_unpenalized_intercept_block_system() -> None:
     queries = np.array([[1.0, 3.0], [5.0, -1.0]])
     variance = train_features.var(axis=0)
     alpha = 0.7
+    bandwidth = 0.5 if gamma is None else gamma
 
     # Solve the original kernel and explicit intercept jointly, without centering.
     kernel = np.array(
         [
-            [np.exp(-np.mean((left - right) ** 2 / variance)) for right in train_features]
+            [np.exp(-bandwidth * np.sum((left - right) ** 2 / variance)) for right in train_features]
             for left in train_features
         ]
     )
@@ -46,7 +49,7 @@ def test_kernel_ridge_matches_unpenalized_intercept_block_system() -> None:
     solution = np.linalg.solve(system, np.vstack([train_curves[:, :10], np.zeros(10)]))
     query_kernel = np.array(
         [
-            [np.exp(-np.mean((query - row) ** 2 / variance)) for row in train_features]
+            [np.exp(-bandwidth * np.sum((query - row) ** 2 / variance)) for row in train_features]
             for query in queries
         ]
     )
@@ -54,9 +57,29 @@ def test_kernel_ridge_matches_unpenalized_intercept_block_system() -> None:
     assert np.all((0.0 < expected) & (expected < 100.0))
     assert np.all(np.diff(expected, axis=1) >= 0.0)
 
-    predictions = kernel_ridge_curves(train_features, train_curves, queries, alpha=alpha)
+    predictions = kernel_ridge_curves(train_features, train_curves, queries, alpha=alpha, gamma=gamma)
 
     np.testing.assert_allclose(predictions[:, :10], expected, atol=1e-12)
+
+
+def test_default_gamma_matches_explicit_inverse_feature_count() -> None:
+    features = np.array([[0.0, 3.0], [2.0, 1.0], [5.0, 7.0]])
+    curves = np.array([[10.0] * 10 + [100.0], [40.0] * 10 + [100.0], [70.0] * 10 + [100.0]])
+    queries = np.array([[1.0, 5.0]])
+
+    implicit = kernel_ridge_curves(features, curves, queries)
+    explicit = kernel_ridge_curves(features, curves, queries, gamma=0.5)
+
+    np.testing.assert_array_equal(implicit, explicit)
+
+
+@pytest.mark.parametrize("gamma", [0.0, -0.1, np.nan, np.inf, -np.inf])
+def test_gamma_must_be_positive_and_finite(gamma) -> None:
+    features = np.array([[0.0], [1.0]])
+    curves = np.tile([25.0] * 10 + [100.0], (2, 1))
+
+    with pytest.raises(ValueError, match="gamma"):
+        kernel_ridge_curves(features, curves, features[:1], gamma=gamma)
 
 
 def test_kernel_ridge_scaling_and_centering_use_only_training_rows() -> None:

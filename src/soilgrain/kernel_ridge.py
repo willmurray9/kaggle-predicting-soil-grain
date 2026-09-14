@@ -7,6 +7,7 @@ def kernel_ridge_curves(
     query_features: np.ndarray,
     *,
     alpha: float = 1.0,
+    gamma: float | None = None,
 ) -> np.ndarray:
     """Fit RBF kernel ridge and predict valid cumulative grain curves."""
     train_features = np.asarray(train_features, dtype=float)
@@ -25,6 +26,10 @@ def kernel_ridge_curves(
         raise ValueError("features and curves must be finite")
     if not np.isfinite(alpha) or alpha <= 0:
         raise ValueError("alpha must be positive and finite")
+    if gamma is None:
+        gamma = 1.0 / train_features.shape[1]
+    if not np.isfinite(gamma) or gamma <= 0:
+        raise ValueError("gamma must be positive and finite")
 
     feature_mean = train_features.mean(axis=0)
     feature_std = train_features.std(axis=0)
@@ -32,7 +37,6 @@ def kernel_ridge_curves(
     scaled_train = (train_features - feature_mean) / feature_std
     scaled_query = (query_features - feature_mean) / feature_std
 
-    gamma = 1.0 / train_features.shape[1]
     kernel = np.exp(-gamma * np.sum((scaled_train[:, None] - scaled_train[None, :]) ** 2, axis=2))
     query_kernel = np.exp(-gamma * np.sum((scaled_query[:, None] - scaled_train[None, :]) ** 2, axis=2))
     kernel_mean = kernel.mean(axis=0)

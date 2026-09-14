@@ -529,6 +529,15 @@ hash, receipt, and score. Review and test, commit/push using the personal identi
 merge to main, and remove the completed branch. The current public incumbent is
 RGB + texture at 61.11357; today's last check showed one of five uploads used.
 
+Nested kernel result: 48.58500 local EMD and 31.60399 camera disagreement,
+compared with incumbent linear ridge 43.40571 / 29.11306. Tuning improves the
+fixed kernel (52.95787 / 24.30804), but fails all four incumbent criteria: only
+11/24 soils improve and the mean gain is negative even without the largest
+beneficiary. **No submission**; one of today's five slots remains used. See
+[the kernel report](texture-kernel-results.md). Next: a separately declared
+linear SVR comparison on the same compact inputs, testing an absolute-error-like
+loss. Do not expand this kernel grid or choose the fixed diagnostic for upload.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

@@ -182,3 +182,9 @@ It needs the vision dependencies and earlier experiment artifacts. The
 to **40.80177** for PCA and **40.25638** for the blend. Camera disagreement rises
 versus their earlier versions, so both miss the stricter submission screen.
 Neither was uploaded; RGB + texture remains the public incumbent.
+
+`make texture-kernel` runs a six-setting nested RBF kernel comparison on the
+incumbent's same 17 RGB + texture features, after reconstructing its linear-ridge
+predictions. The [kernel report](docs/texture-kernel-results.md) records **48.58500**
+local EMD versus the incumbent's **43.40571**, with worse camera disagreement.
+All four submission criteria fail; no upload is made. Existing packages suffice.

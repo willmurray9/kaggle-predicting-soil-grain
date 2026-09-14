@@ -3,6 +3,15 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-14 — nested texture kernel: no submission
+
+The [bounded kernel comparison](texture-kernel-results.md) produces 48.58500
+local EMD and 31.60399 camera disagreement, both worse than the same-input
+linear ridge incumbent. It improves only 11/24 soils and fails all four criteria
+declared in `1b93cda`. The candidate is saved with provenance but not uploaded.
+Today's total remains **one of five submissions used**, with RGB + texture best
+publicly at **61.11357**. The fixed kernel was diagnostic only.
+
 ## 2026-09-14 — official preprocessing: no submission
 
 The [official preprocessing comparison](official-preprocessing-results.md)

@@ -1,5 +1,10 @@
 **Experiment review — 10 September 2026**
 
+**14 September, compact kernel comparison:** [nested RBF kernel ridge](texture-kernel-results.md)
+on the incumbent's 17 features scores 48.58500 local EMD and 31.60399 camera
+disagreement, versus linear ridge's 43.40571 / 29.11306. All four submission
+criteria fail, so no upload is made. Today's total stays at one.
+
 **14 September, official preprocessing:** the [controlled recipe comparison](official-preprocessing-results.md)
 improves PCA ridge to 40.80177 local EMD and its fixed blend to 40.25638.
 Both increase camera disagreement versus their earlier versions, failing the

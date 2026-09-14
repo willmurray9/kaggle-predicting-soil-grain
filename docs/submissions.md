@@ -3,6 +3,53 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-14 — selective PCA blend
+
+The user requested selective submissions with evidence of a possible improvement.
+The [PCA comparison](pca-ridge-results.md) and four-part screen were declared in
+`93de6fef6a0b7f99ded6432b3f69ec383bc1a64c` before new scores, allowing at most
+one upload. The standalone PCA model failed that screen. Its fixed 50/50 blend
+with RGB + texture passed: local EMD 42.02843 versus 43.40571, 14/24 soils better,
+camera disagreement 17.90374 versus 29.11306, and +0.47653 mean improvement after
+omitting the largest beneficiary from the comparison. Every soil remains in
+model fitting and the primary validation score.
+
+The selected candidate is `artifacts/submissions/rgb_texture_pca8_blend.csv`,
+produced by `8b47558d6910ef89d391c9f72b3a964894eb02c4`, with SHA-256
+`52c41bce5cbd43a2d31c0a831f6a881cab5666061a94f7e3c9964d79aba44549`.
+All 136 tests and both [remote CI jobs](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/34886175828)
+passed before upload. Independent review reproduced the decision from saved
+curves; the file validates and changes every test curve relative to all seven
+earlier submissions.
+
+| Field | Result |
+| --- | --- |
+| Submission ID | `56237810` |
+| Submitted UTC | `2026-09-14 19:21:46.313000` |
+| Status | Complete |
+| Public EMD | **63.33017** |
+| Prior best public EMD | **61.11357**, RGB + texture |
+| Private score | Unavailable |
+| Local outer EMD | 42.0284318338925 |
+| Camera disagreement | 17.90373798556798 |
+
+The blend worsens public EMD by **2.21660 (3.63%)** despite meeting the local
+screen. Retain RGB + texture as our best submitted model. The local gains were
+real for these folds, but they did not transfer to this public population. One
+result cannot determine whether the difference arises from cameras, soil
+composition, or exploratory selection. Do not change blend weights, PCA counts,
+or the screen in response to this result.
+
+Final API receipt:
+`artifacts/experiments/informative_submissions/2026-09-14_rgb_texture_pca8_blend.json`.
+It records the input checks, screen evidence, producing/declaration commits,
+candidate hash, request/response timestamps, and final server status and score.
+
+Preflight confirmed seven lifetime uploads, none today, and a daily limit of
+five. After this upload there are eight lifetime submissions, one today, and
+four remaining daily slots. No additional submissions or post-result
+weight/component searches are part of this batch.
+
 ## 2026-09-11 — physical texture and color control
 
 The [four-configuration comparison](physical-texture-results.md) fixes ridge

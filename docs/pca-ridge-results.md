@@ -4,7 +4,9 @@ Compressing the frozen ResNet features improves their nested local EMD from
 **49.91991 to 45.02758**. A fixed 50/50 blend with RGB + texture scores
 **42.02843**, versus **43.40571** for our current best public submission's local
 predictions. The blend passes all four predeclared submission criteria; PCA alone
-does not. Only the blend is selected for a possible upload after verification.
+does not. The single blend submission scored **63.33017 public EMD**, worse than
+the incumbent **61.11357**. RGB + texture remains our best submitted model. We
+used one daily slot and preserved the other four.
 
 The [declaration](roadmap.md#fixed-pca-and-selective-submissions--declared-2026-09-14)
 was committed as `93de6fe` before new scores. It limits this round to **at most
@@ -57,6 +59,8 @@ H126 contributes the largest blend gain, **22.09440 EMD**. Other substantial
 gains include H666 (+14.69667) and H183 (+12.09454). G190 worsens by 12.62266,
 H516 by 7.32834, and H405 by 7.25085. All soils stay in training and evaluation;
 omitting the largest beneficiary is solely a sensitivity diagnostic.
+H126 accounts for about 67% of the total gain, so the improvement remains
+concentrated despite the positive average change across the other 23 soils.
 
 The screen supplies a reason to try one upload, not a significance test or a
 guarantee of improving the current **61.11357 public EMD**. The blended local
@@ -67,8 +71,9 @@ as an exact predictor of leaderboard ranking.
 PCA preserves feature variance, which need not correspond to grain information.
 The observed improvement is consistent with discarding unhelpful directions,
 but it does not establish what the retained components represent. Complementary
-errors let the blend beat either of its two components locally; the public test
-will check whether that benefit transfers.
+errors let the blend beat either of its two components locally; its public score
+shows that the benefit did not transfer to the public test population. Passing
+the screen supplied a reasoned experiment, not a reliable leaderboard forecast.
 
 ## Alpha selection
 
@@ -92,7 +97,7 @@ inner/final alpha scores, per-soil comparisons, and the submission decision.
 
 - The unchanged 512-feature model reconstructs OOF, camera, and test predictions
   within 1.43e-14. All outer/final alpha selections and selection scores match.
-- All **136 tests** pass, including PCA scale preservation, full-rank equivalence,
+- All **136 tests** and both remote CI jobs pass, including PCA scale preservation, full-rank equivalence,
   inner-fold fitting, query/label isolation, invalid component counts, aligned
   blending, reference reconstruction, and every submission-screen criterion.
 - Independent implementation review found no actionable issues. All 104 earlier
@@ -108,4 +113,5 @@ inner/final alpha scores, per-soil comparisons, and the submission decision.
 
 The next separate comparison can test the encoder's official preprocessing
 recipe while retaining the same representation and grouped evaluation. Do not
-react to this batch by searching new PCA counts or blend weights.
+react to this batch by searching new PCA counts or blend weights. The original
+RGB + texture submission stays the reference for future selective uploads.

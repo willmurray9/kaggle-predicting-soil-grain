@@ -418,7 +418,9 @@ completed branch. No automatic follow-up submissions are authorized by this batc
 Local results: PCA ridge 45.02758 EMD; fixed blend 42.02843. The blend improves
 14/24 soils versus RGB + texture, lowers camera disagreement to 17.90374, and
 retains +0.47653 mean improvement without its largest beneficiary. Only the
-blend passes the declared screen. See [the PCA report](pca-ridge-results.md)
+blend passes the declared screen. Its single upload scored 63.33017 public EMD;
+RGB + texture remains best at 61.11357. One slot was used, four preserved, and
+there are no follow-up uploads in this batch. See [the PCA report](pca-ridge-results.md)
 and [submission log](submissions.md). Next: a separate official encoder
 preprocessing comparison, with the same grouped validation.
 

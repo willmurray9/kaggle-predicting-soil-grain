@@ -172,3 +172,5 @@ RGB + texture. It reconstructs the uncompressed reference and applies a
 predeclared screen before recommending at most one submission. The
 [PCA report](docs/pca-ridge-results.md) records 45.02758 local EMD for PCA and
 42.02843 for the blend; only the blend passes all four submission criteria.
+The one blend upload scored **63.33017 public EMD**, so RGB + texture retains
+the best public result of **61.11357**. Four of today's five slots remain unused.

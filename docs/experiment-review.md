@@ -1,5 +1,10 @@
 **Experiment review — 10 September 2026**
 
+**14 September, linear SVR:** the [same-input SVR comparison](linear-svr-results.md)
+scores 42.96239 local EMD, a small improvement over ridge's 43.40571. Only ten
+soils improve and camera disagreement rises to 39.24129. The gain disappears
+without its largest beneficiary, so all four criteria fail and no upload is made.
+
 **14 September, compact kernel comparison:** [nested RBF kernel ridge](texture-kernel-results.md)
 on the incumbent's 17 features scores 48.58500 local EMD and 31.60399 camera
 disagreement, versus linear ridge's 43.40571 / 29.11306. All four submission

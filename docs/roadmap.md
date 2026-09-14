@@ -590,6 +590,13 @@ The current public best remains RGB + texture at 61.11357. The previous batch
 made no upload; today's latest check showed one of five slots used. Keep the
 remaining daily budget unless this candidate supplies the declared evidence.
 
+Linear SVR result: 42.96239 EMD versus incumbent 43.40571, but camera disagreement
+rises to 39.24129. Only 10/24 soils improve, and omitting H666's largest gain
+leaves a -1.16793 mean improvement. All four criteria fail: **no upload**.
+See [the SVR report](linear-svr-results.md). One of today's five slots remains
+used. Next: a separately declared shallow-tree ensemble comparison on compact
+inputs; no C, epsilon, or blend search is added to this completed batch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

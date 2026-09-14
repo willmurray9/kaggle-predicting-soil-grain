@@ -188,3 +188,10 @@ incumbent's same 17 RGB + texture features, after reconstructing its linear-ridg
 predictions. The [kernel report](docs/texture-kernel-results.md) records **48.58500**
 local EMD versus the incumbent's **43.40571**, with worse camera disagreement.
 All four submission criteria fail; no upload is made. Existing packages suffice.
+
+`make linear-svr` tests three regularization strengths inside whole-soil folds,
+with a fixed one-percentage-point error tolerance and checked solver convergence.
+It reuses the 17-feature cache and adds scikit-learn through the lockfile. The
+[SVR report](docs/linear-svr-results.md) records **42.96239** local EMD, but only
+ten soils improve and camera disagreement increases. All four submission criteria
+fail, so no upload is made. Refresh dependencies before running the new command.

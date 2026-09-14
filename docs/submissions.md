@@ -3,6 +3,15 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-14 — linear SVR: no submission
+
+The [linear SVR comparison](linear-svr-results.md) scores 42.96239 local EMD,
+only 0.44331 better than ridge, with camera disagreement 39.24129 versus 29.11306.
+Ten soils improve; removing the largest beneficiary makes the average gain
+negative. All four criteria declared in `1339af5` fail, so no upload is made.
+The candidate and provenance are saved. Today's total stays at **one of five**;
+RGB + texture remains best publicly at **61.11357**.
+
 ## 2026-09-14 — nested texture kernel: no submission
 
 The [bounded kernel comparison](texture-kernel-results.md) produces 48.58500

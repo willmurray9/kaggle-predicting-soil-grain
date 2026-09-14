@@ -597,6 +597,53 @@ See [the SVR report](linear-svr-results.md). One of today's five slots remains
 used. Next: a separately declared shallow-tree ensemble comparison on compact
 inputs; no C, epsilon, or blend search is added to this completed batch.
 
+## Fixed shallow ExtraTrees — declared 2026-09-14
+
+Before generating new predictions or scores, test one fixed shallow tree
+ensemble on the incumbent's same 17 RGB + physical-texture features. Reuse the
+verified combined cache with exact split/soil/camera/path alignment and float64
+equal-photo aggregation. Reconstruct alpha-10 ridge OOF, camera, and test curves
+within 1e-10 before evaluating trees. Keep images, 100 mm crops, calibration,
+labels, and all previous artifacts unchanged.
+
+Use one joint ten-output `ExtraTreesRegressor` with **256 trees**, **max_depth=3**,
+**min_samples_leaf=3**, **max_features=1.0**, **criterion="squared_error"**,
+**bootstrap=False**, **random_state=42**, and **n_jobs=1**. No feature or target
+scaling, PCA, parameter grid, seed search, or blend. Scikit-learn internally
+converts feature matrices to float32; photo aggregation remains float64.
+Shared terminal leaves average training curves and the forest averages trees.
+Keep the existing clipping/monotone repair and final 100% endpoint. See the
+[official estimator documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html).
+
+Use the existing whole-soil LOO evaluator: each fold excludes all photos of one
+soil and fits on the other 23 soil means. It refits for pooled and separate-camera
+queries; identical training rows and the fixed seed make the forests identical.
+Test query-cohort independence and the absence of held-out targets from fitting.
+No inner selection is needed for this fixed model. Fit once on all 24 labeled
+soils for the final test candidate. Trees do not extrapolate beyond their training
+target ranges; this may limit unusually fine or coarse held-out soils.
+
+Submit **at most one** valid file, numerically distinct from previous uploads,
+only if all four incumbent screens pass: mean EMD gain >=1 against
+43.40570546697441; >=12/24 soils improve by >1e-9; camera disagreement no worse
+than the reconstructed incumbent (~29.113056428926008); positive mean gain
+without the single largest beneficiary. Keep all soils in fitting and primary
+scoring. These are practical submission screens, not statistical significance or
+guarantees. If the candidate fails, record it without changing tree depth,
+leaf size, feature subset, criterion, seed, or adding a blend in this batch.
+
+Save separate OOF/camera curves, paired per-soil errors, the candidate CSV,
+settings, package versions, source hashes, and the decision. No tuning-selection
+files are needed. Test known terminal means, constant features, valid curves,
+query independence, actual forest depth/leaf limits, soil isolation, source and
+reference alignment, and candidate validation. Reuse installed scikit-learn;
+no package changes are needed. Review and test, commit/push with the personal
+identity, merge to main, and remove the completed branch.
+
+The public incumbent remains RGB + texture at 61.11357. The SVR batch made no
+upload; the latest check showed one of five daily slots used. Preserve the
+remaining budget unless this fixed candidate passes the declared screen.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

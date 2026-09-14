@@ -195,3 +195,9 @@ It reuses the 17-feature cache and adds scikit-learn through the lockfile. The
 [SVR report](docs/linear-svr-results.md) records **42.96239** local EMD, but only
 ten soils improve and camera disagreement increases. All four submission criteria
 fail, so no upload is made. Refresh dependencies before running the new command.
+
+`make shallow-trees` evaluates one fixed ensemble on those same 17 inputs:
+256 trees, depth at most three, and at least three soils per leaf. The
+[tree report](docs/shallow-trees-results.md) records **47.52880** local EMD and
+**25.45697** camera disagreement. Accuracy worsens and only 11/24 soils improve,
+so no upload is made. It reuses installed packages and preserves prior artifacts.

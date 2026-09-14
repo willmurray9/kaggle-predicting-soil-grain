@@ -3,6 +3,14 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-14 — shallow trees: no submission
+
+The [fixed ExtraTrees comparison](shallow-trees-results.md) scores 47.52880 local
+EMD, worse than ridge's 43.40571, with 11/24 soils improving. Camera disagreement
+improves to 25.45697, but the other three criteria declared in `f733c39` fail.
+The candidate is saved with provenance and not uploaded. Today's total remains
+**one of five**; RGB + texture remains best publicly at **61.11357**.
+
 ## 2026-09-14 — linear SVR: no submission
 
 The [linear SVR comparison](linear-svr-results.md) scores 42.96239 local EMD,

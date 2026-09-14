@@ -644,6 +644,14 @@ The public incumbent remains RGB + texture at 61.11357. The SVR batch made no
 upload; the latest check showed one of five daily slots used. Preserve the
 remaining budget unless this fixed candidate passes the declared screen.
 
+Fixed ExtraTrees result: **47.52880 EMD** and **25.45697 camera disagreement**.
+Only 11/24 soils improve, and mean gain without the largest beneficiary is
+−5.66402. Camera agreement passes; the other three criteria fail, so **no upload**
+is made. See [the tree report](shallow-trees-results.md). All previous artifacts
+are preserved, and today's count stays at one of five. Next: the planned second
+frozen-encoder comparison, with settings declared separately before scoring;
+no tree tuning or blending is added to this completed batch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

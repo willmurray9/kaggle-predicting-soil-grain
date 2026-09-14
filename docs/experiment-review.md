@@ -1,5 +1,10 @@
 **Experiment review — 10 September 2026**
 
+**14 September, shallow trees:** the [fixed ExtraTrees comparison](shallow-trees-results.md)
+scores 47.52880 local EMD versus ridge's 43.40571. Camera disagreement improves
+to 25.45697, but only 11/24 soils improve and three submission criteria fail.
+No upload is made. Next is the planned second frozen-encoder comparison.
+
 **14 September, linear SVR:** the [same-input SVR comparison](linear-svr-results.md)
 scores 42.96239 local EMD, a small improvement over ridge's 43.40571. Only ten
 soils improve and camera disagreement rises to 39.24129. The gain disappears

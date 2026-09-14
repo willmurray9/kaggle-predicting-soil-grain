@@ -1,5 +1,11 @@
 **Experiment review — 10 September 2026**
 
+**14 September, official preprocessing:** the [controlled recipe comparison](official-preprocessing-results.md)
+improves PCA ridge to 40.80177 local EMD and its fixed blend to 40.25638.
+Both increase camera disagreement versus their earlier versions, failing the
+additional predeclared criterion. Neither is submitted. Today's total stays at
+one upload; RGB + texture remains best publicly at 61.11357.
+
 **14 September update:** [eight-component PCA](pca-ridge-results.md) improves
 nested ResNet local EMD to 45.02758. Its fixed equal blend with RGB + texture
 scores 42.02843 and passes the new selective submission screen. At most that

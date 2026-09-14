@@ -468,6 +468,15 @@ unchanged from the saved September 10 receipts, including external-model
 permission; this comparison uses the existing verified checkpoint. See the
 [official ResNet-18 recipe](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html).
 
+Official-preprocessing results: PCA 40.80177 EMD / 16.90987 camera disagreement;
+fixed blend 40.25638 / 19.41314. Both pass all four incumbent criteria and improve
+EMD by at least one point over their matched earlier versions. Both fail the
+matched-camera criterion, so **neither is submitted**. Preserve the candidates,
+keep RGB + texture as the public incumbent, and retain four daily slots. See the
+[official-preprocessing report](official-preprocessing-results.md). Next: a
+separately declared bounded regressor comparison on compact RGB + texture inputs;
+a second encoder remains a later option. No thresholds or settings change here.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

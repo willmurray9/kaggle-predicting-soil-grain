@@ -174,3 +174,11 @@ predeclared screen before recommending at most one submission. The
 42.02843 for the blend; only the blend passes all four submission criteria.
 The one blend upload scored **63.33017 public EMD**, so RGB + texture retains
 the best public result of **61.11357**. Four of today's five slots remain unused.
+
+`make official-preprocessing` applies the official ResNet recipe to the same
+calibrated crop, then evaluates the existing PCA/ridge setup and fixed blend.
+It needs the vision dependencies and earlier experiment artifacts. The
+[recipe comparison](docs/official-preprocessing-results.md) improves local EMD
+to **40.80177** for PCA and **40.25638** for the blend. Camera disagreement rises
+versus their earlier versions, so both miss the stricter submission screen.
+Neither was uploaded; RGB + texture remains the public incumbent.

@@ -3,6 +3,16 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-14 — official preprocessing: no submission
+
+The [official preprocessing comparison](official-preprocessing-results.md)
+improves local EMD to 40.80177 for PCA ridge and 40.25638 for its fixed blend.
+Both meet the four incumbent criteria but worsen camera disagreement versus
+their matched earlier versions, failing the additional screen declared in
+`7093b1c`. Neither candidate was uploaded; both are saved with source and file
+hashes. Today's total remains **one submission, four slots unused** under the
+API limit of five. RGB + texture remains best at **61.11357 public EMD**.
+
 ## 2026-09-14 — selective PCA blend
 
 The user requested selective submissions with evidence of a possible improvement.

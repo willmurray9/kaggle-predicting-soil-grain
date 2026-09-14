@@ -1,5 +1,12 @@
 **Experiment review — 10 September 2026**
 
+**14 September, second encoder and informative upload:** [MobileNet PCA/ridge](mobilenet-results.md)
+scores 41.82774 local EMD and 13.08667 camera disagreement. The user requested
+one more experiment followed by one upload; the predeclared lower-EMD comparison
+selects the saved official ResNet blend (40.25638). Its submission scores
+**62.65462**, leaving RGB + texture best at **61.11357**. Two daily slots are
+used, three remain, and no further upload follows this result.
+
 **14 September, shallow trees:** the [fixed ExtraTrees comparison](shallow-trees-results.md)
 scores 47.52880 local EMD versus ridge's 43.40571. Camera disagreement improves
 to 25.45697, but only 11/24 soils improve and three submission criteria fail.

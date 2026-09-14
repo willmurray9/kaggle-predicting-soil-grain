@@ -703,6 +703,15 @@ isolation, reference integrity, candidate selection including the fallback, and
 submission validity. Review and verify, commit/push with the personal identity,
 merge to clean synchronized main, and delete the completed branch.
 
+Completed: MobileNet scores **41.82774 EMD / 13.08667 camera disagreement**;
+the saved official blend's **40.25638 EMD** wins the declared comparison.
+Exactly one upload was made: **56239628**, public EMD **62.65462**. Retain
+RGB + texture at **61.11357** as the best submitted model. All 142 earlier artifacts
+are unchanged; two of today's five slots are used. See [the MobileNet report](mobilenet-results.md)
+and [submission receipt details](submissions.md). No settings change or additional
+upload follows the public result. A fixed MobileNet/RGB-texture blend remains
+a possible separately declared comparison; it has not been evaluated.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

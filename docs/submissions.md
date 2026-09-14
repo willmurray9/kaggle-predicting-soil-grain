@@ -3,6 +3,49 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-14 — official recipe blend after one more encoder experiment
+
+The user requested one additional experiment followed by an informative upload,
+superseding the earlier all-screens-must-pass policy for this batch. Declaration
+`0ac12929405c3a0f75e2b93838124fafed785932` fixed a MobileNet V3 Large V1/PCA/ridge
+comparison and a single selection rule: lower outer EMD between that new model
+and the previously saved official ResNet/RGB-texture blend, tie preferring the
+saved blend. The [MobileNet report](mobilenet-results.md) records **41.82774 local
+EMD** versus the saved blend's **40.25638**, so the blend is selected unchanged.
+
+| Field | Result |
+| --- | --- |
+| Submission ID | `56239628` |
+| Submitted UTC | `2026-09-14 22:09:20.513000` |
+| Status | Complete |
+| Public EMD | **62.65462** |
+| Best public EMD, retained | **61.11357**, RGB + texture |
+| Earlier legacy PCA blend public EMD | 63.33017 |
+| Private score | Unavailable |
+| Local outer EMD | 40.25637519242576 |
+| Camera disagreement | 19.41313897279763 |
+
+Submitted file: `artifacts/submissions/rgb_texture_official_pca8_blend.csv`.
+SHA-256: `ff75b009ae1025bd90264fd95a961ee4b5def5c62d3e2afde20d2f3cbcb2c4fb`.
+Original producing code: `0cbb5537fdf3dbfca6e0df6b82a582e0dec1f5c4`.
+This batch's comparison/selection code: `20bd9ba7058ccfeb5859efd74f0e3c6305e1fc89`.
+All **231 tests** and both [CI jobs](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/34902302604)
+passed before upload. Independent audits verified the old blend's provenance,
+exact arithmetic, and numerical differences from every one of the eight prior
+uploads, plus the new model's outputs and selection decision.
+
+The public score is **1.54105 worse** than the incumbent and **0.67555 better**
+than the earlier PCA blend. Retain RGB + texture as the best submitted model.
+There is no follow-up submission or adjustment based on this score. The earlier
+official-preprocessing batch's no-upload decision remains recorded below; this
+new user authorization is the reason the preserved candidate is submitted now.
+
+Receipt:
+`artifacts/experiments/informative_submissions/2026-09-14_official_recipe_blend.json`.
+It was written before the API request, updated with the accepted reference, and
+then finalized with the completed score. Kaggle now shows **nine lifetime
+uploads, two today, and three remaining** under the five-per-day API limit.
+
 ## 2026-09-14 — shallow trees: no submission
 
 The [fixed ExtraTrees comparison](shallow-trees-results.md) scores 47.52880 local

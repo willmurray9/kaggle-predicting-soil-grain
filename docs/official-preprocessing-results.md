@@ -1,5 +1,11 @@
 # Official ResNet preprocessing — 14 September 2026
 
+**Later September 14 follow-up:** after the user requested another experiment
+and an informative upload, the unchanged blend was selected against a new
+MobileNet candidate and submitted. It scored **62.65462 public EMD**, leaving
+RGB + texture best at 61.11357. See the [later report](mobilenet-results.md) and
+[submission log](submissions.md); the original batch and its decision follow.
+
 The official recipe improves PCA ridge from **45.02758 to 40.80177 local EMD**
 and its fixed RGB + texture blend from **42.02843 to 40.25638**. Both pass all
 four criteria against our incumbent. However, both increase camera disagreement

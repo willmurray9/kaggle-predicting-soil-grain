@@ -201,3 +201,10 @@ fail, so no upload is made. Refresh dependencies before running the new command.
 [tree report](docs/shallow-trees-results.md) records **47.52880** local EMD and
 **25.45697** camera disagreement. Accuracy worsens and only 11/24 soils improve,
 so no upload is made. It reuses installed packages and preserves prior artifacts.
+
+`make mobilenet-pca` compares a second frozen encoder using the same official
+image recipe and nested PCA/ridge head. [MobileNet results](docs/mobilenet-results.md)
+are **41.82774** local EMD and **13.08667** camera disagreement. Under the user's
+new request for one informative upload, the saved official ResNet blend wins the
+declared comparison and scores **62.65462 publicly**. RGB + texture remains best
+at **61.11357**; two of five slots were used on September 14.

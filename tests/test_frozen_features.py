@@ -178,3 +178,118 @@ def test_frozen_features_reject_checkpoint_hash_mismatch(tmp_path: Path, encoder
     index, ppm = _photos(tmp_path, ["red"])
     with pytest.raises(ValueError, match="checkpoint.*hash"):
         extract_frozen_features(index, ppm)
+
+
+@pytest.fixture
+def mobilenet_checkpoint(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    torch = pytest.importorskip("torch")
+    torchvision = pytest.importorskip("torchvision")
+    observations = []
+
+    class TinyMobileNet(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.bn = torch.nn.BatchNorm2d(3, eps=0)
+            self.classifier = torch.nn.Sequential(
+                torch.nn.Linear(960, 1280), torch.nn.Hardswish(),
+                torch.nn.Dropout(), torch.nn.Linear(1280, 1000),
+            )
+
+        def forward(self, batch):
+            observations.append((self.training, torch.is_grad_enabled(), torch.is_inference_mode_enabled(), tuple(batch.shape)))
+            channels = self.bn(batch).mean(dim=(2, 3))
+            return self.classifier(channels.repeat(1, 320))
+
+    checkpoint_bytes = b"unit-test mobile checkpoint; no pretrained download"
+    digest = hashlib.sha256(checkpoint_bytes).hexdigest()
+    filename = f"mobilenet_v3_large-{digest[:8]}.pth"
+    checkpoint = tmp_path / "checkpoints" / filename
+    checkpoint.parent.mkdir()
+    checkpoint.write_bytes(checkpoint_bytes)
+    weights = SimpleNamespace(
+        url=f"https://download.pytorch.org/models/{filename}",
+        transforms=torchvision.models.MobileNet_V3_Large_Weights.IMAGENET1K_V1.transforms,
+    )
+    model = TinyMobileNet()
+
+    def mobilenet_v3_large(*, weights: object):
+        assert weights is torchvision.models.MobileNet_V3_Large_Weights.IMAGENET1K_V1
+        return model
+
+    monkeypatch.setattr(torchvision.models, "MobileNet_V3_Large_Weights", SimpleNamespace(IMAGENET1K_V1=weights))
+    monkeypatch.setattr(torchvision.models, "mobilenet_v3_large", mobilenet_v3_large)
+    monkeypatch.setattr(torch.hub, "get_dir", lambda: str(tmp_path))
+    return model, observations, checkpoint
+
+
+def test_mobilenet_uses_official_recipe_and_removes_entire_classifier(tmp_path: Path, mobilenet_checkpoint) -> None:
+    import torch
+    from torchvision.models import MobileNet_V3_Large_Weights
+
+    from soilgrain.frozen_features import extract_frozen_features
+
+    index, ppm = _photos(tmp_path, ["red"])
+    pixels = np.full((256, 256, 3), [255, 0, 0], dtype=np.uint8)
+    pixels[16:-16, 16:-16] = np.random.default_rng(19).integers(0, 256, (224, 224, 3), dtype=np.uint8)
+    image = Image.fromarray(pixels)
+    image.save(index.iloc[0]["path"])
+    ppm.loc[0, ["width", "height", "ppm"]] = [256, 256, 2.56]
+    encoder_inputs = []
+    hook = mobilenet_checkpoint[0].register_forward_pre_hook(lambda _model, args: encoder_inputs.append(args[0].clone()))
+    try:
+        features, metadata = extract_frozen_features(index, ppm, encoder_name="mobilenet_v3_large", preprocessing="official")
+    finally:
+        hook.remove()
+
+    expected = MobileNet_V3_Large_Weights.IMAGENET1K_V1.transforms()(image)
+    torch.testing.assert_close(encoder_inputs[0][0], expected, rtol=0, atol=0)
+    assert isinstance(mobilenet_checkpoint[0].classifier, torch.nn.Identity)
+    assert features.shape == (1, 964)
+    assert features.columns[4:].tolist() == [f"feature_{i}" for i in range(960)]
+    pd.testing.assert_frame_equal(features.iloc[:, :4], index.reset_index(drop=True))
+    np.testing.assert_allclose(features.iloc[0, 4:].to_numpy(dtype=float), expected.mean(dim=(1, 2)).repeat(320).numpy(), atol=1e-6)
+    assert metadata["encoder"] == "mobilenet_v3_large"
+    assert metadata["weights"] == "MobileNet_V3_Large_Weights.IMAGENET1K_V1"
+    assert metadata["feature_count"] == 960
+    assert metadata["checkpoint_sha256"] == hashlib.sha256(mobilenet_checkpoint[2].read_bytes()).hexdigest()
+    assert metadata["preprocessing"] == {
+        "name": "official", "resize_size": [256], "interpolation": "BILINEAR", "antialias": True,
+        "input_pixels": [224, 224], "nominal_field_mm": 87.5,
+    }
+
+
+def test_mobilenet_is_frozen_and_batch_independent(tmp_path: Path, mobilenet_checkpoint) -> None:
+    from soilgrain.frozen_features import extract_frozen_features
+
+    model, observations, _checkpoint = mobilenet_checkpoint
+    index, ppm = _photos(tmp_path, ["red"] + ["white"] * 8)
+    alone, _ = extract_frozen_features(index.iloc[:1], ppm, encoder_name="mobilenet_v3_large", preprocessing="official")
+    mixed, _ = extract_frozen_features(index, ppm, encoder_name="mobilenet_v3_large", preprocessing="official")
+
+    np.testing.assert_array_equal(alone.iloc[0, 4:], mixed.iloc[0, 4:])
+    np.testing.assert_array_equal(model.bn.running_mean.numpy(), [0, 0, 0])
+    np.testing.assert_array_equal(model.bn.running_var.numpy(), [1, 1, 1])
+    assert not model.training
+    assert all(not parameter.requires_grad and parameter.device.type == "cpu" for parameter in model.parameters())
+    assert observations == [
+        (False, False, True, (1, 3, 224, 224)),
+        (False, False, True, (8, 3, 224, 224)),
+        (False, False, True, (1, 3, 224, 224)),
+    ]
+
+
+@pytest.mark.parametrize("encoder,preprocessing", [("unknown", "official"), ("mobilenet_v3_large", "legacy")])
+def test_frozen_features_reject_invalid_encoder_combinations(encoder: str, preprocessing: str) -> None:
+    from soilgrain.frozen_features import extract_frozen_features
+
+    with pytest.raises(ValueError, match="encoder|official"):
+        extract_frozen_features(pd.DataFrame(), pd.DataFrame(), encoder_name=encoder, preprocessing=preprocessing)
+
+
+def test_mobilenet_rejects_checkpoint_hash_mismatch(tmp_path: Path, mobilenet_checkpoint) -> None:
+    from soilgrain.frozen_features import extract_frozen_features
+
+    mobilenet_checkpoint[2].write_bytes(b"changed cached mobile weights")
+    index, ppm = _photos(tmp_path, ["red"])
+    with pytest.raises(ValueError, match="checkpoint.*hash"):
+        extract_frozen_features(index, ppm, encoder_name="mobilenet_v3_large", preprocessing="official")

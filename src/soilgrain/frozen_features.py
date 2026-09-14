@@ -12,19 +12,32 @@ from soilgrain.image_model import physical_crop
 
 
 def extract_frozen_features(
-    index: pd.DataFrame, ppm: pd.DataFrame, *, preprocessing: str = "legacy",
+    index: pd.DataFrame, ppm: pd.DataFrame, *, preprocessing: str = "legacy", encoder_name: str = "resnet18",
 ) -> tuple[pd.DataFrame, dict]:
-    """Extract fixed ImageNet ResNet-18 features from each calibrated photo crop."""
+    """Extract fixed ImageNet encoder features from each calibrated photo crop."""
     if preprocessing not in ("legacy", "official"):
         raise ValueError("preprocessing must be 'legacy' or 'official'.")
+    if encoder_name not in ("resnet18", "mobilenet_v3_large"):
+        raise ValueError("encoder_name must be 'resnet18' or 'mobilenet_v3_large'.")
+    if encoder_name == "mobilenet_v3_large" and preprocessing != "official":
+        raise ValueError("MobileNet requires official preprocessing.")
 
     import torch
     import torchvision
-    from torchvision.models import ResNet18_Weights, resnet18
+    from torchvision.models import MobileNet_V3_Large_Weights, ResNet18_Weights, mobilenet_v3_large, resnet18
 
-    weights = ResNet18_Weights.IMAGENET1K_V1
-    encoder = resnet18(weights=weights).to("cpu")
-    encoder.fc = torch.nn.Identity()
+    if encoder_name == "resnet18":
+        weights = ResNet18_Weights.IMAGENET1K_V1
+        encoder = resnet18(weights=weights).to("cpu")
+        encoder.fc = torch.nn.Identity()
+        feature_count = 512
+        weights_name = "ResNet18_Weights.IMAGENET1K_V1"
+    else:
+        weights = MobileNet_V3_Large_Weights.IMAGENET1K_V1
+        encoder = mobilenet_v3_large(weights=weights).to("cpu")
+        encoder.classifier = torch.nn.Identity()
+        feature_count = 960
+        weights_name = "MobileNet_V3_Large_Weights.IMAGENET1K_V1"
     encoder.requires_grad_(False).eval()
     checkpoint = Path(torch.hub.get_dir()) / "checkpoints" / Path(urlparse(weights.url).path).name
     with checkpoint.open("rb") as source:
@@ -49,15 +62,15 @@ def extract_frozen_features(
                     images.append((rgb - mean) / std)
             batches.append(encoder(torch.stack(images)).numpy())
     values = np.vstack(batches)
-    if values.shape != (len(index), 512) or not np.isfinite(values).all():
-        raise ValueError("The frozen encoder must produce 512 finite features per photo.")
+    if values.shape != (len(index), feature_count) or not np.isfinite(values).all():
+        raise ValueError(f"The frozen encoder must produce {feature_count} finite features per photo.")
     features = pd.concat([
         index[["split", "sample_id", "camera", "path"]].reset_index(drop=True),
-        pd.DataFrame(values, columns=[f"feature_{i}" for i in range(512)]),
+        pd.DataFrame(values, columns=[f"feature_{i}" for i in range(feature_count)]),
     ], axis=1)
     metadata = {
-        "encoder": "resnet18",
-        "weights": "ResNet18_Weights.IMAGENET1K_V1",
+        "encoder": encoder_name,
+        "weights": weights_name,
         "checkpoint_url": weights.url,
         "checkpoint_sha256": checkpoint_hash,
         "checkpoint_path": str(checkpoint),
@@ -65,7 +78,7 @@ def extract_frozen_features(
             "torch": torch.__version__, "torchvision": torchvision.__version__,
             "numpy": np.__version__, "pillow": PIL.__version__,
         },
-        "device": "cpu", "batch_size": 8, "feature_count": 512,
+        "device": "cpu", "batch_size": 8, "feature_count": feature_count,
         "crop": {"millimeters": 100, "pixels": [256, 256], "resample": "LANCZOS", "center_crop_pixels": None},
         "normalization": {"mean": recipe.mean, "std": recipe.std},
     }

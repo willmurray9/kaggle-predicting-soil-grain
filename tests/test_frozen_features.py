@@ -96,13 +96,14 @@ def test_frozen_features_preserve_photo_alignment_and_imagenet_normalization(tmp
     assert metadata["versions"]["torchvision"]
 
 
-def test_encoder_is_frozen_and_batch_independent_including_test_photos(tmp_path: Path, encoder_checkpoint) -> None:
+@pytest.mark.parametrize("preprocessing,size", [("legacy", 256), ("official", 224)])
+def test_encoder_is_frozen_and_batch_independent_including_test_photos(tmp_path: Path, encoder_checkpoint, preprocessing, size) -> None:
     from soilgrain.frozen_features import extract_frozen_features
 
     model, observations, _checkpoint = encoder_checkpoint
     index, ppm = _photos(tmp_path, ["red"] + ["white"] * 8)
-    alone, _ = extract_frozen_features(index.iloc[:1], ppm)
-    mixed, _ = extract_frozen_features(index, ppm)
+    alone, _ = extract_frozen_features(index.iloc[:1], ppm, preprocessing=preprocessing)
+    mixed, _ = extract_frozen_features(index, ppm, preprocessing=preprocessing)
 
     np.testing.assert_array_equal(alone.iloc[0, 4:], mixed.iloc[0, 4:])
     np.testing.assert_array_equal(model.bn.running_mean.numpy(), [0, 0, 0])
@@ -110,10 +111,64 @@ def test_encoder_is_frozen_and_batch_independent_including_test_photos(tmp_path:
     assert not model.training
     assert all(not parameter.requires_grad and parameter.device.type == "cpu" for parameter in model.parameters())
     assert observations == [
-        (False, False, True, (1, 3, 256, 256)),
-        (False, False, True, (8, 3, 256, 256)),
-        (False, False, True, (1, 3, 256, 256)),
+        (False, False, True, (1, 3, size, size)),
+        (False, False, True, (8, 3, size, size)),
+        (False, False, True, (1, 3, size, size)),
     ]
+
+
+def test_official_preprocessing_matches_recipe_on_center_and_border_pixels(tmp_path: Path, encoder_checkpoint) -> None:
+    import torch
+    from torchvision.models import ResNet18_Weights
+
+    from soilgrain.frozen_features import extract_frozen_features
+
+    index, ppm = _photos(tmp_path, ["red"])
+    pixels = np.full((256, 256, 3), [255, 0, 0], dtype=np.uint8)
+    pixels[16:-16, 16:-16] = np.random.default_rng(19).integers(0, 256, (224, 224, 3), dtype=np.uint8)
+    image = Image.fromarray(pixels)
+    image.save(index.iloc[0]["path"])
+    ppm.loc[0, ["width", "height", "ppm"]] = [256, 256, 2.56]
+    encoder_inputs = []
+    hook = encoder_checkpoint[0].register_forward_pre_hook(lambda _model, args: encoder_inputs.append(args[0].clone()))
+    try:
+        features, metadata = extract_frozen_features(index, ppm, preprocessing="official")
+    finally:
+        hook.remove()
+
+    expected = ResNet18_Weights.IMAGENET1K_V1.transforms()(image)
+    assert encoder_inputs[0].shape == (1, 3, 224, 224)
+    torch.testing.assert_close(encoder_inputs[0][0], expected, rtol=0, atol=0)
+    np.testing.assert_allclose(features.iloc[0, 4:].to_numpy(dtype=float), expected.mean(dim=(1, 2)).repeat(171)[:512].numpy(), atol=1e-6)
+    assert metadata["crop"] == {
+        "millimeters": 100, "pixels": [256, 256], "resample": "LANCZOS", "center_crop_pixels": [224, 224],
+    }
+    assert metadata["preprocessing"] == {
+        "name": "official", "resize_size": [256], "interpolation": "BILINEAR", "antialias": True,
+        "input_pixels": [224, 224], "nominal_field_mm": 87.5,
+    }
+
+
+def test_explicit_legacy_preserves_default_features_and_metadata(tmp_path: Path, encoder_checkpoint) -> None:
+    from soilgrain.frozen_features import extract_frozen_features
+
+    index, ppm = _photos(tmp_path, ["red", "black"])
+    default_features, default_metadata = extract_frozen_features(index, ppm)
+    legacy_features, legacy_metadata = extract_frozen_features(index, ppm, preprocessing="legacy")
+
+    pd.testing.assert_frame_equal(legacy_features, default_features)
+    assert legacy_metadata == default_metadata
+    assert "preprocessing" not in default_metadata
+    assert default_metadata["crop"] == {
+        "millimeters": 100, "pixels": [256, 256], "resample": "LANCZOS", "center_crop_pixels": None,
+    }
+
+
+def test_frozen_features_reject_unknown_preprocessing() -> None:
+    from soilgrain.frozen_features import extract_frozen_features
+
+    with pytest.raises(ValueError, match="preprocessing"):
+        extract_frozen_features(pd.DataFrame(), pd.DataFrame(), preprocessing="unknown")
 
 
 def test_frozen_features_reject_checkpoint_hash_mismatch(tmp_path: Path, encoder_checkpoint) -> None:

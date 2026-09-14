@@ -7,8 +7,9 @@ def ridge_curves(
     query_features: np.ndarray,
     *,
     alpha: float = 10.0,
+    n_components: int | None = None,
 ) -> np.ndarray:
-    """Fit ridge on training rows and predict valid cumulative grain curves."""
+    """Fit ridge with optional training-only PCA and predict cumulative curves."""
     train_features = np.asarray(train_features, dtype=float)
     train_curves = np.asarray(train_curves, dtype=float)
     query_features = np.asarray(query_features, dtype=float)
@@ -25,12 +26,23 @@ def ridge_curves(
         raise ValueError("features and curves must be finite")
     if not np.isfinite(alpha) or alpha <= 0:
         raise ValueError("alpha must be positive and finite")
+    if n_components is not None and (
+        isinstance(n_components, (bool, np.bool_))
+        or not isinstance(n_components, (int, np.integer))
+        or not 1 <= n_components <= min(train_features.shape[1], train_features.shape[0] - 1)
+    ):
+        raise ValueError("n_components must be an integer between 1 and min(feature count, training rows - 1)")
 
     feature_mean = train_features.mean(axis=0)
     feature_std = train_features.std(axis=0)
     feature_std[feature_std == 0.0] = 1.0
     scaled_train = (train_features - feature_mean) / feature_std
     scaled_query = (query_features - feature_mean) / feature_std
+    if n_components is not None:
+        _, _, directions = np.linalg.svd(scaled_train, full_matrices=False)
+        basis = directions[:n_components].T
+        scaled_train = scaled_train @ basis
+        scaled_query = scaled_query @ basis
 
     targets = train_curves[:, :10]
     target_mean = targets.mean(axis=0)

@@ -49,9 +49,11 @@ def test_inner_selection_refits_only_inner_training_rows(monkeypatch, soils):
     assert chosen == min(expected, key=lambda alpha: (expected[alpha], -alpha))
 
 
-def test_outer_predictions_match_manual_nested_loop(soils):
+@pytest.mark.parametrize("n_components", [None, 1])
+def test_outer_predictions_match_manual_nested_loop(soils, n_components):
     photos, sample_ids, features, curves = soils
-    oof, cameras, selections = nested.evaluate_nested_ridge(photos, sample_ids, curves)
+    options = {} if n_components is None else {"n_components": n_components}
+    oof, cameras, selections = nested.evaluate_nested_ridge(photos, sample_ids, curves, **options)
 
     for i, sample_id in enumerate(sample_ids):
         keep = np.arange(len(features)) != i
@@ -63,38 +65,40 @@ def test_outer_predictions_match_manual_nested_loop(soils):
                 inner_keep = np.arange(len(inner_features)) != j
                 inner_predictions.append(ridge_curves(
                     inner_features[inner_keep], inner_curves[inner_keep],
-                    inner_features[j:j + 1], alpha=alpha,
+                    inner_features[j:j + 1], alpha=alpha, **options,
                 )[0])
             scores[alpha] = emd_score(inner_curves, np.vstack(inner_predictions))
         chosen = min(scores, key=lambda alpha: (scores[alpha], -alpha))
         selection = selections[selections["sample_id"] == sample_id]
         assert selection.loc[selection["selected"], "alpha"].tolist() == [chosen]
         assert selection.set_index("alpha")["inner_loo_emd"].to_dict() == scores
-        expected = ridge_curves(features[keep], curves[keep], features[i:i + 1], alpha=chosen)
+        expected = ridge_curves(features[keep], curves[keep], features[i:i + 1], alpha=chosen, **options)
         np.testing.assert_allclose(oof[i], expected[0])
         views = photos[photos["sample_id"] == sample_id].set_index("camera")
         for row in cameras[cameras["sample_id"] == sample_id].itertuples(index=False, name=None):
             _, camera, error, *prediction = row
             query = views.loc[[camera], ["feature_0", "feature_1"]].to_numpy()
-            expected = ridge_curves(features[keep], curves[keep], query, alpha=chosen)[0]
+            expected = ridge_curves(features[keep], curves[keep], query, alpha=chosen, **options)[0]
             np.testing.assert_allclose(prediction, expected)
             assert error == pytest.approx(emd_score(curves[i], expected))
     assert cameras.columns.tolist() == ["sample_id", "camera", "emd", *CANONICAL_GRAIN_LABELS]
 
 
-def test_held_out_target_and_query_features_cannot_choose_own_alpha(soils):
+@pytest.mark.parametrize("n_components", [None, 1])
+def test_held_out_target_and_query_features_cannot_choose_own_alpha(soils, n_components):
     photos, sample_ids, _, curves = soils
-    original, _, selection = nested.evaluate_nested_ridge(photos, sample_ids, curves)
+    options = {} if n_components is None else {"n_components": n_components}
+    original, _, selection = nested.evaluate_nested_ridge(photos, sample_ids, curves, **options)
     changed_curves = curves.copy()
     changed_curves[0] = [0] * 10 + [100]
-    changed, _, target_selection = nested.evaluate_nested_ridge(photos, sample_ids, changed_curves)
+    changed, _, target_selection = nested.evaluate_nested_ridge(photos, sample_ids, changed_curves, **options)
     np.testing.assert_allclose(original[0], changed[0])
     own_fold = selection["sample_id"] == sample_ids[0]
     pd.testing.assert_frame_equal(selection[own_fold], target_selection[own_fold])
 
     changed_photos = photos.copy()
     changed_photos.loc[changed_photos["sample_id"] == sample_ids[0], "feature_0"] = 1e6
-    _, _, query_selection = nested.evaluate_nested_ridge(changed_photos, sample_ids, curves)
+    _, _, query_selection = nested.evaluate_nested_ridge(changed_photos, sample_ids, curves, **options)
     pd.testing.assert_frame_equal(selection[own_fold], query_selection[own_fold])
 
 
@@ -131,3 +135,27 @@ def test_selection_and_outer_evaluation_require_nonempty_inner_training(soils):
         nested.select_ridge_alpha(features[:1], curves[:1])
     with pytest.raises(ValueError, match="at least three"):
         nested.evaluate_nested_ridge(photos, sample_ids[:2], curves[:2])
+
+
+def test_pca_is_refitted_on_each_inner_training_set(monkeypatch, soils):
+    _, _, features, curves = soils
+    svd = np.linalg.svd
+    fitted = []
+
+    def observe(values, **kwargs):
+        fitted.append(values.copy())
+        return svd(values, **kwargs)
+
+    monkeypatch.setattr(np.linalg, "svd", observe)
+    nested.select_ridge_alpha(features, curves, n_components=1)
+
+    assert len(fitted) == len(features) * len(nested.RIDGE_ALPHAS)
+    for i, values in enumerate(fitted):
+        training = features[np.arange(len(features)) != i % len(features)]
+        np.testing.assert_allclose(values, (training - training.mean(axis=0)) / training.std(axis=0))
+
+
+def test_nested_pca_must_fit_inside_inner_training_capacity(soils):
+    photos, sample_ids, _, curves = soils
+    with pytest.raises(ValueError, match="n_components"):
+        nested.evaluate_nested_ridge(photos, sample_ids[:3], curves[:3], n_components=1)

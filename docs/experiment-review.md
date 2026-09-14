@@ -1,5 +1,10 @@
 **Experiment review — 10 September 2026**
 
+**14 September update:** [eight-component PCA](pca-ridge-results.md) improves
+nested ResNet local EMD to 45.02758. Its fixed equal blend with RGB + texture
+scores 42.02843 and passes the new selective submission screen. At most that
+single candidate will be uploaded; the standalone PCA model is not eligible.
+
 **11 September update:** the [physical texture and color control](physical-texture-results.md)
 is complete. Adding four normalized texture measurements worsened local ridge
 EMD by about 2.2 with either RGB or grayscale inputs, but RGB + texture reached a

@@ -165,3 +165,10 @@ our best public submission at 61.11357 EMD**, a 1.24% improvement over RGB ridge
 Grayscale and grayscale + texture scored 70.83530 and 71.34901. See the
 [texture results](docs/physical-texture-results.md) for the controlled comparisons
 and `artifacts/experiments/physical_texture/` for detailed outputs.
+
+`make pca-ridge` tests eight-component PCA fitted inside every training fold,
+with the existing nested ridge penalty selection, plus a fixed 50/50 blend with
+RGB + texture. It reconstructs the uncompressed reference and applies a
+predeclared screen before recommending at most one submission. The
+[PCA report](docs/pca-ridge-results.md) records 45.02758 local EMD for PCA and
+42.02843 for the blend; only the blend passes all four submission criteria.

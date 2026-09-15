@@ -226,3 +226,10 @@ records **38.85735 local EMD / 13.50764 camera disagreement**, both better than
 spectral ridge. The selected upload scores **59.84769 publicly**, so spectral
 ridge remains best at **55.78511**. Two of five daily slots were used on
 September 15; no settings changed after the public result.
+
+`make dino-pca` tests frozen self-supervised DINOv2 patch features with the
+existing nested PCA/ridge head. The [DINO report](docs/dino-results.md) records
+**41.66782 local EMD / 22.10168 camera disagreement**. Mean EMD is worse than
+spectral ridge, so the declared rule rejects an upload; only 8/24 soils improve. The candidate
+and pinned code/weight provenance are saved. Spectral ridge remains best at
+**55.78511 publicly**; three of September 15's five submission slots remain.

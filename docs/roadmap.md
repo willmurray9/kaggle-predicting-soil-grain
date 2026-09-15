@@ -899,6 +899,15 @@ corruption. Reuse the existing PCA/ridge code and installed vision dependencies.
 Review, commit/push with the personal email, merge into main, and remove the
 completed branch.
 
+Completed: DINO scores **41.66782 local EMD / 22.10168 camera disagreement**,
+with only 8/24 soils improving against spectral ridge. Alpha 100 wins every
+outer fold and the final selection. The strict two-metric rule fails, so no
+upload is made. Spectral ridge remains best publicly at **55.78511** and three
+daily slots remain. All 316 tests pass; all 165 previous artifacts are unchanged.
+See [the DINO report](dino-results.md) and [submission log](submissions.md).
+No further pooling, blend, or encoder variation follows these scores. A future
+EMD-aligned objective on the spectral features is a possible separate comparison.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

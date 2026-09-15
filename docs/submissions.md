@@ -3,6 +3,24 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-15 — frozen DINOv2 patch features: no submission
+
+The [DINO comparison](dino-results.md), declared in
+`70daa80002eedb906147f3a064acb0d41598fdd3`, scores **41.66782 local EMD** versus
+spectral ridge's **40.53927**. Camera disagreement improves to **22.10168**, but
+only 8/24 soils improve and the gain excluding the largest beneficiary is
+**−3.33431 EMD**. The declared strict two-metric rule fails, so no candidate is
+uploaded and no fallback comparison follows the result.
+
+The saved candidate is
+`artifacts/submissions/dinov2_vits14_patch_pca8_nested_ridge.csv`, produced by
+`3e4a97a6bdeac02c1ac6f1481751f378510ecd17`, with SHA-256
+`f9c04cd140e2fb26cd87db3843459110a5ad02ebc03172d141100f5656484003`.
+Feature, upstream code, weight, photo, and source provenance is preserved under
+`artifacts/experiments/dino_pca/`. Spectral ridge remains our best submitted
+model at **55.78511**. The count remains **eleven lifetime submissions, two
+today, three daily slots remaining** under the API limit of five.
+
 ## 2026-09-15 — spectral/photo-training combination
 
 Declaration `d49b7d3fdac58bae1dac7b175887cc8922466d03` fixes one combination:

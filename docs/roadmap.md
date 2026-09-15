@@ -779,6 +779,17 @@ with fold-fitted PCA/ridge, pinning its code and weights before use. This change
 the pretraining objective and spatial representation; it is not evaluated here.
 See the [official DINOv2 repository](https://github.com/facebookresearch/dinov2).
 
+Completed: spectral ridge scores **40.53927 EMD / 25.33273 camera disagreement**;
+photo-trained ridge scores **42.28823 / 13.91782**. Both pass the declared rule
+and all four earlier diagnostic screens, so lower EMD selects spectral. Its one
+submission, **56258597**, scores **55.78511 public EMD**, a new best and **8.72%**
+better than the prior 61.11357. All 288 tests and both CI jobs passed before
+upload; all 151 earlier artifacts remain unchanged. One of today's five slots
+is used. See [the experiment report](physical-photo-results.md) and
+[submission record](submissions.md). No settings change or second upload follows
+the public result. DINO patch features and combining the two new ideas remain
+options for separately declared future experiments; neither has been evaluated here.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

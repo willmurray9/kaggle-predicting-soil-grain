@@ -2,6 +2,9 @@
 
 Learning-first scaffold for the Kaggle competition [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 
+Current best: **55.78511 public EMD**, using RGB + texture + spectral ridge
+(15 September 2026). See the [latest results](docs/physical-photo-results.md).
+
 The pipeline provides:
 
 - clean data and artifact folders,
@@ -208,3 +211,11 @@ are **41.82774** local EMD and **13.08667** camera disagreement. Under the user'
 new request for one informative upload, the saved official ResNet blend wins the
 declared comparison and scores **62.65462 publicly**. RGB + texture remains best
 at **61.11357**; two of five slots were used on September 14.
+
+`make physical-photo` tests six calibrated spectral texture bands and, separately,
+ridge trained on individual photos with equal total weight per soil. Both improve
+local EMD and camera disagreement. The [comparison](docs/physical-photo-results.md)
+records **40.53927 / 25.33273** for spectral ridge and **42.28823 / 13.91782** for
+photo training. The selected spectral model scores **55.78511 publicly**, an
+**8.72% improvement** over the previous best. One of five daily slots was used
+on September 15. No dependencies or pretrained weights were added.

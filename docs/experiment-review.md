@@ -1,5 +1,14 @@
 **Experiment review — 10 September 2026**
 
+**15 September, new best from broader texture scales:** the [spectral and photo-training comparison](physical-photo-results.md)
+tests two fixed changes to the incumbent ridge. Adding six calibrated spectral
+bands scores **40.53927 local EMD / 25.33273 camera disagreement**, improving
+15/24 soils. Weighted photo training scores **42.28823 / 13.91782**. Both pass
+the declared two-metric rule; lower EMD selects spectral for the one upload.
+It reaches **55.78511 public EMD**, improving the previous **61.11357** by
+**8.72%**. RGB + texture + spectrum is now our best submitted model. One daily
+slot is used and four remain; no settings change or further upload follows.
+
 **14 September, second encoder and informative upload:** [MobileNet PCA/ridge](mobilenet-results.md)
 scores 41.82774 local EMD and 13.08667 camera disagreement. The user requested
 one more experiment followed by one upload; the predeclared lower-EMD comparison

@@ -3,6 +3,48 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-15 — spectral texture: new best
+
+Declaration `41dd0a5e59b4f31634fecc2b5adbab5ac654295b` fixed two separate
+comparisons: six calibrated spectral bands added to the incumbent features,
+and ridge trained on individual photos with equal total weight per soil. Both
+retain alpha 10 and whole-soil validation. At most one upload is allowed if
+both local EMD and camera disagreement strictly improve, with lower EMD winning
+and an exact tie preferring spectral texture. The [experiment report](physical-photo-results.md)
+records both candidates passing this rule and all four earlier diagnostics.
+Spectral ridge wins the comparison; photo-trained ridge remains unsubmitted.
+
+| Field | Result |
+| --- | --- |
+| Submission ID | `56258597` |
+| Submitted UTC | `2026-09-15 16:08:21.117000` |
+| Status | Complete |
+| Public EMD, new best | **55.78511** |
+| Previous best public EMD | 61.11357, RGB + texture |
+| Improvement | **5.32846 EMD / 8.72%** |
+| Private score | Unavailable |
+| Local outer EMD | 40.539274942623116 |
+| Camera disagreement | 25.332728282723547 |
+
+Submitted file: `artifacts/submissions/rgb_texture_spectral_ridge.csv`.
+SHA-256: `7e34fa8cc8e8eaa455572ce93ca115077fdd085b41aad72a1745681d68212766`.
+Producing code: `3bc7d28b0c6fda22628f6715a098facffd0aa4ee`.
+All **288 tests** and both [CI jobs](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/34992686018)
+passed before upload. Independent review checked the model math, valid curves,
+exact template order, all 178 recorded hashes, and numerical differences from
+all nine earlier submissions. All 151 prior artifacts remain unchanged.
+
+RGB + texture + spectrum becomes the best submitted model. Its local gain
+transferred to the public evaluation, although this does not establish private
+performance or competitors' methods. No settings changed and no additional
+upload followed the public score.
+
+Receipt:
+`artifacts/experiments/informative_submissions/2026-09-15_spectral_ridge.json`.
+It was written before the API request and finalized against the exact accepted
+reference. Kaggle now shows **ten lifetime uploads, one today, and four daily
+slots remaining** under its five-per-day API limit.
+
 ## 2026-09-14 — official recipe blend after one more encoder experiment
 
 The user requested one additional experiment followed by an informative upload,

@@ -1,5 +1,13 @@
 **Experiment review — 10 September 2026**
 
+**15 September, image geometry and distribution transport:** the
+[two fixed alternatives](geometry-transport-results.md) score **48.33618**
+and **47.47930 local EMD**, both worse than spectral ridge's **40.53927**.
+Camera disagreement also increases, and only 7/24 and 10/24 soils improve.
+The experiments change the image representation and the target representation,
+respectively; neither prompts tuning or an upload. Best public remains
+**55.78511**, with three daily slots preserved.
+
 **15 September, self-supervised DINO patch features:** the [fixed DINO comparison](dino-results.md)
 scores **41.66782 local EMD / 22.10168 camera disagreement**. Camera agreement
 improves versus spectral ridge, but EMD worsens and only 8/24 soils improve.

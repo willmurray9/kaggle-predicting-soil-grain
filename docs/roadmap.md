@@ -981,6 +981,20 @@ paper, but is not evaluated here; it adds a shape restriction and target-fitting
 stage. That paper's image split and test-loss checkpoint selection are not
 comparable to our unseen-soil validation.
 
+**Completed:** [the two fixed comparisons](geometry-transport-results.md)
+score **48.33618 local EMD / 35.15894 camera disagreement** for granulometry
+and **47.47930 / 31.54698** for transport. Both worsen both reference metrics;
+only 7/24 and 10/24 soils improve. Neither is submitted, leaving three daily
+slots. All 384 tests pass. Quantile conversion alone costs 0.10229 mean EMD,
+well below the observed model deficit. No follow-up tuning or blend was run.
+
+**Next proposed direction, not yet declared or evaluated:** retain a compact
+description of the distribution of local patch measurements within photos.
+Earlier spatial coverage averaged crop features; representing variation could
+distinguish homogeneous texture from fine/coarse mixtures with a similar mean.
+Fix the measurement recipe and comparison before extracting or scoring it, and
+retain whole-soil folds. Avoid another aperture, encoder or blend sweep.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

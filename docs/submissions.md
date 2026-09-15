@@ -3,6 +3,21 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-15 — image granulometry and distribution transport: no submission
+
+The [two fixed experiments](geometry-transport-results.md), declared in
+`f51647f4cd100d20c81d44f8e76b226ff568ce84` and produced by
+`6b14133aad80fdd6b4ad797a32e89cbc7ac96377`, score **48.33618 / 47.47930
+local EMD**, versus spectral ridge's **40.53927**. Camera disagreement also
+worsens to **35.15894 / 31.54698**, versus **25.33273**. Neither meets the
+fixed strict improvement requirement in both metrics; no upload is requested.
+
+Candidates and hashes are recorded in the linked report and
+`artifacts/experiments/geometry_transport/summary.json`. All 384 tests pass.
+Spectral ridge remains best publicly at **55.78511**. The count stays at
+**eleven lifetime submissions, two today, three of five daily slots remaining**.
+No fallback, combination or parameter search follows these results.
+
 ## 2026-09-15 — frozen DINOv2 patch features: no submission
 
 The [DINO comparison](dino-results.md), declared in

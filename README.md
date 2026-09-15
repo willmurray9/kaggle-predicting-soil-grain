@@ -233,3 +233,10 @@ existing nested PCA/ridge head. The [DINO report](docs/dino-results.md) records
 spectral ridge, so the declared rule rejects an upload; only 8/24 soils improve. The candidate
 and pinned code/weight provenance are saved. Spectral ridge remains best at
 **55.78511 publicly**; three of September 15's five submission slots remain.
+
+`make geometry-transport` tests two different directions: twelve standalone
+image-granulometry measurements, and ridge predicting log-size quantiles instead
+of CDF heights. The [comparison](docs/geometry-transport-results.md) scores
+**48.33618 / 47.47930 local EMD**, with worse camera disagreement for both.
+Neither qualifies for upload. The current public best remains **55.78511**;
+three daily slots are preserved. There is no parameter or blend search.

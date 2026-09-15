@@ -840,6 +840,65 @@ Two of today's five slots are used. See [the combination report](spectral-photo-
 and [submission log](submissions.md). No further model variation or upload follows
 this result; DINO remains the next separately declared representation option.
 
+## Frozen DINOv2 patch features — declared 2026-09-15
+
+The user approved the next representation experiment. Test one frozen
+**DINOv2 ViT-S/14 without registers** using official upstream commit
+`7764ea0f912e53c92e82eb78a2a1631e92725fc8` and
+`https://dl.fbaipublicfiles.com/dinov2/dinov2_vits14/dinov2_vits14_pretrain.pth`,
+SHA-256 `b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9`.
+The checkpoint is 88,283,115 bytes. Its code and weights were inspected/downloaded
+for provenance before any soil-feature extraction or new scores. Public
+pretrained models are permitted by the unchanged competition rules. Fresh
+preflight shows 11 completed submissions, two of five daily slots used, and
+spectral ridge best at **55.78511**, rank **83/249**.
+
+Use the existing calibrated **100 mm / 256-pixel** central crop, then DINOv2's
+official evaluation recipe: bicubic resize to 256, center crop to **224**, tensor
+conversion, and ImageNet mean `[0.485, 0.456, 0.406]` / std
+`[0.229, 0.224, 0.225]`. This retains **87.5 mm** of the original field.
+Run frozen evaluation/inference mode on CPU with batches of eight. Take only
+the last block's **256 patch tokens**, after the encoder's learned LayerNorm,
+and average them into **384 features**. Do not use the class token, concatenate
+layers, add L2 normalization, try another resolution, or fine-tune the encoder.
+
+Average photo features equally per soil, preserving float32 aggregation as in
+our earlier frozen encoders. Use existing **eight-component PCA** and nested
+ridge penalties **10, 100, 1000**, ties preferring larger alpha. Fit scaling,
+PCA and regression afresh inside each inner/outer training fold. Hold out all
+photos of each soil together; query pooled and camera features in the same
+outer fit. Final alpha selection uses the 24 training soils; its selection
+score is not a validation estimate. The feature extractor never receives labels.
+
+The hypothesis is that self-supervised patch representations capture spatial
+and material cues missed by our handcrafted or classification features. Their
+pretraining may still fail to capture this task, and averaging patch tokens
+discards spatial arrangement. These tokens do not directly measure grain sizes
+or mass percentages. This is one fixed representation, with no blend, second
+pooling scheme, feature concatenation, or fallback experiment in this batch.
+See the [official source](https://github.com/facebookresearch/dinov2/tree/7764ea0f912e53c92e82eb78a2a1631e92725fc8)
+and [research paper](https://arxiv.org/abs/2304.07193).
+
+Verify the spectral reference's saved sources, aligned curves, and recomputed
+scores: **40.539274942623116 local EMD / 25.332728282723547 camera disagreement**.
+Report DINO against this reference on all 24 soils and the same 21 camera pairs,
+plus per-soil gains and the earlier four diagnostic screens. Allow **at most
+one** valid, distinct upload only if both local EMD and camera disagreement
+strictly improve. Otherwise save the result without uploading; no fallback or
+post-result settings change. Check fresh quota/history and completed tests/CI
+before any upload. Preserve the remaining daily slots.
+
+Keep all **165 prior artifacts** unchanged. Add `make dino-pca`, isolated
+outputs under `artifacts/experiments/dino_pca/`, and candidate
+`artifacts/submissions/dinov2_vits14_patch_pca8_nested_ridge.csv`. Pin and verify
+upstream code/checkpoint provenance; record feature/photo/source/candidate
+hashes, preprocessing, pooling, environment versions and alpha selections.
+Test frozen/batch-independent extraction, preprocessing and patch-only pooling,
+checkpoint integrity, photo alignment, test independence, and reference/source
+corruption. Reuse the existing PCA/ridge code and installed vision dependencies.
+Review, commit/push with the personal email, merge into main, and remove the
+completed branch.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

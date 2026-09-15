@@ -1,5 +1,13 @@
 **Experiment review — 10 September 2026**
 
+**15 September, spectral/photo-training combination:** the [fixed combination](spectral-photo-results.md)
+improves local EMD to **38.85735** and camera disagreement to **13.50764**
+against the new spectral reference (40.53927 / 25.33273). Fifteen soils improve,
+and the gain remains positive without the largest beneficiary. It passes the
+declared screen, but its one upload scores **59.84769 publicly**, worse than
+**55.78511**. Keep spectral ridge as the best submitted model. Two daily slots
+are used and three remain; no tuning or additional upload follows the result.
+
 **15 September, new best from broader texture scales:** the [spectral and photo-training comparison](physical-photo-results.md)
 tests two fixed changes to the incumbent ridge. Adding six calibrated spectral
 bands scores **40.53927 local EMD / 25.33273 camera disagreement**, improving

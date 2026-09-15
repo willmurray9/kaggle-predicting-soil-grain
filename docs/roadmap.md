@@ -831,6 +831,15 @@ prediction independence from test photos. Commit/push with the personal email,
 merge the completed work into main, and remove its branch. DINO remains a future
 representation experiment, not part of this fixed comparison.
 
+Completed: **38.85735 EMD / 13.50764 camera disagreement**, improving 15/24
+soils against spectral ridge and passing both the declared rule and all four
+older diagnostics. The one upload, **56259049**, scores **59.84769 public EMD**,
+so spectral ridge retains the best score of **55.78511**. All 299 tests and both
+CI jobs passed before upload, and all 159 previous artifacts remain unchanged.
+Two of today's five slots are used. See [the combination report](spectral-photo-results.md)
+and [submission log](submissions.md). No further model variation or upload follows
+this result; DINO remains the next separately declared representation option.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

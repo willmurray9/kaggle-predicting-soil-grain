@@ -219,3 +219,10 @@ records **40.53927 / 25.33273** for spectral ridge and **42.28823 / 13.91782** f
 photo training. The selected spectral model scores **55.78511 publicly**, an
 **8.72% improvement** over the previous best. One of five daily slots was used
 on September 15. No dependencies or pretrained weights were added.
+
+`make spectral-photo` tests their fixed combination: the same 23 spectral inputs
+with weighted-photo ridge. The [combination report](docs/spectral-photo-results.md)
+records **38.85735 local EMD / 13.50764 camera disagreement**, both better than
+spectral ridge. The selected upload scores **59.84769 publicly**, so spectral
+ridge remains best at **55.78511**. Two of five daily slots were used on
+September 15; no settings changed after the public result.

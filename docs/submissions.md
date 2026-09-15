@@ -3,6 +3,47 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-15 — spectral/photo-training combination
+
+Declaration `d49b7d3fdac58bae1dac7b175887cc8922466d03` fixes one combination:
+the same 23 RGB/texture/spectral inputs with equal-soil-weight photo ridge,
+alpha 10. The reference is now spectral ridge, with local EMD 40.53927 and
+camera disagreement 25.33273. Both must strictly improve for one upload.
+The [comparison](spectral-photo-results.md) reaches 38.85735 / 13.50764 and
+improves 15/24 soils. All four older diagnostics also pass, including positive
+gain without the largest beneficiary. There is no parameter or blend search.
+
+| Field | Result |
+| --- | --- |
+| Submission ID | `56259049` |
+| Submitted UTC | `2026-09-15 16:35:22.640000` |
+| Status | Complete |
+| Public EMD | **59.84769** |
+| Best public EMD, retained | **55.78511**, spectral ridge |
+| Difference | **4.06258 EMD / 7.28% worse** |
+| Private score | Unavailable |
+| Local outer EMD | 38.85734885451375 |
+| Camera disagreement | 13.507639851475513 |
+
+Submitted file: `artifacts/submissions/rgb_texture_spectral_photo_ridge.csv`.
+SHA-256: `456dcda4ef020885cc97144c5dbe59e1dbcc02fb8055657475224cfd80a8bfeb`.
+Producing code: `26923069cb63ce88e39d4081baa1f362e094c75f`.
+All **299 tests** and both [CI jobs](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/34995667798)
+passed before upload. Independent reviews verified implementation, metrics,
+valid curves, template order, all 176 recorded hashes, and numeric differences
+from all ten earlier uploads. All 159 previous artifacts remain unchanged.
+
+The local improvement did not transfer publicly. Spectral ridge stays best;
+the result does not establish whether useful signal was suppressed by the
+photo penalty or whether population differences dominate. No settings changed
+and no further upload followed the public score.
+
+Final receipt:
+`artifacts/experiments/informative_submissions/2026-09-15_spectral_photo_ridge.json`.
+The receipt was created before requesting the upload and finalized using its
+exact accepted reference. There are now **eleven lifetime uploads, two today,
+and three daily slots remaining** under the API limit of five.
+
 ## 2026-09-15 — spectral texture: new best
 
 Declaration `41dd0a5e59b4f31634fecc2b5adbab5ac654295b` fixed two separate

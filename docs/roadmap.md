@@ -937,7 +937,10 @@ train-only scaling, and ridge alpha **10**. Neither includes a search or blend.
    Fit ridge with an unpenalized intercept to these 1,000 log10-diameter outputs.
    Project each predicted quantile vector onto nondecreasing sequences with
    equal-weight isotonic regression bounded to `[log10(0.002), log10(200)]`.
-   Convert back by counting quantiles ≤ each required log-diameter, times 0.1.
+   Convert back by counting quantiles ≤ each required log-diameter plus a fixed
+   **1e-12 log10 numerical tolerance**, times 0.1. The tolerance prevents
+   floating-point averaging from moving an atom at a support into the next bin;
+   it was fixed from a synthetic constant-point-mass test before soil scores.
    This moves mass along the size axis, unlike averaging CDF heights. Quantile
    squared loss relates to **W₂²**, not the competition's W₁/EMD; score the
    reconstructed eleven-point CDF with the actual competition metric. The

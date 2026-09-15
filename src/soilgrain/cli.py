@@ -12,7 +12,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Soil grain Kaggle scaffold")
     parser.add_argument(
         "command",
-        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "model-blend", "nested-neighbors", "spatial-coverage", "physical-texture", "pca-ridge", "official-preprocessing", "texture-kernel", "linear-svr", "shallow-trees", "mobilenet-pca", "physical-photo", "spectral-photo", "dino-pca", "validate"],
+        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "model-blend", "nested-neighbors", "spatial-coverage", "physical-texture", "pca-ridge", "official-preprocessing", "texture-kernel", "linear-svr", "shallow-trees", "mobilenet-pca", "physical-photo", "spectral-photo", "dino-pca", "geometry-transport", "validate"],
     )
     parser.add_argument("--config", default="configs/data.yaml")
     parser.add_argument("--submission", help="Submission CSV to validate.")
@@ -169,6 +169,12 @@ def main() -> None:
         from soilgrain.dino_experiment import write_dino_experiment
 
         paths = write_dino_experiment(args.config)
+        for path in paths.values():
+            print(path)
+    elif args.command == "geometry-transport":
+        from soilgrain.geometry_transport_experiment import write_geometry_transport_experiment
+
+        paths = write_geometry_transport_experiment(args.config)
         for path in paths.values():
             print(path)
     elif args.command == "validate":

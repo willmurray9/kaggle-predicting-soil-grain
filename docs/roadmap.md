@@ -908,6 +908,76 @@ See [the DINO report](dino-results.md) and [submission log](submissions.md).
 No further pooling, blend, or encoder variation follows these scores. A future
 EMD-aligned objective on the spectral features is a possible separate comparison.
 
+## Image granulometry and distribution transport — declared 2026-09-15
+
+The user requested materially different experiments, rather than more small
+encoder or parameter variations. Test two separate hypotheses, fixed before
+new scores. Both retain all 24 soils, whole-soil leave-one-out validation,
+train-only scaling, and ridge alpha **10**. Neither includes a search or blend.
+
+1. **Image granulometry:** use twelve geometric measurements alone, with no
+   RGB or Fourier inputs. From the existing calibrated **100 mm / 256-pixel**
+   grayscale crop, reflect-pad once by **83 pixels** on each side. Open the
+   same fixed padded image independently using square sizes **3, 5, 11, 21,
+   41, 83 pixels**. Measure volumes on the same original central 256×256 region.
+   Repeat for `1-gray`. For each polarity, record the six successive volume
+   losses divided by the total loss from the original to the largest opening;
+   total loss at most 1e-12 returns zeros. Clip numerical negative losses to zero
+   and normalize their sum. The apertures are **1.17, 1.95, 4.30, 8.20, 16.02,
+   32.42 mm**, not exact sieve diameters. This measures removed image contrast,
+   not grain counts, areas or bulk mass. Square morphology tests geometry that
+   Fourier power discards. Reflection preserves coverage but can enlarge edge
+   fragments; unresolved fines still require inference. Average photo features
+   equally in float64 and predict the eleven CDF values with existing ridge.
+2. **Distribution transport:** keep exactly the incumbent's **23 features**,
+   but predict log-diameter quantiles of each soil's distribution. Treat the
+   eleven CDF values as a discrete mass distribution on the existing diameter
+   support. Evaluate its generalized inverse at **1,000 midpoint percentiles**
+   `(arange(1000)+0.5)/10`, using the first support where CDF≥percentile.
+   Fit ridge with an unpenalized intercept to these 1,000 log10-diameter outputs.
+   Project each predicted quantile vector onto nondecreasing sequences with
+   equal-weight isotonic regression bounded to `[log10(0.002), log10(200)]`.
+   Convert back by counting quantiles ≤ each required log-diameter, times 0.1.
+   This moves mass along the size axis, unlike averaging CDF heights. Quantile
+   squared loss relates to **W₂²**, not the competition's W₁/EMD; score the
+   reconstructed eleven-point CDF with the actual competition metric. The
+   1,000 values are numerical resolution, not extra labels or independently
+   selected models. Record a label-only round-trip diagnostic; midpoint
+   discretization contributes at most **0.05 percentage point per threshold /
+   0.25 EMD**. Do not change quantile count after inspecting that diagnostic.
+
+The reference remains spectral ridge: **40.539274942623116 local EMD /
+25.332728282723547 camera disagreement**, best public **55.78511**. Verify
+source/photo/cache hashes, independently align spectral and RGB/texture caches,
+and reconstruct reference OOF/camera/test curves within 1e-10 before either
+new model. Use the same 21 camera pairs; all photos of a held-out soil remain
+excluded. The transport transformation is fixed and applied per training curve,
+without learning a target basis across folds. Final fits use all 24 soils.
+
+Allow **at most one** valid, distinct upload only when both primary EMD and
+camera disagreement strictly improve versus spectral ridge. If both qualify,
+choose lower EMD, exact tie preferring granulometry. Report the four earlier
+screens and per-soil gains as diagnostics. No fallback, combined model, extra
+parameter search or public-score-driven follow-up is part of this batch.
+
+Preserve all **173 earlier artifacts**. Add `make geometry-transport`, with
+isolated features, OOF/camera curves, per-soil comparisons, candidates and
+provenance under `artifacts/experiments/geometry_transport/`. Reuse installed
+SciPy/scikit-learn; no new package or pretrained download. Test known shapes,
+equal-histogram/different-geometry examples, polarity/brightness invariance,
+fixed boundary treatment, quantile round trips, point-mass transport, monotone
+projection, train-only fitting, test independence, and reference corruption.
+Review, test, commit/push with the personal email, merge into main, and remove
+the completed branch. Refresh Kaggle history/capacity before any upload.
+
+Sources: [morphological opening](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.grey_opening.html),
+[sediment granulometry](https://www.ias-iss.org/ojs/IAS/article/download/662/565/666),
+[distribution-valued Fréchet regression, §6.1](https://anson.ucdavis.edu/~mueller/frechet26.pdf).
+An alternative two-parameter Weibull model is motivated by a related soil-image
+paper, but is not evaluated here; it adds a shape restriction and target-fitting
+stage. That paper's image split and test-loss checkpoint selection are not
+comparable to our unseen-soil validation.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

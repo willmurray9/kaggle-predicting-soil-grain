@@ -790,6 +790,47 @@ is used. See [the experiment report](physical-photo-results.md) and
 the public result. DINO patch features and combining the two new ideas remain
 options for separately declared future experiments; neither has been evaluated here.
 
+## Spectral features with photo training — declared 2026-09-15
+
+The user approved continuing with the fixed combination suggested after the
+spectral result. Test exactly one candidate: the same **23 RGB/texture/spectral
+features**, trained with the existing weighted-photo ridge. Each soil contributes
+total weight one, scaling uses training-soil feature means, the intercept is
+unpenalized, and alpha stays **10**. All six spectral bands, crop size, photo
+aggregation, target projection, and labels stay fixed. There is no blend, tuning,
+new feature extraction, or encoder change in this comparison.
+
+The reference is now **spectral ridge**, not the older 17-feature model:
+**40.539274942623116 local EMD / 25.332728282723547 camera disagreement**, with
+**55.78511 public EMD** from submission `56258597`. Reconstruct its aligned
+OOF, camera, and test predictions within 1e-10 from verified caches before
+evaluating the combination. Whole-soil leave-one-out excludes every held-out
+photo and uses the same 24 soils and 21 camera pairs. Final fitting uses all
+24 training soils; average query features before curve repair.
+
+The hypothesis is that the broader scale information survives the within-soil
+variation penalty and improves transfer. The countervailing possibility is that
+the penalty suppresses useful variation in grain arrangement. Report per-soil
+gains, count improved, and mean gain excluding the largest beneficiary alongside
+the primary metrics; no soils are removed from fitting or primary evaluation.
+
+Allow **at most one** valid, distinct upload if both local EMD and camera
+disagreement are strictly lower than the reconstructed spectral reference.
+The four earlier screens remain diagnostics, as in the preceding batch. A
+failure means no upload; no fallback or parameter adjustment follows either
+the local or public result. Refresh Kaggle history and capacity before any
+upload, validate provenance and outputs, and wait for tests/CI to pass first.
+
+Preserve all **159 previous artifacts**. Add `make spectral-photo` using the
+existing predictors, with separate outputs under
+`artifacts/experiments/spectral_photo/` and candidate
+`artifacts/submissions/rgb_texture_spectral_photo_ridge.csv`. Record source,
+photo, feature, and candidate hashes. Test cache alignment, incumbent
+reconstruction, source/reference corruption, preserved inputs, and held-out
+prediction independence from test photos. Commit/push with the personal email,
+merge the completed work into main, and remove its branch. DINO remains a future
+representation experiment, not part of this fixed comparison.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

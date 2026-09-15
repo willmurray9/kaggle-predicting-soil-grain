@@ -995,6 +995,60 @@ distinguish homogeneous texture from fine/coarse mixtures with a similar mean.
 Fix the measurement recipe and comparison before extracting or scoring it, and
 retain whole-soil folds. Avoid another aperture, encoder or blend sweep.
 
+## Within-photo heterogeneity — declared 2026-09-15
+
+Test one fixed addition to spectral ridge: **six interquartile ranges of local
+color/texture measurements**, taking the input from 23 to **29 features**.
+Earlier spatial coverage averaged crops. This comparison asks whether regional
+variation contains useful information after retaining the current global inputs.
+
+- Use the existing calibrated **100 mm / 256-pixel RGB crop**, scaled to [0,1].
+  Divide it into a fixed **4×4 grid** of nonoverlapping **64×64-pixel / 25 mm**
+  tiles. Do not resize tiles, pad them, or measure pairs across tile boundaries.
+- Within each tile calculate R/G/B means, then RGB-mean grayscale absolute
+  differences at lags **1, 4, 16 pixels**. Each texture measurement is the
+  average of the horizontal and vertical mean absolute differences, following
+  the existing image-feature convention. Physical offsets are **0.390625,
+  1.5625 and 6.25 mm**; no additional contrast normalization is applied.
+- Across the sixteen tile measurements, take the **75th minus 25th percentile**
+  independently for each of the six descriptors, using NumPy's linear quantile
+  interpolation. Feature order is R/G/B spread, then texture spread by lag.
+  Append only these six spreads to the unchanged 23 cached inputs. Calculate
+  them within each photo, then average photo features equally in float64.
+- Retain ordinary ridge **alpha 10**, its unpenalized intercept and existing
+  curve repair. Use all 24 soils in whole-soil leave-one-out validation with
+  training-only scaling. Retain the same 21 camera pairs; all held-out soil
+  photos remain excluded. Fit the final candidate on all 24 soils.
+
+This is a surface-heterogeneity proxy, not a measured grain mass distribution.
+Shadows, lighting gradients and framing can also produce regional variation.
+Horizontal/vertical pooling is invariant to quarter turns, not arbitrary
+rotations. The IQR can miss a signal confined to only one to three of sixteen
+otherwise identical tiles; this tests broad variation, not rare-particle
+detection. Do not add another spread statistic after inspecting this result.
+
+Before extraction, verify the preceding geometry/transport manifest's sources
+and photos; independently align the 17-feature and six-band spectral caches.
+Reconstruct the spectral reference's held-out, camera and test curves within
+1e-10: **40.539274942623116 EMD / 25.332728282723547 camera disagreement**.
+Its public best remains **55.78511**. Keep all **180 earlier artifacts** intact.
+
+Allow **at most one** upload only if both local EMD and camera disagreement
+strictly improve. Report the four older screens and per-soil gains as diagnostics.
+Check fresh capacity and numeric distinctness from earlier uploads if eligible.
+There is no grid, scale, descriptor, regularization or blend search and no
+fallback upload. The 18:34 UTC preflight found eleven completed submissions,
+two of five used today, three remaining, rank 83/250, and clean synced main.
+
+Add `make patch-mixture`, with isolated features, held-out/camera predictions,
+per-soil comparisons and provenance under `artifacts/experiments/patch_mixture/`.
+Save `artifacts/submissions/rgb_texture_spectral_patch_iqr_ridge.csv`.
+Use analytic synthetic color/ramp examples, equal-histogram/different-localization
+fixtures, invariance and sparse-outlier checks. Verify source corruption,
+unchanged reference inputs, per-photo aggregation and test-feature independence.
+Review, test, commit/push before scoring, then record results, merge to main and
+remove the finished branch. No new packages or pretrained weights are required.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

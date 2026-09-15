@@ -712,6 +712,73 @@ and [submission receipt details](submissions.md). No settings change or addition
 upload follows the public result. A fixed MobileNet/RGB-texture blend remains
 a possible separately declared comparison; it has not been evaluated.
 
+## Physical texture spectrum and photo training — declared 2026-09-15
+
+The user requested more creative directions beyond the current model plateau.
+Fresh authenticated checks at 15:55–15:56 UTC show rank **107/249**, our best
+**61.11357**, leaderboard leader **0.97357**, nine completed lifetime submissions,
+and **zero of five daily slots used**. The leaderboard does not reveal competitors'
+methods. All 165 published data files match local names/sizes; all seven official
+pages, including rules/evaluation, are unchanged. See the [leaderboard](https://www.kaggle.com/competitions/soil-grain-size-from-photos/leaderboard).
+
+Test two fixed hypotheses before another generic encoder or regressor search.
+Both retain all 24 labeled soils, existing calibrated 100 mm/256-pixel crops,
+target projection, and ridge alpha **10**. Reconstruct incumbent OOF, camera,
+and test predictions within 1e-10 from the verified 17-feature cache first.
+
+1. **Spectral texture:** append six radial Fourier power fractions to the
+   incumbent's 17 RGB/texture features. Use existing RGB-mean grayscale; subtract
+   the separable Hann-window-weighted mean, multiply by that window, and FFT2.
+   Integrate squared magnitude in image-wavelength bands **1–2, 2–4, 4–8,
+   8–16, 16–32, 32–64 mm**, using frequency masks `[1/high, 1/low)` cycles/mm.
+   Divide by total power in these six bands; negligible power returns six zeros.
+   Keep equal float64 photo means and fixed ridge alpha 10. These are image
+   texture wavelengths, not directly measured particle diameters or mass fractions.
+   Fourier/wavelet sediment-sizing research motivates the experiment, but its
+   apparent surface axes differ from our bulk mass-CDF labels. Our crop sampling
+   is 0.390625 mm/pixel: clay/silt fractions remain inferred, not resolved.
+   See the [primary wavelet study](https://onlinelibrary.wiley.com/doi/10.1111/sed.12049)
+   and [USGS Fourier-method publication](https://pubs.usgs.gov/publication/70156415).
+2. **Photo-trained ridge:** retain exactly the incumbent's 17 features and fit
+   individual training photos with weight **1 / photos in that soil**. Every
+   soil therefore contributes total weight one, just as it does in ordinary
+   ridge. Standardize with the mean/std of the training-soil feature means;
+   use an unpenalized intercept and ridge alpha 10. The weighted photo objective
+   equals error on soil means plus a penalty for predictions varying within a
+   soil. It can reduce camera/framing sensitivity but can also penalize genuine
+   within-soil heterogeneity. The photos remain 24 independent labels. Hold out
+   every photo of the validation soil. Predict at pooled/camera mean features
+   before clipping/monotone repair, equivalent to averaging raw photo predictions.
+
+These are two separate candidates; do not combine them, change spectral bins,
+crop size, weighting, alpha, or target loss after seeing scores. No inner search
+is needed for these fixed models. Use one model per outer training set for pooled
+and camera queries (existing ridge may deterministically refit). Final fits use
+all 24 labeled soils. Evaluate 24 whole-soil folds and the same 21 camera pairs.
+
+For this exploratory round, submit **at most one** new, valid, distinct candidate
+if **both** its mean outer EMD and paired-camera disagreement are strictly lower
+than the reconstructed incumbent (43.40570546697441 / 29.113056428926008).
+If both qualify, use lower outer EMD, exact tie preferring spectral texture.
+Retain the four earlier screens, per-soil gains, and largest-beneficiary
+sensitivity as diagnostics; they are not additional vetoes for this batch.
+This is a declared exploration policy, not a statistical guarantee. No automatic
+fallback upload or additional submission follows the public score.
+
+Keep all **151 previous artifacts** unchanged. Save separate feature, OOF/camera,
+per-soil comparison, candidate, source/photo hashes, settings, and decisions under
+`artifacts/experiments/physical_photo/`. No dependencies or downloaded models are
+needed. Test known spectral frequencies, brightness/rotation invariance, constant
+images, calibrated cropping, photo-ridge equivalence with one view per soil,
+invariance to duplicating all views of a soil, held-out soil/test exclusion,
+reference reconstruction, and candidate validity. Review, test, commit/push
+with the personal email, merge into main, and remove the completed branch.
+
+Next representation option: frozen self-supervised DINOv2 ViT-S/14 patch features
+with fold-fitted PCA/ridge, pinning its code and weights before use. This changes
+the pretraining objective and spatial representation; it is not evaluated here.
+See the [official DINOv2 repository](https://github.com/facebookresearch/dinov2).
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

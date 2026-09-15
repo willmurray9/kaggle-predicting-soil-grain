@@ -3,6 +3,20 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-15 — within-photo heterogeneity: no submission
+
+The [fixed patch comparison](patch-mixture-results.md), declared in
+`ed431eea003f0ec0c9266e56b3c3eedbbdfb4e1a`, scores **41.74919 local EMD**
+versus spectral ridge's **40.53927**. Camera disagreement improves from
+**25.33273 to 24.17428**, but only 9/24 soils improve. The declared strict
+two-metric rule fails, so no upload is requested and no fallback is tried.
+
+Producing code: `ffb671a5257d3da6436f3153bfbcfb0416d5d8f7`.
+Candidate: `artifacts/submissions/rgb_texture_spectral_patch_iqr_ridge.csv`.
+SHA-256: `cf1173e3cbc8e5837137afff437a14978a64644470aea46e19168a57dd2dc024`.
+All 413 tests pass. Best public stays **55.78511**, with **eleven lifetime
+submissions, two today, and three of five daily slots remaining**.
+
 ## 2026-09-15 — image granulometry and distribution transport: no submission
 
 The [two fixed experiments](geometry-transport-results.md), declared in

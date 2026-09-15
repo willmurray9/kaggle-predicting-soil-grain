@@ -1049,6 +1049,21 @@ unchanged reference inputs, per-photo aggregation and test-feature independence.
 Review, test, commit/push before scoring, then record results, merge to main and
 remove the finished branch. No new packages or pretrained weights are required.
 
+**Completed:** [the fixed comparison](patch-mixture-results.md) scores
+**41.74919 local EMD / 24.17428 camera disagreement**. Only 9/24 soils improve;
+mean gain is −1.20991 EMD and −1.49997 without the largest beneficiary. Camera
+agreement improves slightly, but the required EMD improvement fails. No upload
+is made and no tile/descriptor/pooling search follows. All 413 tests pass.
+
+**Next proposed direction, not yet declared or evaluated:** inspect explicit
+coarse-particle candidates at the highest available source resolution on a fixed
+small paired-camera panel. Assess boundaries before any fitting; only plausible
+regions justify count/projected-area/diameter summaries. Earlier granulometry
+measured contrast loss without identifying instances. Touching grains, shadows
+and surface-area versus bulk-mass differences remain limitations; stop at the
+feasibility audit if the boundaries are unconvincing. Do not imply recovery of
+detail lost when the competition images were reduced.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

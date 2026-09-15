@@ -1,5 +1,12 @@
 **Experiment review — 10 September 2026**
 
+**15 September, within-photo variation:** the [fixed tile-IQR comparison](patch-mixture-results.md)
+adds six regional-spread measurements to the existing 23 spectral features.
+It scores **41.74919 local EMD / 24.17428 camera disagreement**, versus
+**40.53927 / 25.33273**. Only 9/24 soils improve. Camera agreement improves
+slightly, but EMD worsens, so no upload is made; three daily slots remain.
+No tile or pooling-statistic search follows the result.
+
 **15 September, image geometry and distribution transport:** the
 [two fixed alternatives](geometry-transport-results.md) score **48.33618**
 and **47.47930 local EMD**, both worse than spectral ridge's **40.53927**.

@@ -240,3 +240,9 @@ of CDF heights. The [comparison](docs/geometry-transport-results.md) scores
 **48.33618 / 47.47930 local EMD**, with worse camera disagreement for both.
 Neither qualifies for upload. The current public best remains **55.78511**;
 three daily slots are preserved. There is no parameter or blend search.
+
+`make patch-mixture` adds six measures of within-photo color/texture variation
+to the 23 spectral inputs. The [heterogeneity comparison](docs/patch-mixture-results.md)
+scores **41.74919 local EMD / 24.17428 camera disagreement**. Only 9/24 soils
+improve; EMD is worse than spectral ridge, so no upload is made. The current
+public best remains **55.78511**, with three of September 15's five slots unused.

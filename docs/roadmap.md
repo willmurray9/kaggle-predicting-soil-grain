@@ -1064,6 +1064,67 @@ and surface-area versus bulk-mass differences remain limitations; stop at the
 feasibility audit if the boundaries are unconvincing. Do not imply recovery of
 detail lost when the competition images were reduced.
 
+## Coarse-particle feasibility audit — declared 2026-09-16
+
+Before another predictive model, test whether a fixed region detector identifies
+visible individual grains. This is an image-only feasibility audit, not a model
+comparison. No training labels, held-out EMD, test photos or submissions are
+used. Preserve all **186 existing artifacts**.
+
+Select paired training soils at positions **0, 7, 14, 20** in the sorted list
+having both Motorola Edge and Samsung A52 photos: **F827, H183, H516, H668**.
+Use the lexicographically first photo for each camera, giving eight images.
+Selection preceded viewing and used no labels or model errors. The source
+contact sheet shows coarse grains as well as fine matrix and shadows. These
+are different views of each soil, not registered images of identical particles.
+
+Fix one heuristic before any region extraction:
+
+1. Apply EXIF orientation and RGB conversion, calculate effective PPM using
+   the same native-to-downloaded resolution correction as the existing crop,
+   and take the central 100 mm square **without resizing**. The panel retains
+   455–460 pixels across this field, approximately 4.55–4.60 pixels/mm. This
+   preserves available detail; it cannot recover original camera resolution.
+2. On RGB-mean grayscale in [0,1], calculate Gaussian gradient magnitude with
+   **sigma=max(0.5 pixel, 0.25 mm × PPM)** and reflected boundaries. A maximum
+   gradient at most 1e-12 returns no regions.
+3. Mark pixels at or below the **25th gradient percentile**, with linear
+   interpolation. Binary-open once with a raster disk satisfying
+   `dx²+dy² <= (0.5 mm × PPM)²`, using a zero border; label the surviving
+   connected components with **eight-connectivity** as positive integer seeds.
+   If no seeds survive, return no regions. Do not add manual seeds.
+4. Scale the gradient by its maximum to [0,65535], round to uint16 and run
+   SciPy's `watershed_ift` once with those seeds and eight-connectivity. No
+   background mask, negative markers, alternate algorithm or threshold search.
+5. Record every region's seed/region ID, pixel area, area in mm² and
+   equivalent-circle diameter `2*sqrt(area_mm²/pi)`. Flag crop-edge regions as
+   truncated. Overlay seeds and boundaries; distinguish interior regions with
+   diameter **at least 2 mm** from smaller or truncated regions. Record all
+   regions rather than silently deleting difficult cases.
+
+Watershed partitions the whole image, including fine matrix; its regions are
+not automatically grains. Independently review all eight overlays against the
+source crops. Systematic grain splitting, merged neighboring grains or large
+false regions in fine matrix rejects this detector before predictive fitting.
+There is no quantitative segmentation-accuracy claim without annotated masks.
+If the audit fails, stop this method without producing model features, a CDF
+candidate or an upload. Any later detector requires a separate declaration.
+
+Keep the implementation small: calibrated crop, fixed detector, region table
+and one `make particle-audit` report command. Use synthetic calibration/area,
+seed/connectivity, flat-image and border tests, plus source-fingerprint checks.
+Write source-resolution crops, label/seed arrays, overlays, region tables and
+provenance under `artifacts/experiments/particle_audit/`; record findings in Git.
+Verify source hashes from the previous patch manifest before reading images.
+Review/test and commit/push the recipe and code before the actual audit, then
+document the result, merge to main and remove the completed branch.
+
+The fresh September 16 preflight confirms **zero of five submissions used**,
+best **55.78511**, rank **90/259**, and unchanged 165 data files/seven official
+pages. No upload is warranted by this image-only audit itself.
+[SciPy watershed](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.watershed_ift.html),
+[Gaussian gradient](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_gradient_magnitude.html).
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

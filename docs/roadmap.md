@@ -5,6 +5,15 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
+## Latest status — September 16
+
+The user-authorized [autonomous search](autonomous-search-plan.md) is complete
+at its daily stop condition: **five of five submissions used, no new public best**.
+[Results](autonomous-search-results.md) cover all seven candidates and exact uploads.
+Spectral ridge remains best at **55.78511**. The three local improvements failed
+to transfer publicly; investigate a concrete validation/test mismatch before
+resuming small model variations. No further work is scheduled by this run.
+
 ## Model progression
 
 1. **Camera and feature robustness — first batch complete.** Compare color, grayscale,

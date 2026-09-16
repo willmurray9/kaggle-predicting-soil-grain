@@ -1,5 +1,15 @@
 **Experiment review — 10 September 2026**
 
+**16 September, autonomous search:** the [fixed batch](autonomous-search-results.md)
+tests supervised DINO PLS, two equal spectral/encoder blends, stronger spectral
+ridge regularization and shallow boosting, alongside two saved learned models.
+PLS and both blends improve local EMD to **39.74220 / 39.89860 / 39.90057**,
+but their public results are **69.70024 / 60.65620 / 60.59547**. Standalone
+DINO and MobileNet score **69.02875 / 67.06322** publicly. All five daily slots
+are used; **55.78511 remains best**. The run stops at the authorized daily limit.
+This adds evidence that small local gains and camera consistency alone are
+weak selection signals for the current test distribution.
+
 **16 September, particle-boundary feasibility:** the
 [source-resolution audit](particle-audit-results.md) rejects one fixed watershed
 detector on eight training photos. Both visual reviews find merged matrix

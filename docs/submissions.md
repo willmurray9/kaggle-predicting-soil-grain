@@ -3,6 +3,27 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-16 — autonomous fixed batch: five submissions, no new best
+
+The user authorized experiments and uploads until a public improvement or the
+daily allowance was exhausted. The [fixed seven-candidate batch](autonomous-search-results.md)
+produced three local improvements, but all five queued uploads scored worse
+publicly. Recipes and queue order were fixed before these public results.
+
+| Order | Candidate | Submission ref | Public EMD ↓ | Difference from 55.78511 |
+| ---: | --- | --- | ---: | ---: |
+| 1 | dino_pls | `56285554` | 69.70024 | +13.91513 |
+| 2 | spectral_dino_blend | `56285568` | 60.65620 | +4.87109 |
+| 3 | spectral_mobilenet_blend | `56285591` | 60.59547 | +4.81036 |
+| 4 | dino_pca | `56285606` | 69.02875 | +13.24364 |
+| 5 | mobilenet_pca | `56285626` | 67.06322 | +11.27811 |
+
+All are complete. **Five of five daily slots are used; sixteen lifetime submissions
+are complete. Best public remains 55.78511.** Stop the run here. Boosting remains
+unsubmitted; nested spectral ridge reproduces the incumbent and is skipped.
+Producing code is `02ffc4cbd0a9aa38fad9713214c1fa54212adf1d`; 510 tests and both
+CI jobs pass. Candidate hashes and request/result receipts are in the linked report.
+
 ## 2026-09-16 — particle-boundary feasibility: no submission
 
 The [fixed image audit](particle-audit-results.md), declared in

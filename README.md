@@ -3,7 +3,7 @@
 Learning-first scaffold for the Kaggle competition [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 
 Current best: **55.78511 public EMD**, using RGB + texture + spectral ridge
-(15 September 2026). See the [latest results](docs/physical-photo-results.md).
+(15 September 2026). See the [latest search results](docs/autonomous-search-results.md).
 
 The pipeline provides:
 
@@ -252,3 +252,9 @@ photos at source resolution. The [feasibility report](docs/particle-audit-result
 rejects the watershed detector: it merges fine matrix into false coarse regions
 and splits some individual stones. No predictive model or submission is made;
 all five September 16 slots remain available. Saved overlays show the failures.
+
+`make autonomous-search` evaluates the fixed September 16 batch of supervised
+DINO PLS, spectral/encoder blends, nested spectral ridge and shallow boosting,
+alongside two saved learned models. The [report](docs/autonomous-search-results.md)
+records all seven local candidates and five public submissions. None beats
+**55.78511**; all five daily slots are used. Tests and source/output audits pass.

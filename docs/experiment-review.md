@@ -1,5 +1,12 @@
 **Experiment review — 10 September 2026**
 
+**16 September, particle-boundary feasibility:** the
+[source-resolution audit](particle-audit-results.md) rejects one fixed watershed
+detector on eight training photos. Both visual reviews find merged matrix
+regions and split stones; one false F827 region has a 42.57 mm equivalent
+diameter. No soil target values or test photos are used, no predictive model is
+fitted, and no upload is made. Best public remains **55.78511**; five slots remain.
+
 **15 September, within-photo variation:** the [fixed tile-IQR comparison](patch-mixture-results.md)
 adds six regional-spread measurements to the existing 23 spectral features.
 It scores **41.74919 local EMD / 24.17428 camera disagreement**, versus

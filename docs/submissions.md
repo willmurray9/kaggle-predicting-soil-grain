@@ -3,6 +3,19 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-16 — particle-boundary feasibility: no submission
+
+The [fixed image audit](particle-audit-results.md), declared in
+`c2f128b960a5d8acadfecacfa2882cf45a8c1b95` and produced by
+`d33961919cd92fe045b69203a979a86c0788e195`, rejects the detector before
+predictive fitting. Large regions include many particles and fine matrix;
+some individual stones are split. No CDF candidate or upload is produced.
+
+Fresh daily preflight confirms **eleven completed lifetime submissions, zero
+today, five daily slots available**. Best public remains spectral ridge at
+**55.78511**. The detector has no local or public model score; 452 tests and
+both producing-code CI jobs pass. No segmentation-parameter search follows.
+
 ## 2026-09-15 — within-photo heterogeneity: no submission
 
 The [fixed patch comparison](patch-mixture-results.md), declared in

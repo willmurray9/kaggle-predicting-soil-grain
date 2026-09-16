@@ -246,3 +246,9 @@ to the 23 spectral inputs. The [heterogeneity comparison](docs/patch-mixture-res
 scores **41.74919 local EMD / 24.17428 camera disagreement**. Only 9/24 soils
 improve; EMD is worse than spectral ridge, so no upload is made. The current
 public best remains **55.78511**, with three of September 15's five slots unused.
+
+`make particle-audit` checks individual-region boundaries on eight fixed training
+photos at source resolution. The [feasibility report](docs/particle-audit-results.md)
+rejects the watershed detector: it merges fine matrix into false coarse regions
+and splits some individual stones. No predictive model or submission is made;
+all five September 16 slots remain available. Saved overlays show the failures.

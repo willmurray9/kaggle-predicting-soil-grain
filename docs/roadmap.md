@@ -1125,6 +1125,15 @@ pages. No upload is warranted by this image-only audit itself.
 [SciPy watershed](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.watershed_ift.html),
 [Gaussian gradient](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_gradient_magnitude.html).
 
+**Completed:** [the eight-photo visual audit](particle-audit-results.md)
+rejects the fixed detector before modeling. Both reviews find false large
+regions in fine matrix and internal splits of visible stones. F827 Motorola
+region 12 represents many particles but has a 42.57 mm equivalent diameter.
+All 944 regions remain recorded; no feature model, CDF candidate or upload is
+produced. All 452 tests and producing-code CI pass, and all 186 prior artifacts
+remain intact. Any later segmentation method needs a separately declared
+boundary check; no threshold or smoothing sweep follows this result.
+
 ## First experiment batch: fixed before seeing results
 
 | Experiment | Image features | Crop | Predictor |

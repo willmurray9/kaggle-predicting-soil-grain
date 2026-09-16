@@ -1,7 +1,7 @@
 PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 PYTHONPATH := src
 
-.PHONY: download data labels baselines eda image-model experiments multicrop audit camera-balance kernel-ridge frozen-model nested-ridge model-blend nested-neighbors spatial-coverage physical-texture pca-ridge official-preprocessing texture-kernel linear-svr shallow-trees mobilenet-pca physical-photo spectral-photo dino-pca geometry-transport patch-mixture particle-audit validate test
+.PHONY: download data labels baselines eda image-model experiments multicrop audit camera-balance kernel-ridge frozen-model nested-ridge model-blend nested-neighbors spatial-coverage physical-texture pca-ridge official-preprocessing texture-kernel linear-svr shallow-trees mobilenet-pca physical-photo spectral-photo dino-pca geometry-transport patch-mixture particle-audit autonomous-search validate test
 
 download:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli download
@@ -89,6 +89,9 @@ patch-mixture:
 
 particle-audit:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli particle-audit
+
+autonomous-search:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli autonomous-search
 
 validate:
 	@if [ -z "$(SUBMISSION)" ]; then echo "Usage: make validate SUBMISSION=path/to/submission.csv"; exit 2; fi

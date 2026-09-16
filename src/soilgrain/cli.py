@@ -12,7 +12,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Soil grain Kaggle scaffold")
     parser.add_argument(
         "command",
-        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "model-blend", "nested-neighbors", "spatial-coverage", "physical-texture", "pca-ridge", "official-preprocessing", "texture-kernel", "linear-svr", "shallow-trees", "mobilenet-pca", "physical-photo", "spectral-photo", "dino-pca", "geometry-transport", "patch-mixture", "particle-audit", "validate"],
+        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "model-blend", "nested-neighbors", "spatial-coverage", "physical-texture", "pca-ridge", "official-preprocessing", "texture-kernel", "linear-svr", "shallow-trees", "mobilenet-pca", "physical-photo", "spectral-photo", "dino-pca", "geometry-transport", "patch-mixture", "particle-audit", "autonomous-search", "validate"],
     )
     parser.add_argument("--config", default="configs/data.yaml")
     parser.add_argument("--submission", help="Submission CSV to validate.")
@@ -187,6 +187,12 @@ def main() -> None:
         from soilgrain.particle_audit import write_particle_audit
 
         paths = write_particle_audit(args.config)
+        for path in paths.values():
+            print(path)
+    elif args.command == "autonomous-search":
+        from soilgrain.search_experiment import write_search_experiment
+
+        paths = write_search_experiment(args.config)
         for path in paths.values():
             print(path)
     elif args.command == "validate":

@@ -14,6 +14,13 @@ Spectral ridge remains best at **55.78511**. The three local improvements failed
 to transfer publicly; investigate a concrete validation/test mismatch before
 resuming small model variations. No further work is scheduled by this run.
 
+The subsequent [strategy review](strategy-review-2026-09-16.md) investigates the
+three-soil public split, camera/domain mismatch, fine-grain error, and relevant
+public research. The [September 17 plan](superpowers/plans/2026-09-17-domain-and-representation.md)
+prioritizes camera-transfer validation, a compact Weibull target, and an isolated
+visual-language baseline if feasible, with at most two uploads. It is planning
+only, awaiting the user's next implementation request.
+
 ## Model progression
 
 1. **Camera and feature robustness — first batch complete.** Compare color, grayscale,

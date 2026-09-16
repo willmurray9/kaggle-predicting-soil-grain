@@ -152,3 +152,18 @@ def test_search_driver_records_numerical_exclusion_and_finishes_other_candidates
     assert summary['failed_candidates'] == [{'experiment': 'spectral_boost', 'error': 'synthetic nonfinite boost prediction'}]
     assert len(summary['candidates']) == 6
     assert 'spectral_boost' not in summary['submission_queue']
+
+
+def test_search_blend_preserves_competition_column_spelling(search_run):
+    config, _, sample, _, components, _ = search_run
+    names = {'2.0': '2', '20.0': '20', '63.0': '63', '200.0': '200'}
+    sample.rename(columns=names, inplace=True)
+    for component in components.values():
+        component['submission'].rename(columns=names, inplace=True)
+    prior = config.parent / 'artifacts/submissions/prior.csv'
+    components['spectral']['submission'].to_csv(prior, index=False)
+
+    summary = json.loads(search.write_search_experiment(config)['summary'].read_text())
+
+    for candidate in summary['candidates']:
+        assert pd.read_csv(candidate['submission']['path']).columns.tolist() == sample.columns.tolist()

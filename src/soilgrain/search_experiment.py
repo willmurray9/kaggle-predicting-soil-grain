@@ -115,11 +115,13 @@ def write_search_experiment(config_path: str | Path = "configs/data.yaml") -> di
     for name in ("dino", "mobilenet"):
         saved = components[name]
         save(f"{name}_pca", saved.copy())
-        save(f"spectral_{name}_blend", {
+        blended = {
             kind: _blend_predictions(reference[kind], saved[kind],
                                      ["sample_id", "camera"] if kind == "camera" else ["sample_id"])
             for kind in ("oof", "camera", "submission")
-        })
+        }
+        blended["submission"] = submission(curve_array(blended["submission"]))
+        save(f"spectral_{name}_blend", blended)
 
     for name, feature_name, evaluator, selector, predictor, parameter in (
         ("dino_pls", "dino", evaluate_nested_pls, select_pls_components, pls_curves, "n_components"),

@@ -7,21 +7,25 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 
 ## Latest status — September 18
 
-**New public best: 49.65594**, from native-resolution spectral ridge. The
-[review-guided run](september18-results.md) met its goal after two submissions
-and stopped with three daily slots remaining. The winning model retains ridge
-and 23 features, increasing calibrated 100 mm crops from 256×256 to 460×460 and
-adjusting feature offsets/frequencies to the physical scale. Its public error
-is 10.99% below the previous 55.78511 best; private performance is unknown.
+**New public best: 37.62858**, from the isolated visual-language baseline. The
+[second round](september18-round2-results.md) met the renewed goal on its first
+upload, improving on 49.65594 by **24.22%**. It reused the frozen `gpt-6-astra`
+predictions with anonymous soil images and eight training-only examples per
+query; no model calls or prompt changes were made in the second round.
+Three of five daily slots are used across both rounds; two remain. Private
+performance is unknown, and the winner's local EMD remains worse than ridge's.
 
 The [strategy review](strategy-review-2026-09-16.md) and
 [September 17 plan](superpowers/plans/2026-09-17-domain-and-representation.md)
 were executed under the user's renewed [September 18 authorization](september18-plan.md).
+The [first round](september18-results.md) improved public EMD from 55.78511 to
+49.65594 by preserving higher-resolution texture in a simple spectral ridge.
 The camera diagnostic found no consistent known-camera penalty for spectral
-ridge. Weibull failed its capacity gate. Square-root mass improved locally
-but not publicly. The fixed LBP, median-regression and isolated visual-language
-candidates are evaluated and saved, but remain unsubmitted because the goal
-was met. No further work or uploads are scheduled.
+ridge; Weibull failed its capacity gate. The second round's native square-root
+mass model improved locally to 39.90205, while its native/LBP blend scored
+42.75853. Both remain unsubmitted because the visual-language upload met the
+goal first. Standalone LBP and median regression also remain unsubmitted.
+No further work or uploads are scheduled.
 
 ## Model progression
 

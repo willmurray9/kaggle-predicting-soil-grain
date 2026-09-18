@@ -3,6 +3,26 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-18 — second round: visual-language model sets a new best
+
+The user renewed the goal to beat **49.65594** or exhaust the remaining daily
+allowance. The [fixed three-candidate round](september18-round2-results.md)
+met the goal with its first upload: **37.62858 public EMD**, a **24.22% reduction**.
+
+- Submission: **`56339475`**, complete, uploaded **19:50:31.483 UTC**.
+- Candidate: original isolated `gpt-6-astra` visual-language predictions;
+  local whole-soil EMD **50.62293**. No new model requests or prompt changes.
+- Producing code: `8c157a7caf10cddfb829fca0714eb6f42a8887de`.
+- CSV SHA-256: `1e2877246a00938044acc139fa7f265f330b6d7bf70824a3e94e0039bed81321`.
+- Round declaration: `f265b76`; frozen selection:
+  `2d3c0f77d276e76b1faeaa29b6469a1a2826e923c8e2652786fd61279056608c`.
+
+**Stopped after one upload this round: nineteen complete lifetime submissions,
+three of five slots used today, two remaining.** Native square-root mass and
+native/LBP blend were evaluated and saved but not submitted. The stronger public
+result does not establish stronger private performance. All 602 tests and the
+relevant producing-code CI jobs passed; previous artifacts remain unchanged.
+
 ## 2026-09-18 — native-resolution spectral ridge sets a new best
 
 The [review-guided run](september18-results.md) stopped on a public improvement,

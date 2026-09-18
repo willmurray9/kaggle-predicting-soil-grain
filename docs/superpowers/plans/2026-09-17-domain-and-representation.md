@@ -10,7 +10,7 @@
 
 **Spec:** [September 16 strategy review](../../strategy-review-2026-09-16.md).
 
-**Status:** Planned only. Start when the user requests implementation. No scheduled task or automatic submission is created by this plan.
+**Status:** Executed on September 18 under the user's renewed authorization and [updated declaration](../../september18-plan.md). [Results](../../september18-results.md): public best improved to 49.65594 after two submissions; work stopped. The original checklist below records the intended sequence, not a new pending run. No scheduled task exists.
 
 ## Global constraints
 

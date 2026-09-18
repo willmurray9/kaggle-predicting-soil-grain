@@ -2,6 +2,8 @@
 
 The user authorized continued work until public EMD improves on **55.78511** or the five daily submissions are exhausted. The [execution declaration](september18-plan.md) supersedes the earlier two-submission cap. Fresh preflight found no data or rules changes, no submissions today, and the same incumbent.
 
+**Outcome: new public best 49.65594**, from native-resolution spectral ridge, a **6.12917 EMD / 10.99% reduction**. Stop condition reached after two uploads; three daily slots remain. No further experiment or submission follows the winning result.
+
 ## Camera diagnostic
 
 Each row averages 21 held-out soils; each fit uses exactly the other 20 paired soils from one camera. All photos of the held-out soil are excluded. Lower EMD is better.
@@ -31,7 +33,7 @@ All numerical models use whole-soil LOO with training-only scaling and the origi
 | 2 | Native-resolution spectral ridge | 41.20828 | 25.77945 | 10/24 |
 | 3 | Local binary pattern ridge | 45.57380 | 26.28702 | 9/24 |
 | 4 | Median CDF regression | 48.58551 | 36.01612 | 7/24 |
-| 5 | Fixed visual-language baseline | 50.62293 | Not measured | Recorded separately below |
+| 5 | Fixed visual-language baseline | 50.62293 | Not measured | 9/24 |
 
 Square-root mass ridge improves mean EMD by **0.67180**, with median per-soil gain **1.82168**. Excluding its largest beneficiary leaves mean gain **0.07219**: positive but small. Its Motorola → Samsung / Samsung → Motorola errors are **41.179 / 40.117**, better than spectral's **43.967 / 41.057**. It is the strongest first upload. Camera disagreement remains a secondary diagnostic, not direct transfer accuracy.
 
@@ -54,4 +56,18 @@ All five predictions differ from one another and from the sixteen previous submi
 
 ## Official results
 
-Pending the frozen sequential submissions. No public score is inferred from local validation.
+| Order | Candidate | Submission ref | Public EMD | Change from 55.78511 |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Square-root mass ridge | `56336925` | 59.91139 | +4.12628 |
+| 2 | **Native-resolution spectral ridge** | **`56336938`** | **49.65594** | **−6.12917** |
+
+Both are complete on the [authenticated submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions). Uploads occurred at **18:06:17.537 UTC** and **18:06:56.350 UTC** on September 18. There are eighteen completed lifetime submissions, two today, and three of five daily slots remaining. LBP, median regression and the visual-language candidate remain **unsubmitted** because the goal was met.
+
+The winning model keeps the simple ridge regressor and 23-feature design. The change is calibrated 100 mm crops at **460×460 rather than 256×256**, with feature offsets and Fourier frequencies adjusted to the physical scale. Its local EMD is slightly worse than the incumbent, while its public EMD improves. This supports retaining the higher-resolution candidate for this competition; it does not establish improvement on the unrevealed private soils or prove which texture detail caused the gain.
+
+Winning CSV: `artifacts/experiments/distribution_search/native_spectral_ridge/submission.csv`.
+SHA-256: `5e2e24966078dc3f50f9a9c01653e7f602c6e31ce94a7b83916527eb2b5963a2`.
+Producing commit: `8d3adaacb450e1ee18aa08bf9791df73770050f6`.
+Both [producing-code CI jobs passed](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/35377596529) before either upload; the [initial experiment CI](https://github.com/willmurray9/kaggle-predicting-soil-grain/actions/runs/35376569929) also passed.
+
+Exact accepted-reference receipts, the frozen selection manifest, independent audits and final verification inventory are in `artifacts/experiments/september18/`. The candidate audit recomputed all local/camera scores, checked all folds and template orders, and verified all 34 visual-language contexts, 327 prepared images, source/output hashes and absence of held-out labels. No prediction was changed in response to a public score.

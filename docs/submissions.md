@@ -3,6 +3,29 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-18 — native-resolution spectral ridge sets a new best
+
+The [review-guided run](september18-results.md) stopped on a public improvement,
+after two of five daily slots. Candidate recipes and order were frozen before
+either public result; no feedback-dependent adjustments were made.
+
+| Order | Candidate | Submission ref | Public EMD ↓ | Change from 55.78511 |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Square-root mass ridge | `56336925` | 59.91139 | +4.12628 |
+| 2 | **Native-resolution spectral ridge** | **`56336938`** | **49.65594** | **−6.12917** |
+
+**New best 49.65594: 10.99% lower public error.** Both submissions are complete;
+eighteen lifetime submissions, two today, and three daily slots remain. Stop
+the run here. LBP, median regression and the isolated visual-language candidate
+remain unsubmitted. The Weibull family failed its label-capacity check and
+produced no submission.
+
+The winner retains ridge and 23 features, using physically calibrated 100 mm
+crops at 460×460 instead of 256×256 with corresponding physical offset/frequency
+adjustments. Producing code `8d3adaacb450e1ee18aa08bf9791df73770050f6` passes
+596 local tests and both CI jobs. Winner SHA-256:
+`5e2e24966078dc3f50f9a9c01653e7f602c6e31ce94a7b83916527eb2b5963a2`.
+
 ## 2026-09-16 — autonomous fixed batch: five submissions, no new best
 
 The user authorized experiments and uploads until a public improvement or the

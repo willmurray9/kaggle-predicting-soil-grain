@@ -7,13 +7,19 @@ The fixed starting point is the [first image baseline](baseline-results.md):
 
 ## Latest status — September 18
 
-**New public best: 37.62858**, from the isolated visual-language baseline. The
-[second round](september18-round2-results.md) met the renewed goal on its first
-upload, improving on 49.65594 by **24.22%**. It reused the frozen `gpt-6-astra`
-predictions with anonymous soil images and eight training-only examples per
-query; no model calls or prompt changes were made in the second round.
-Three of five daily slots are used across both rounds; two remain. Private
-performance is unknown, and the winner's local EMD remains worse than ridge's.
+**Public best remains 37.62858**, from the isolated visual-language baseline.
+The [third round](september18-round3-results.md) completed two more uploads:
+the fixed VLM/native mass blend scored **44.06175**, and similarity-selected
+VLM examples scored **47.32415**. Both improved local EMD but failed to improve
+public EMD. **Five of five daily slots are used; all twenty-one lifetime
+submissions are complete. Work stopped with no further uploads scheduled.**
+
+The [second round](september18-round2-results.md) had improved on 49.65594 by
+**24.22%** using the original frozen `gpt-6-astra` predictions. That winner uses
+anonymous soil images and eight training-only examples per query. Private
+performance remains unknown. Saved responses reproduce its CSV; fresh hosted
+responses are not guaranteed identical, and external-model prize eligibility
+has not been established.
 
 The [strategy review](strategy-review-2026-09-16.md) and
 [September 17 plan](superpowers/plans/2026-09-17-domain-and-representation.md)
@@ -23,9 +29,10 @@ The [first round](september18-results.md) improved public EMD from 55.78511 to
 The camera diagnostic found no consistent known-camera penalty for spectral
 ridge; Weibull failed its capacity gate. The second round's native square-root
 mass model improved locally to 39.90205, while its native/LBP blend scored
-42.75853. Both remain unsubmitted because the visual-language upload met the
-goal first. Standalone LBP and median regression also remain unsubmitted.
-No further work or uploads are scheduled.
+42.75853. Both remain unsubmitted as standalone candidates; the native mass
+predictions were used in the third round's fixed blend. Standalone LBP and
+median regression also remain unsubmitted. The third round completed 34 new
+isolated VLM requests and passed 621 tests; every historical artifact is intact.
 
 ## Model progression
 

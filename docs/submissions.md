@@ -3,6 +3,26 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-18 — third round: two fixed hypotheses, allowance exhausted
+
+The [third round](september18-round3-results.md) tested a fixed 50/50 blend of
+the winning VLM with native mass ridge and a VLM using similarity-selected
+training examples. Both improved local EMD, but neither beat **37.62858** publicly.
+Predictions and order were frozen before either new public score.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | VLM / native mass 50/50 blend | `56340871` | 43.05461 | 44.06175 |
+| 2 | Similarity-selected VLM | `56340908` | 43.11100 | 47.32415 |
+
+**Stopped: five of five daily slots used, twenty-one lifetime submissions,
+all complete. Best remains 37.62858**, original VLM submission `56339475`.
+Declaration: `d61ad58`; producing commits: `91ddcac` and `0d65e49`.
+Frozen selection: `45a9519fc6cd100ffd85701c233fcceacf308e2786635e4cb8e5e283f8befbc9`.
+All 621 tests and producing-code CI passed. Independent audits verified all
+34 new model responses and preserved all 788 historical artifact files.
+The report records CSV hashes, receipts and hosted-model reproduction limits.
+
 ## 2026-09-18 — second round: visual-language model sets a new best
 
 The user renewed the goal to beat **49.65594** or exhaust the remaining daily

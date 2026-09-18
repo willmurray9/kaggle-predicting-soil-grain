@@ -12,7 +12,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Soil grain Kaggle scaffold")
     parser.add_argument(
         "command",
-        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "model-blend", "nested-neighbors", "spatial-coverage", "physical-texture", "pca-ridge", "official-preprocessing", "texture-kernel", "linear-svr", "shallow-trees", "mobilenet-pca", "physical-photo", "spectral-photo", "dino-pca", "geometry-transport", "patch-mixture", "particle-audit", "autonomous-search", "validate"],
+        choices=["download", "data", "labels", "baselines", "eda", "image-model", "experiments", "multicrop", "audit", "camera-balance", "kernel-ridge", "frozen-model", "nested-ridge", "model-blend", "nested-neighbors", "spatial-coverage", "physical-texture", "pca-ridge", "official-preprocessing", "texture-kernel", "linear-svr", "shallow-trees", "mobilenet-pca", "physical-photo", "spectral-photo", "dino-pca", "geometry-transport", "patch-mixture", "particle-audit", "autonomous-search", "camera-transfer", "weibull", "visual-language", "validate"],
     )
     parser.add_argument("--config", default="configs/data.yaml")
     parser.add_argument("--submission", help="Submission CSV to validate.")
@@ -195,6 +195,21 @@ def main() -> None:
         paths = write_search_experiment(args.config)
         for path in paths.values():
             print(path)
+    elif args.command == "camera-transfer":
+        from soilgrain.camera_transfer import run_camera_transfer
+
+        summary = run_camera_transfer(args.config)
+        print(f"Camera-transfer results saved for {summary['paired_soils']} paired soils.")
+    elif args.command == "weibull":
+        from soilgrain.weibull_experiment import run_weibull
+
+        for path in run_weibull(args.config).values():
+            print(path)
+    elif args.command == "visual-language":
+        from soilgrain.visual_language import run_visual_language
+
+        summary = run_visual_language(args.config)
+        print(f"Visual-language LOO EMD: {summary['loo_emd']:.5f}")
     elif args.command == "validate":
         if not args.submission:
             raise SystemExit("--submission is required for validate")

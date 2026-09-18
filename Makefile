@@ -1,7 +1,16 @@
 PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 PYTHONPATH := src
 
-.PHONY: download data labels baselines eda image-model experiments multicrop audit camera-balance kernel-ridge frozen-model nested-ridge model-blend nested-neighbors spatial-coverage physical-texture pca-ridge official-preprocessing texture-kernel linear-svr shallow-trees mobilenet-pca physical-photo spectral-photo dino-pca geometry-transport patch-mixture particle-audit autonomous-search validate test
+.PHONY: download data labels baselines eda image-model experiments multicrop audit camera-balance kernel-ridge frozen-model nested-ridge model-blend nested-neighbors spatial-coverage physical-texture pca-ridge official-preprocessing texture-kernel linear-svr shallow-trees mobilenet-pca physical-photo spectral-photo dino-pca geometry-transport patch-mixture particle-audit autonomous-search camera-transfer weibull visual-language validate test
+
+camera-transfer:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli camera-transfer
+
+weibull:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli weibull
+
+visual-language:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli visual-language
 
 download:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m soilgrain.cli download

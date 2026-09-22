@@ -2,6 +2,20 @@
 
 The user renewed autonomous work until a public improvement over **37.62858** or exhaustion of the daily allowance. The [declaration](september22-plan.md), commit `18fb903`, fixed two information-focused VLM experiments and saved numerical replacements. Official preflight at **15:07:54 UTC** confirmed twenty-one completed submissions, none today, five slots available, and unchanged official pages and data.
 
+## Public results — daily allowance exhausted
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Multi-scale VLM | `56468669` | 48.66290 | 40.88127 |
+| 2 | Native square-root mass ridge | `56468686` | 39.90205 | 54.55433 |
+| 3 | LBP ridge | `56468706` | 45.57380 | 64.42273 |
+| 4 | EMD median regression | `56468726` | 48.58551 | 72.33884 |
+| 5 | Native spectral / LBP blend | `56468742` | 42.75853 | 53.72754 |
+
+**Stopped after five of five daily slots: all twenty-six lifetime submissions are complete. Public best remains 37.62858**, original VLM submission `56339475`. Official state was verified at **15:49:45 UTC**. No further model requests or uploads are scheduled.
+
+The multi-scale VLM was today's strongest candidate at **40.88127**, but its local improvement did not transfer to a public improvement. The four saved numerical alternatives also failed to beat the incumbent. We did not change predictions or queue order after observing these scores. This round provides no evidence to replace the original VLM; the complete-context hypothesis remains untested because its run failed.
+
 ## Local results and frozen queue
 
 | Order | Candidate | Whole-soil LOO EMD ↓ | Source |

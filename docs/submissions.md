@@ -3,6 +3,29 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-22 — multi-scale VLM and saved alternatives, allowance exhausted
+
+The [fixed five-candidate round](september22-results.md) tested paired 100 mm /
+25 mm VLM crops and four previously saved numerical alternatives. The second
+new VLM recipe, complete labeled context, failed its execution check and was
+not submitted. Its replacement and the entire queue were fixed before public feedback.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Multi-scale VLM | `56468669` | 48.66290 | 40.88127 |
+| 2 | Native square-root mass ridge | `56468686` | 39.90205 | 54.55433 |
+| 3 | LBP ridge | `56468706` | 45.57380 | 64.42273 |
+| 4 | EMD median regression | `56468726` | 48.58551 | 72.33884 |
+| 5 | Native spectral / LBP blend | `56468742` | 42.75853 | 53.72754 |
+
+**Stopped: five of five daily slots used; all twenty-six lifetime submissions
+are complete. Best remains 37.62858**, original VLM reference `56339475`.
+Declaration: `18fb903`; new producing code: `ec82bde`; selection:
+`bf3ef61c046fb1d98f4a8060957560813faa862cb091895ca5dc6c705b29c29a`.
+All 632 tests and producing-code CI passed. Independent audits verified all
+34 multi-scale predictions and preserved 1,348 historical artifacts. The report
+records the internal transport-retry deviation, exact hashes and resource limits.
+
 ## 2026-09-18 — third round: two fixed hypotheses, allowance exhausted
 
 The [third round](september18-round3-results.md) tested a fixed 50/50 blend of

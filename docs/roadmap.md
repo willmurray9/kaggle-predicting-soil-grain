@@ -5,34 +5,38 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — September 18
+## Latest status — September 22
 
-**Public best remains 37.62858**, from the isolated visual-language baseline.
-The [third round](september18-round3-results.md) completed two more uploads:
-the fixed VLM/native mass blend scored **44.06175**, and similarity-selected
-VLM examples scored **47.32415**. Both improved local EMD but failed to improve
-public EMD. **Five of five daily slots are used; all twenty-one lifetime
-submissions are complete. Work stopped with no further uploads scheduled.**
+**Public best remains 37.62858**, from the original isolated visual-language
+baseline. The [September 22 round](september22-results.md) used all five daily
+slots: multi-scale VLM **40.88127**, native square-root mass ridge **54.55433**,
+LBP ridge **64.42273**, EMD median regression **72.33884**, and native/LBP blend
+**53.72754**. **All twenty-six lifetime submissions are complete. Work stopped
+with no further model requests or uploads scheduled.**
 
-The [second round](september18-round2-results.md) had improved on 49.65594 by
-**24.22%** using the original frozen `gpt-6-astra` predictions. That winner uses
-anonymous soil images and eight training-only examples per query. Private
-performance remains unknown. Saved responses reproduce its CSV; fresh hosted
-responses are not guaranteed identical, and external-model prize eligibility
-has not been established.
+The multi-scale recipe adds calibrated 25 mm crops beside the original 100 mm
+views. It improved local EMD from 50.62293 to 48.66290, but only 10 of 24 soils
+improved; excluding H549, mean local error worsened by 1.07850. The complete-context
+recipe failed after two requests with reconnect error events and was not submitted.
+The declared saved replacements filled the queue. All predictions and the order
+were frozen before public feedback; no numerical candidates were refitted.
+The report records the CLI transport-retry deviation and hosted-response limits.
+All 632 tests and producing-code CI passed, and 1,348 historical artifacts remain intact.
 
-The [strategy review](strategy-review-2026-09-16.md) and
-[September 17 plan](superpowers/plans/2026-09-17-domain-and-representation.md)
-were executed under the user's renewed [September 18 authorization](september18-plan.md).
-The [first round](september18-results.md) improved public EMD from 55.78511 to
-49.65594 by preserving higher-resolution texture in a simple spectral ridge.
-The camera diagnostic found no consistent known-camera penalty for spectral
-ridge; Weibull failed its capacity gate. The second round's native square-root
-mass model improved locally to 39.90205, while its native/LBP blend scored
-42.75853. Both remain unsubmitted as standalone candidates; the native mass
-predictions were used in the third round's fixed blend. Standalone LBP and
-median regression also remain unsubmitted. The third round completed 34 new
-isolated VLM requests and passed 621 tests; every historical artifact is intact.
+The original winner uses anonymous images and eight training-only examples per
+query. It improved the prior 49.65594 public score by 24.22% in the
+[September 18 second round](september18-round2-results.md). Its private performance
+remains unknown; fresh hosted responses need not match the saved responses, and
+external-model prize eligibility has not been established.
+
+The [strategy review](strategy-review-2026-09-16.md),
+[September 17 plan](superpowers/plans/2026-09-17-domain-and-representation.md),
+and [September 18 first](september18-results.md) and
+[third](september18-round3-results.md) round reports retain the earlier evidence.
+Standalone native mass, LBP, median regression and native/LBP blend have now all
+been submitted. Complete labeled context remains unresolved; saved spectral
+boosting remains unsubmitted. Any further run requires a new daily allowance
+and renewed execution decision.
 
 ## Model progression
 

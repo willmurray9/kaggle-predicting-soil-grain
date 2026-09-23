@@ -2,6 +2,20 @@
 
 The user renewed autonomous work until public EMD beats **37.62858** or the daily allowance is exhausted. The [declaration](september23-plan.md), commit `a248140`, fixed two new visual-context experiments and a saved-candidate queue. Official preflight at **17:17 UTC** found 26 completed submissions, none today, five slots available, and no changes to the seven official pages, 165 data files or discussions.
 
+## Public results — daily allowance exhausted
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Paired-camera examples VLM | `56500720` | 51.29550 | 46.04449 |
+| 2 | Complete-context VLM | `56500738` | 40.21564 | 58.45786 |
+| 3 | Fixed VLM median | `56500757` | 46.63935 | 43.88009 |
+| 4 | Spectral boosting | `56500777` | 44.43476 | 99.24452 |
+| 5 | Log-quantile transport ridge | `56500795` | 47.47930 | 75.93323 |
+
+**Stopped after five of five daily slots: all 31 lifetime submissions are complete. Public best remains 37.62858**, original VLM submission `56339475`. Official final state was checked at **17:55:03 UTC**. No further model calls or uploads are scheduled.
+
+The median was today's best at **43.88009**. Neither new visual context improved public EMD. Complete context's much stronger local mean failed to transfer, reinforcing the need to inspect which soils drive a local gain. Spectral boosting and log-quantile transport also lost; those saved alternatives now have public evidence. This round supports retaining the original VLM, while its private performance remains unknown. Predictions and queue order were never changed after public feedback.
+
 ## Local experiments and frozen queue
 
 | Order | Candidate | Whole-soil LOO EMD ↓ |

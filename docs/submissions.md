@@ -3,6 +3,30 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-09-23 — visual context and fixed median, allowance exhausted
+
+The [declared five-candidate round](september23-results.md) completed two new
+VLM experiments, a fixed median of three saved VLMs, and two saved numerical
+alternatives. All recipes, predictions and the full order were fixed before
+new public feedback. None improved **37.62858**.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Paired-camera examples VLM | `56500720` | 51.29550 | 46.04449 |
+| 2 | Complete-context VLM | `56500738` | 40.21564 | 58.45786 |
+| 3 | Fixed VLM median | `56500757` | 46.63935 | 43.88009 |
+| 4 | Spectral boosting | `56500777` | 44.43476 | 99.24452 |
+| 5 | Log-quantile transport ridge | `56500795` | 47.47930 | 75.93323 |
+
+**Stopped: five of five daily slots used; all 31 lifetime submissions are complete.
+Best remains 37.62858**, original VLM reference `56339475`. Declaration `a248140`;
+new producing code `b00229b`; frozen selection
+`6a6130df92ac375d3fcec6321d7dfa52034ca63400ee72f20a99200e71793185`.
+All 647 tests and producing-code CI passed. Independent audits verified all
+68 new responses, the median, and 2,306 historical artifacts unchanged.
+Complete context recovered transport interruptions under the predeclared policy;
+the report separates recorded usage from unknown disconnected-attempt consumption.
+
 ## 2026-09-22 — multi-scale VLM and saved alternatives, allowance exhausted
 
 The [fixed five-candidate round](september22-results.md) tested paired 100 mm /

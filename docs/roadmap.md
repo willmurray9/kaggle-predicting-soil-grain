@@ -5,38 +5,42 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — September 22
+## Latest status — September 23
 
 **Public best remains 37.62858**, from the original isolated visual-language
-baseline. The [September 22 round](september22-results.md) used all five daily
-slots: multi-scale VLM **40.88127**, native square-root mass ridge **54.55433**,
-LBP ridge **64.42273**, EMD median regression **72.33884**, and native/LBP blend
-**53.72754**. **All twenty-six lifetime submissions are complete. Work stopped
-with no further model requests or uploads scheduled.**
+baseline. The [September 23 round](september23-results.md) used all five daily
+slots: paired-camera examples **46.04449**, complete context **58.45786**, fixed
+VLM median **43.88009**, spectral boosting **99.24452**, and log-quantile transport
+**75.93323**. **All 31 lifetime submissions are complete. Work stopped with no
+further model requests or uploads scheduled.**
 
-The multi-scale recipe adds calibrated 25 mm crops beside the original 100 mm
-views. It improved local EMD from 50.62293 to 48.66290, but only 10 of 24 soils
-improved; excluding H549, mean local error worsened by 1.07850. The complete-context
-recipe failed after two requests with reconnect error events and was not submitted.
-The declared saved replacements filled the queue. All predictions and the order
-were frozen before public feedback; no numerical candidates were refitted.
-The report records the CLI transport-retry deviation and hosted-response limits.
-All 632 tests and producing-code CI passed, and 1,348 historical artifacts remain intact.
+Both new VLMs completed 24 whole-soil holdouts and ten test predictions. Paired
+examples provide the first photo from each camera for the original eight labeled
+soils. Complete context supplies all other 23 training soils per holdout and all
+24 for test queries, finishing yesterday's untested hypothesis with fresh outputs.
+Its local EMD improved to 40.21564, but H549 and H405 account for essentially all
+net gain; the remaining soils' mean gain is approximately zero. The deterministic
+median scored 46.63935 locally and was today's strongest public result. Neither
+local improvement transferred to a new public best. No weights or numerical
+models were refitted, and all predictions and the queue were frozen before uploads.
+
+All 647 tests and producing-code CI passed. Independent audits verified all 68
+new responses and the median, and preserved 2,306 historical artifact files.
+Complete context had 18 requests with recognized transport recovery under the
+predeclared acceptance policy. The report records warning counts and distinguishes
+completed-turn token accounting from unknown disconnected-attempt consumption.
 
 The original winner uses anonymous images and eight training-only examples per
 query. It improved the prior 49.65594 public score by 24.22% in the
 [September 18 second round](september18-round2-results.md). Its private performance
-remains unknown; fresh hosted responses need not match the saved responses, and
-external-model prize eligibility has not been established.
+remains unknown; fresh hosted responses need not match saved ones, and external-model
+prize eligibility has not been established. Prior experiments remain in the
+[September 22 report](september22-results.md), [strategy review](strategy-review-2026-09-16.md),
+and [submission log](submissions.md).
 
-The [strategy review](strategy-review-2026-09-16.md),
-[September 17 plan](superpowers/plans/2026-09-17-domain-and-representation.md),
-and [September 18 first](september18-results.md) and
-[third](september18-round3-results.md) round reports retain the earlier evidence.
-Standalone native mass, LBP, median regression and native/LBP blend have now all
-been submitted. Complete labeled context remains unresolved; saved spectral
-boosting remains unsubmitted. Any further run requires a new daily allowance
-and renewed execution decision.
+Spectral boosting and log-quantile transport have now been submitted. Saved
+linear SVR and shallow ExtraTrees were audited as failure replacements but not
+needed. Any further run requires a new daily allowance and renewed execution decision.
 
 ## Model progression
 

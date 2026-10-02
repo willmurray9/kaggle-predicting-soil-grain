@@ -36,6 +36,7 @@ CLAUDE_MODEL = "claude-opus-5-5"
 CLAUDE_SYSTEM = ("You estimate soil grain size distributions from attached photographs. "
                  "Follow the user's instructions and respond only through the requested JSON.")
 PLAN = Path("docs/october2-plan.md")
+ROUND2_PLAN = Path("docs/october2-round2-plan.md")
 ORIGINAL = Path("artifacts/experiments/visual_language")
 ORIGINAL_LEDGER_SHA256 = "dd4d650236ea87303248170937587129de988ef7f181e063af9abbaa1d6b86b3"
 QUERIES = 34
@@ -49,6 +50,29 @@ RECIPES = {
     "high_reasoning_vlm": {"provider": "codex", "reasoning": "high", "views": "camera",
                            "max_side": 768},
     "claude_vlm": {"provider": "claude", "reasoning": "low", "views": "camera", "max_side": 768},
+}
+# Round 2 (docs/october2-round2-plan.md): fresh draws of the all-photo winner, 150 mm crops, Claude.
+# At 150 mm this one test photo shows a ruler and a company card, so wide recipes omit it.
+NON_SOIL_AT_150MM = ("8d6d82eb17c2598a4348d8c3edee7cfadd6295c7d14ced895932a5b355d79b94",)
+ROUND2 = {
+    **{f"all_views_{d}_vlm": {"provider": "codex", "reasoning": "low", "views": "all",
+                              "max_side": 768} for d in ("b", "c")},
+    **{f"wide_all_views_{d}_vlm": {"provider": "codex", "reasoning": "low", "views": "all",
+                                   "max_side": 768, "width_mm": 150,
+                                   "exclude_sha256": NON_SOIL_AT_150MM} for d in ("a", "b", "c")},
+    **{f"claude_all_views_{d}_vlm": {"provider": "claude", "reasoning": "low", "views": "all",
+                                     "max_side": 768} for d in ("a", "b", "c")},
+}
+RECIPES.update(ROUND2)
+# Coordinatewise means of independent draws: (components, minimum eligible components).
+MEANS = {
+    "all_views_draw_mean": (("all_views_vlm", "all_views_b_vlm", "all_views_c_vlm"), 2),
+    "wide_draw_mean": (("wide_all_views_a_vlm", "wide_all_views_b_vlm", "wide_all_views_c_vlm"), 2),
+    "all_scales_draw_mean": (("all_views_vlm", "all_views_b_vlm", "all_views_c_vlm",
+                              "wide_all_views_a_vlm", "wide_all_views_b_vlm",
+                              "wide_all_views_c_vlm"), 4),
+    "claude_all_views_mean": (("claude_all_views_a_vlm", "claude_all_views_b_vlm",
+                               "claude_all_views_c_vlm"), 2),
 }
 UNKNOWN_INPUT_TOKENS = 40_000
 UNKNOWN_OUTPUT_TOKENS = {"low": 2_000, "high": 20_000, "claude": 4_000}
@@ -65,16 +89,17 @@ def budget(recipe: str) -> dict:
     return BUDGETS["claude" if spec["provider"] == "claude" else spec["reasoning"]]
 
 
-def prepare_crop(path: Path, camera: pd.Series, output: Path, max_side: int) -> None:
-    """The original calibrated 100 mm crop; ``max_side=768`` is byte-identical to it."""
+def prepare_crop(path: Path, camera: pd.Series, output: Path, max_side: int,
+                 width_mm: int = 100) -> None:
+    """A calibrated center crop; 100 mm at ``max_side=768`` is byte-identical to the original."""
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source).convert("RGB")
     ppm = float(camera["ppm"]) * max(image.size) / max(camera["width"], camera["height"])
     if not np.isfinite(ppm) or ppm <= 0:
         raise ValueError("Invalid physical calibration")
-    side = round(100 * ppm)
+    side = round(width_mm * ppm)
     if not 1 <= side <= min(image.size):
-        raise ValueError("100mm crop does not fit")
+        raise ValueError(f"{width_mm}mm crop does not fit")
     left, top = (image.width - side) // 2, (image.height - side) // 2
     crop = image.crop((left, top, left + side, top + side))
     if side > max_side:
@@ -89,9 +114,18 @@ def request_context(recipe: str, truth: pd.DataFrame, photos: pd.DataFrame, quer
     views = index.loc[index.sample_id == query_id]
     if spec["views"] == "camera":
         views = views.groupby("camera", sort=True).head(1)
+    if spec.get("exclude_sha256"):
+        keep = [file_record(Path(path))["sha256"] not in spec["exclude_sha256"] for path in views.path]
+        views = views.loc[keep]
     if views.empty:
         raise ValueError("Query requires at least one photo")
     prompt, examples = build_prompt(truth, query_id, len(views))
+    width = spec.get("width_mm", 100)
+    if width != 100:
+        original = "Each attached image is a 100 mm square center crop."
+        if prompt.count(original) != 1 or prompt.count("100 mm") != 1:
+            raise ValueError("Prompt crop-width sentence changed")
+        prompt = prompt.replace(original, f"Each attached image is a {width} mm square center crop.")
     if query_id in examples:
         raise ValueError("Held-out soil cannot be an example")
     rows = [index.loc[(index.split == "train") & (index.sample_id == sample_id)].iloc[0]
@@ -106,7 +140,8 @@ def render_images(recipe: str, rows, cameras: pd.DataFrame, folder: Path) -> lis
     images = []
     for number, row in enumerate(rows, 1):
         output = folder / f"image_{number:02d}.png"
-        prepare_crop(Path(row.path), cameras.loc[row.camera], output, RECIPES[recipe]["max_side"])
+        prepare_crop(Path(row.path), cameras.loc[row.camera], output, RECIPES[recipe]["max_side"],
+                     RECIPES[recipe].get("width_mm", 100))
         images.append(output)
     return images
 
@@ -291,8 +326,35 @@ def verify_reruns_match_original(truth, sample, photos, cameras, folder: Path) -
             raise ValueError(f"Rerun context differs from the original request: {query_id}")
 
 
+ALL_VIEWS = Path("artifacts/experiments/october2/all_views_vlm")
+ALL_VIEWS_SUMMARY_SHA256 = "6e076cfd756a93e7ffab87763881767790b2d24ee8931734e063c4b9d62fa424"
+
+
+def verify_matches_all_views(recipe, truth, sample, photos, cameras, folder: Path) -> None:
+    """All-photo 100 mm redraws must rebuild the winning requests' prompts and images exactly."""
+    _verified_sources([{"path": str(ALL_VIEWS / "summary.json"), "sha256": ALL_VIEWS_SUMMARY_SHA256}])
+    records = {}
+    for path in sorted((ALL_VIEWS / "records").glob("*_attempt_1.json")):
+        record = json.loads(path.read_text())
+        _verified_sources(record["raw_files"])
+        records[record["sample_id"]] = record
+    for query_id in truth.sample_id.tolist() + sample.sample_id.tolist():
+        prompt, selection, rows = request_context(recipe, truth, photos, query_id)
+        target = folder / query_id.replace(" ", "_")
+        target.mkdir(parents=True)
+        images = render_images(recipe, rows, cameras, target)
+        record = records[query_id]
+        if (record["state"] != "complete"
+                or sha256(prompt.encode()).hexdigest() != record["prompt_sha256"]
+                or selection["examples"] != record["examples"]
+                or [file_record(path)["sha256"] for path in images] != record["image_sha256"]):
+            raise ValueError(f"Redraw context differs from the all-photo winner: {query_id}")
+
+
 def runtime_identity(recipe: str) -> dict:
     paths = [Path(__file__).resolve(), PLAN.resolve()]
+    if recipe in ROUND2:
+        paths.append(ROUND2_PLAN.resolve())
     root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
     code = [file_record(path) for path in paths]
     for path, record in zip(paths, code, strict=True):
@@ -322,9 +384,12 @@ def run_recipe(recipe: str, config_path: str = "configs/data.yaml") -> dict:
     if len(truth) != 24 or len(query_ids) != QUERIES or len(set(query_ids)) != QUERIES:
         raise ValueError("The declaration requires 24 distinct holdouts and ten distinct test soils")
     identity = runtime_identity(recipe)
-    if RECIPES[recipe]["views"] == "camera" and RECIPES[recipe]["max_side"] == 768:
+    spec = RECIPES[recipe]
+    if spec["max_side"] == 768 and spec.get("width_mm", 100) == 100:
+        verify = (verify_reruns_match_original if spec["views"] == "camera"
+                  else lambda *args: verify_matches_all_views(recipe, *args))
         with TemporaryDirectory(prefix="soilgrain-october2-") as temporary:
-            verify_reruns_match_original(truth, sample, photos, cameras, Path(temporary))
+            verify(truth, sample, photos, cameras, Path(temporary))
     output = (cfg.artifacts_dir / "experiments" / "october2" / recipe).resolve()
     output.mkdir(parents=True, exist_ok=True)
     with (output / ".lock").open("a") as lock:
@@ -499,13 +564,57 @@ def draw_mean(config_path: str = "configs/data.yaml") -> dict:
                      subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()})
 
 
+def recipe_mean(name: str, config_path: str = "configs/data.yaml") -> dict:
+    """Coordinatewise mean of the eligible draws declared for ``name`` in ``MEANS``."""
+    components, minimum = MEANS[name]
+    cfg, truth, sample, _photos, _cameras, sources = load_inputs(config_path)
+    _verified_sources(sources)
+    base = cfg.artifacts_dir / "experiments" / "october2"
+    curves, pinned, excluded = [], [], []
+    for recipe in components:
+        summary_path, failure_path = base / recipe / "summary.json", base / recipe / "failure.json"
+        if summary_path.exists() == failure_path.exists():
+            raise ValueError(f"{recipe} must have finished as exactly one of eligible or failed")
+        if failure_path.exists():
+            if json.loads(failure_path.read_text())["eligible"] is not False:
+                raise ValueError(f"{recipe} failure record is inconsistent")
+            excluded.append(recipe)
+            continue
+        summary = json.loads(summary_path.read_text())
+        if summary["experiment"] != recipe or summary["eligible"] is not True:
+            raise ValueError(f"{recipe} summary is inconsistent")
+        _verified_sources([summary["oof"], summary["submission"]])
+        oof, test = pd.read_csv(summary["oof"]["path"]), pd.read_csv(summary["submission"]["path"])
+        if (sorted(oof.sample_id) != sorted(truth.sample_id)
+                or sorted(test.sample_id) != sorted(sample.sample_id)):
+            raise ValueError("Each draw requires exactly the holdout and test soils")
+        validate_cumulative_curves(oof)
+        validate_cumulative_curves(test)
+        curves.append(np.vstack([curve_array(oof.set_index("sample_id").loc[truth.sample_id]),
+                                 curve_array(test.set_index("sample_id").loc[sample.sample_id])]))
+        pinned += [summary["oof"], summary["submission"]]
+    output = base / name
+    if len(curves) < minimum:
+        output.mkdir(parents=True, exist_ok=True)
+        save_once(output / "failure.json", json_bytes({"eligible": False, "experiment": name,
+                                                       "excluded": excluded}))
+        raise ValueError(f"{name} needs at least {minimum} eligible draws")
+    output.mkdir(parents=True, exist_ok=True)
+    return finalize(output, name, truth, sample, np.mean(curves, axis=0),
+                    {"draws": len(curves), "excluded": excluded, "components": pinned,
+                     "producing_commit": subprocess.check_output(
+                         ["git", "rev-parse", "HEAD"], text=True).strip()})
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--recipe", choices=[*RECIPES, "vlm_draw_mean"], required=True)
+    parser.add_argument("--recipe", choices=[*RECIPES, "vlm_draw_mean", *MEANS], required=True)
     parser.add_argument("--config-path", default="configs/data.yaml")
     arguments = parser.parse_args()
     if arguments.recipe == "vlm_draw_mean":
         print(json.dumps(draw_mean(arguments.config_path), indent=2))
+    elif arguments.recipe in MEANS:
+        print(json.dumps(recipe_mean(arguments.recipe, arguments.config_path), indent=2))
     else:
         print(json.dumps(run_recipe(arguments.recipe, arguments.config_path), indent=2))
 

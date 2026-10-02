@@ -191,3 +191,52 @@ def test_launch_errors_do_not_consume_attempts_and_resume_uses_dispatched_respon
                             run=run, progress=lambda *a, **k: None)
     assert summary["eligible"] and summary["failed_attempts"] == 0
     assert len(calls) + (1 if (folder / "events.jsonl").exists() else 0) == len(ids)
+
+
+def test_wide_crops_scale_the_physical_width_and_only_the_width_sentence(tmp_path):
+    source = tmp_path / "source.png"
+    Image.effect_noise((1000, 900), 40).convert("RGB").save(source)
+    camera = pd.Series({"ppm": 4.6, "width": 1000, "height": 900})
+    october2.prepare_crop(source, camera, tmp_path / "wide.png", 768, 150)
+    assert Image.open(tmp_path / "wide.png").size == (690, 690)
+    truth, _sample, photos = soil_data(tmp_path)
+    narrow, *_ = october2.request_context("all_views_b_vlm", truth, photos, "T")
+    wide, *_ = october2.request_context("wide_all_views_a_vlm", truth, photos, "T")
+    assert wide == narrow.replace("is a 100 mm square", "is a 150 mm square") and wide != narrow
+
+
+def test_recipe_mean_requires_finished_components_and_a_minimum(tmp_path, monkeypatch):
+    truth, sample, _photos = soil_data(tmp_path)
+    cfg = type("Cfg", (), {"artifacts_dir": tmp_path / "artifacts"})()
+    monkeypatch.setattr(october2, "load_inputs", lambda _config: (cfg, truth, sample, None, None, []))
+    base = tmp_path / "artifacts" / "experiments" / "october2"
+    ids = truth.sample_id.tolist() + sample.sample_id.tolist()
+    for recipe, level in (("wide_all_views_a_vlm", 10), ("wide_all_views_b_vlm", 30)):
+        curves = np.array([[level] * 10 + [100]] * len(ids), dtype=float)
+        october2.finalize(base / recipe, recipe, truth, sample, curves, {})
+    with pytest.raises(ValueError, match="exactly one"):
+        october2.recipe_mean("wide_draw_mean")  # wide_c has neither a summary nor a failure.
+    (base / "wide_all_views_c_vlm").mkdir(parents=True)
+    (base / "wide_all_views_c_vlm" / "failure.json").write_text(json.dumps({"eligible": False}))
+    summary = october2.recipe_mean("wide_draw_mean")
+    assert summary["draws"] == 2 and summary["excluded"] == ["wide_all_views_c_vlm"]
+    result = pd.read_csv(base / "wide_draw_mean" / "wide_draw_mean.csv")
+    np.testing.assert_allclose(result.iloc[0, 1:11].to_numpy(dtype=float), [20] * 10)
+    (base / "claude_all_views_a_vlm").mkdir(parents=True)
+    for d in "abc":
+        folder = base / f"claude_all_views_{d}_vlm"
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "failure.json").write_text(json.dumps({"eligible": False}))
+    with pytest.raises(ValueError, match="at least 2"):
+        october2.recipe_mean("claude_all_views_mean")
+
+
+def test_wide_recipes_omit_only_the_declared_non_soil_photo(tmp_path, monkeypatch):
+    truth, _sample, photos = soil_data(tmp_path)
+    excluded = october2.file_record(Path(photos.loc[photos.sample_id == "T"].path.iloc[1]))["sha256"]
+    monkeypatch.setitem(october2.RECIPES["wide_all_views_a_vlm"], "exclude_sha256", (excluded,))
+    prompt, selection, rows = october2.request_context("wide_all_views_a_vlm", truth, photos, "T")
+    assert "remaining 2 query" in prompt and len(rows) == 8 + 2
+    assert excluded not in [source["sha256"] for source in selection["image_sources"]]
+    _prompt, _selection, rows = october2.request_context("all_views_b_vlm", truth, photos, "T")
+    assert len(rows) == 8 + 3

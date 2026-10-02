@@ -8,7 +8,7 @@ The visual-language (VLM) family has every one of our seven best public scores: 
 
 - **One photo per test soil.** The original takes the first photo per camera. Training holdouts usually have two cameras. Each test soil has one iPhone camera, so the model saw **one of its 3–5 photos**: a single 100 mm square, even for the cobble and gravel soils.
 - **Sharper test crops.** The labelled examples are ~460 px crops (~4.6 px/mm). iPhone queries were 768 px, downsampled from 1394–1953 px.
-- **Noisy draws.** A fresh rerun of the identical original recipe differs from the saved draw by **8.9 EMD per holdout and 7.4 per test soil** on average. EMD is convex in the prediction, so averaging draws cannot raise expected error.
+- **Noisy draws.** A fresh rerun of the identical original recipe differs from the saved draw by **8.9 EMD per holdout and 7.1 per test soil** on average. EMD is convex in the prediction, so averaging draws cannot raise expected error.
 
 Higher reasoning effort and a second model family (Claude Opus 5.5) were the remaining untested levers.
 
@@ -68,6 +68,8 @@ After the runs, an independent audit with a completeness critic:
 - confirmed the reruns, high-reasoning and Claude requests reproduce the original 34 prompts and images exactly;
 - recomputed every LOO score and CSV row;
 - confirmed Claude saw the images (its input tokens track image area, r = 0.998).
+
+One isolation caveat applies to the unsubmitted Claude candidate only. Its built-in AGENTS.md plugin may have loaded an 804-byte user-level `AGENTS.md`. That file contains no soil content, the token overhead was constant across queries, and the only available tool was the structured-output schema.
 
 The audit found that kaggle 2.2.2 reports a failed upload as reference 0 without raising. The upload script now verifies nothing was created and sets the receipt aside, rather than recording a false acceptance.
 

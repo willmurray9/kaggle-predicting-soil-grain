@@ -13,7 +13,7 @@ The [declaration](october2-round2-plan.md) and producing code were committed as 
 
 **Stopped: five of five daily slots used; 36 lifetime submissions, all complete. Best remains 30.22376** (`56778295`, the single all-photo draw). The final check was at **18:08:48 UTC**. The queue and predictions never changed after public feedback.
 
-On the three public soils, the public ranking is the **reverse of the local ranking**. The 150 mm crops had the best local error on every draw but scored worst publicly among the GPT candidates. The 100 mm three-draw mean includes the uploaded 30.22376 draw, yet scores 33.38, so the two fresh 100 mm draws were probably weaker on the public soils. This reinforces that a single draw's public score includes substantial luck. These three soils cannot show whether wider crops hurt the hidden seven; local validation says they help 16–19 of 24 training soils. We did not try to infer which soils are public.
+On the three public soils, **the public ranking reversed the local ranking among the three GPT candidates**; Claude was last in both. The 150 mm crops had the best local error on every draw but scored worst publicly among the GPT candidates. The 100 mm three-draw mean includes the uploaded 30.22376 draw, yet scores 33.38, so the two fresh 100 mm draws were probably weaker on the public soils. This reinforces that a single draw's public score includes substantial luck. These three soils cannot show whether wider crops hurt the hidden seven; local validation says they help 16–19 of 24 training soils. We did not try to infer which soils are public.
 
 ## Local evidence
 

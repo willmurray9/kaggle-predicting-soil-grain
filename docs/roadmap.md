@@ -16,8 +16,8 @@ were 33.37513 (100 mm three-draw mean), 36.95005 (six-draw mean),
 **All 36 lifetime submissions are complete; today's allowance is exhausted.**
 
 Locally, 150 mm crops improved every draw: 41.86 for the mean versus 44.37 for
-the uploaded draw, helping 17/24 soils. Publicly they ranked worst. On these
-three soils the public order reversed the local order. Fresh 100 mm draws were
+the uploaded draw, helping 17/24 soils. Publicly they ranked worst among the GPT
+candidates, whose public order reversed their local order on these three soils. Fresh 100 mm draws were
 also weaker publicly than the uploaded one, so its 30.22376 includes draw luck.
 The public score covers three soils; private performance of every candidate is
 unknown. When choosing final submissions, consider both the public best and the

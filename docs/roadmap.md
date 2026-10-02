@@ -5,28 +5,24 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — October 2
+## Latest status — October 2 (both rounds)
 
-**New public best: 30.22376**, from the [October 2 round](october2-results.md).
-It is a 19.68% reduction from 37.62858. The winning `all_views_vlm` keeps the
-original visual-language recipe but shows the model **every photo of the query
-soil** instead of the first photo per camera. Each test soil has one iPhone
-camera, so the original had seen only one of its 3–5 photos. Locally, whole-soil
-EMD improved from 50.62293 to 44.37302 (16/24 soils, +3.17 mean gain excluding
-the largest beneficiary). The first upload met the goal, so the round stopped
-after **one of five daily slots**. 32 lifetime submissions are complete.
+**Public best: 30.22376**, from the [first October 2 round](october2-results.md).
+The visual-language model is shown every photo of each soil instead of one per
+camera, which improves on 37.62858 by 19.68%. The [second round](october2-round2-results.md)
+used the remaining four slots on averaged draws and wider crops. Public scores
+were 33.37513 (100 mm three-draw mean), 36.95005 (six-draw mean),
+41.17472 (150 mm three-draw mean) and 42.00414 (Claude three-draw mean).
+**All 36 lifetime submissions are complete; today's allowance is exhausted.**
 
-Four frozen alternatives remain unsubmitted: three-draw mean, matched resolution,
-high reasoning, and Claude Opus 5.5. None improved local EMD beyond draw noise.
-A fresh rerun of the identical original recipe differs from its saved draw by
-about 8.9 EMD per holdout, so single-draw comparisons are noisy. Promising next
-steps combine all query photos with averaged draws, or with wider coverage of
-coarse soils. Each needs a new declaration.
-
-The public result covers three soils and does not establish private performance.
-Hosted model aliases are not immutable, and external-model prize eligibility
-remains unverified. Earlier evidence is in the [September 23 report](september23-results.md),
-the [strategy review](strategy-review-2026-09-16.md), and the [submission log](submissions.md).
+Locally, 150 mm crops improved every draw: 41.86 for the mean versus 44.37 for
+the uploaded draw, helping 17/24 soils. Publicly they ranked worst. On these
+three soils the public order reversed the local order. Fresh 100 mm draws were
+also weaker publicly than the uploaded one, so its 30.22376 includes draw luck.
+The public score covers three soils; private performance of every candidate is
+unknown. When choosing final submissions, consider both the public best and the
+strongest locally validated candidate. Any further run needs a new daily
+allowance and a new declaration.
 
 ## Model progression
 

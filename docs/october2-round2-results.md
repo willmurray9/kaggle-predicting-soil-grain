@@ -2,6 +2,19 @@
 
 The [declaration](october2-round2-plan.md) and producing code were committed as `f7a15c8` before any model request; CI passed. The goal is to beat **30.22376**, set by this morning's first-round all-photos upload, using today's remaining four slots. The user declined leaderboard probing.
 
+## Official results — allowance exhausted, best unchanged
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Mean of three 100 mm all-photo draws | `56779732` | 46.10971 | 33.37513 |
+| 2 | Mean of six all-photo draws (100 + 150 mm) | `56779745` | 43.82860 | 36.95005 |
+| 3 | Mean of three 150 mm all-photo draws | `56779760` | 41.85984 | 41.17472 |
+| 4 | Mean of three Claude all-photo draws | `56779767` | 46.46534 | 42.00414 |
+
+**Stopped: five of five daily slots used; 36 lifetime submissions, all complete. Best remains 30.22376** (`56778295`, the single all-photo draw). The final check was at **18:08:48 UTC**. The queue and predictions never changed after public feedback.
+
+On the three public soils, the public ranking is the **reverse of the local ranking**. The 150 mm crops had the best local error on every draw but scored worst publicly among the GPT candidates. The 100 mm three-draw mean includes the uploaded 30.22376 draw, yet scores 33.38, so the two fresh 100 mm draws were probably weaker on the public soils. This reinforces that a single draw's public score includes substantial luck. These three soils cannot show whether wider crops hurt the hidden seven; local validation says they help 16–19 of 24 training soils. We did not try to infer which soils are public.
+
 ## Local evidence
 
 All eight new recipes completed 24 whole-soil holdouts and ten test soils. **273 dispatches; one failed.** That failure was a Codex start-up race in which two clients installed system skills at the same moment (`ERROR … Directory not empty`). Its declared second dispatch succeeded. 55 Codex sessions recovered from WebSocket disconnects under the round-1 transport policy. Gains are against the original VLM's per-soil EMD; positive is better.

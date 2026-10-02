@@ -3,6 +3,26 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-10-02 — second round: averaged draws and wider crops, allowance exhausted
+
+The [second round](october2-round2-results.md) averaged independent all-photo
+draws and tested 150 mm crops and Claude all-photo draws. Recipes, the queue
+and all predictions were frozen before any of these public results.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Mean of three 100 mm all-photo draws | `56779732` | 46.10971 | 33.37513 |
+| 2 | Mean of six all-photo draws (100 + 150 mm) | `56779745` | 43.82860 | 36.95005 |
+| 3 | Mean of three 150 mm all-photo draws | `56779760` | 41.85984 | 41.17472 |
+| 4 | Mean of three Claude all-photo draws | `56779767` | 46.46534 | 42.00414 |
+
+**Stopped: five of five daily slots used; 36 lifetime submissions, all complete.
+Best remains 30.22376** (`56778295`). Declaration and producing code: `f7a15c8`
+(CI passed). Pre-upload record: `43d45fe`. Frozen selection:
+`31622a32b6e0e7d424e59831e2e2a971104f009eb4ad98faa0180bb8a2bbc220`.
+All 657 tests passed. An independent audit verified all 273 requests and every
+score before upload. Public order reversed local order on these three soils.
+
 ## 2026-10-02 — all query photos set a new best
 
 The [October 2 round](october2-results.md) kept the winning visual-language

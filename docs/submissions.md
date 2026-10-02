@@ -3,6 +3,27 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-10-02 — all query photos set a new best
+
+The [October 2 round](october2-results.md) kept the winning visual-language
+recipe and changed one thing per candidate. The first frozen candidate shows
+the model every photo of the query soil; each test soil previously contributed
+a single photo. It met the goal with the first upload.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | **All query photos VLM** | **`56778295`** | 44.37302 | **30.22376** |
+
+**New best 30.22376: 19.68% lower than 37.62858. Stopped after one of five
+daily slots; 32 lifetime submissions, all complete.** The three-draw mean,
+matched resolution, high reasoning and Claude Opus 5.5 candidates remain
+unsubmitted. Declaration and producing code: `dc05595` (CI passed); results
+record before upload: `0d1e7c3`. Frozen selection:
+`7699a51a59fe19120feb3e92b22f5095518903fdbdf398db418adb91e7db2e22`.
+CSV SHA-256: `199dd51b0e6eb031571be561d5e475242d6c08a334773f2f7fef0cdefcbc4119`.
+All 655 tests passed. An independent audit verified all 204 requests, their
+isolation, and every score before the upload.
+
 ## 2026-09-23 — visual context and fixed median, allowance exhausted
 
 The [declared five-candidate round](september23-results.md) completed two new

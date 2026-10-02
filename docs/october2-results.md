@@ -14,6 +14,14 @@ Higher reasoning effort and a second model family (Claude Opus 5.5) were the rem
 
 **Considered but not pursued:** leaderboard probing. Public scores of 0.00001 and 0.09 now top the leaderboard, almost certainly from probing the three public soils. Our 31 scored submissions would allow similar inference, but repository policy forbids tuning to public cases. This option is the user's decision. External data containing test soils, and hand-written curves, were also excluded.
 
+## Official result — new best, stopped after one upload
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | **All query photos** | **`56778295`** | 44.37302 | **30.22376** |
+
+**New public best 30.22376**, a **7.40482 EMD / 19.68% reduction** from 37.62858. The upload completed at **16:46:12 UTC**. The first upload met the declared goal, so the round stopped. **One of five daily slots was used** and 32 lifetime submissions are complete. The other four frozen candidates remain unsubmitted, and no prediction or queue changed after the result.
+
 ## Local evidence
 
 Each recipe ran 24 whole-soil holdouts and 10 test soils. All **204 model requests were valid on their first attempt**, with no retries, transport recoveries or tool use. Gains are against the original VLM's per-soil EMD; positive is better.

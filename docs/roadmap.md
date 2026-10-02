@@ -5,42 +5,28 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — September 23
+## Latest status — October 2
 
-**Public best remains 37.62858**, from the original isolated visual-language
-baseline. The [September 23 round](september23-results.md) used all five daily
-slots: paired-camera examples **46.04449**, complete context **58.45786**, fixed
-VLM median **43.88009**, spectral boosting **99.24452**, and log-quantile transport
-**75.93323**. **All 31 lifetime submissions are complete. Work stopped with no
-further model requests or uploads scheduled.**
+**New public best: 30.22376**, from the [October 2 round](october2-results.md).
+It is a 19.68% reduction from 37.62858. The winning `all_views_vlm` keeps the
+original visual-language recipe but shows the model **every photo of the query
+soil** instead of the first photo per camera. Each test soil has one iPhone
+camera, so the original had seen only one of its 3–5 photos. Locally, whole-soil
+EMD improved from 50.62293 to 44.37302 (16/24 soils, +3.17 mean gain excluding
+the largest beneficiary). The first upload met the goal, so the round stopped
+after **one of five daily slots**. 32 lifetime submissions are complete.
 
-Both new VLMs completed 24 whole-soil holdouts and ten test predictions. Paired
-examples provide the first photo from each camera for the original eight labeled
-soils. Complete context supplies all other 23 training soils per holdout and all
-24 for test queries, finishing yesterday's untested hypothesis with fresh outputs.
-Its local EMD improved to 40.21564, but H549 and H405 account for essentially all
-net gain; the remaining soils' mean gain is approximately zero. The deterministic
-median scored 46.63935 locally and was today's strongest public result. Neither
-local improvement transferred to a new public best. No weights or numerical
-models were refitted, and all predictions and the queue were frozen before uploads.
+Four frozen alternatives remain unsubmitted: three-draw mean, matched resolution,
+high reasoning, and Claude Opus 5.5. None improved local EMD beyond draw noise.
+A fresh rerun of the identical original recipe differs from its saved draw by
+about 8.9 EMD per holdout, so single-draw comparisons are noisy. Promising next
+steps combine all query photos with averaged draws, or with wider coverage of
+coarse soils. Each needs a new declaration.
 
-All 647 tests and producing-code CI passed. Independent audits verified all 68
-new responses and the median, and preserved 2,306 historical artifact files.
-Complete context had 18 requests with recognized transport recovery under the
-predeclared acceptance policy. The report records warning counts and distinguishes
-completed-turn token accounting from unknown disconnected-attempt consumption.
-
-The original winner uses anonymous images and eight training-only examples per
-query. It improved the prior 49.65594 public score by 24.22% in the
-[September 18 second round](september18-round2-results.md). Its private performance
-remains unknown; fresh hosted responses need not match saved ones, and external-model
-prize eligibility has not been established. Prior experiments remain in the
-[September 22 report](september22-results.md), [strategy review](strategy-review-2026-09-16.md),
-and [submission log](submissions.md).
-
-Spectral boosting and log-quantile transport have now been submitted. Saved
-linear SVR and shallow ExtraTrees were audited as failure replacements but not
-needed. Any further run requires a new daily allowance and renewed execution decision.
+The public result covers three soils and does not establish private performance.
+Hosted model aliases are not immutable, and external-model prize eligibility
+remains unverified. Earlier evidence is in the [September 23 report](september23-results.md),
+the [strategy review](strategy-review-2026-09-16.md), and the [submission log](submissions.md).
 
 ## Model progression
 

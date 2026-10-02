@@ -2,8 +2,8 @@
 
 Learning-first scaffold for the Kaggle competition [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 
-Current best: **55.78511 public EMD**, using RGB + texture + spectral ridge
-(15 September 2026). See the [latest search results](docs/autonomous-search-results.md).
+Current best: **30.22376 public EMD**, using an isolated visual-language model
+shown every photo of each soil (2 October 2026). See the [latest results](docs/october2-results.md).
 
 The pipeline provides:
 

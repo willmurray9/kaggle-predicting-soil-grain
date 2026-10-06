@@ -37,6 +37,7 @@ CLAUDE_SYSTEM = ("You estimate soil grain size distributions from attached photo
                  "Follow the user's instructions and respond only through the requested JSON.")
 PLAN = Path("docs/october2-plan.md")
 ROUND2_PLAN = Path("docs/october2-round2-plan.md")
+ROUND3_PLAN = Path("docs/october6-plan.md")
 ORIGINAL = Path("artifacts/experiments/visual_language")
 ORIGINAL_LEDGER_SHA256 = "dd4d650236ea87303248170937587129de988ef7f181e063af9abbaa1d6b86b3"
 QUERIES = 34
@@ -64,6 +65,16 @@ ROUND2 = {
                                      "max_side": 768} for d in ("a", "b", "c")},
 }
 RECIPES.update(ROUND2)
+# October 6 (docs/october6-plan.md): other random example panels, and two 100 mm side tiles per photo.
+ROUND3 = {
+    **{f"panel{seed}_all_views_vlm": {"provider": "codex", "reasoning": "low", "views": "all",
+                                      "max_side": 768, "seed": seed, "round_dir": "october6"}
+       for seed in (1, 2, 3, 4)},
+    **{f"tiled_all_views_{d}_vlm": {"provider": "codex", "reasoning": "low", "views": "all",
+                                    "max_side": 768, "tile_offsets_mm": (-50, 50),
+                                    "round_dir": "october6"} for d in ("a", "b")},
+}
+RECIPES.update(ROUND3)
 # Coordinatewise means of independent draws: (components, minimum eligible components).
 MEANS = {
     "all_views_draw_mean": (("all_views_vlm", "all_views_b_vlm", "all_views_c_vlm"), 2),
@@ -73,7 +84,36 @@ MEANS = {
                               "wide_all_views_c_vlm"), 4),
     "claude_all_views_mean": (("claude_all_views_a_vlm", "claude_all_views_b_vlm",
                                "claude_all_views_c_vlm"), 2),
+    # October 6: components may themselves be means; each component has equal weight.
+    "panel_bagged_mean": (("all_views_draw_mean", "panel1_all_views_vlm", "panel2_all_views_vlm",
+                           "panel3_all_views_vlm", "panel4_all_views_vlm"), 4),
+    "tiled_mean": (("tiled_all_views_a_vlm", "tiled_all_views_b_vlm"), 2),
+    "coverage_panel_mean": (("panel_bagged_mean", "tiled_mean"), 2),
 }
+ROUND3_MEANS = ("panel_bagged_mean", "tiled_mean", "coverage_panel_mean")
+
+
+def round_dir(name: str) -> str:
+    if name in RECIPES:
+        return RECIPES[name].get("round_dir", "october2")
+    return "october6" if name in ROUND3_MEANS else "october2"
+
+
+def seeded_prompt(truth: pd.DataFrame, query_id: str, query_views: int,
+                  seed: int) -> tuple[str, list[str]]:
+    """``build_prompt`` with its example panel drawn from ``seed`` (seed 0 is the original)."""
+    prompt, original = build_prompt(truth, query_id, query_views)
+    if seed == 0:
+        return prompt, original
+    available = sorted(s for s in truth.sample_id.tolist() if s != query_id)
+    examples = np.random.default_rng(seed).permutation(available)[:8].tolist()
+    values = curve_array(truth.set_index("sample_id").loc[examples])
+    lines = prompt.splitlines()
+    expected = [f"Example image {i} mass percentages passing: " for i in range(1, 9)]
+    if [line[:len(prefix)] for line, prefix in zip(lines[1:9], expected)] != expected:
+        raise ValueError("Prompt example lines changed")
+    lines[1:9] = [f"{prefix}{row.tolist()}" for prefix, row in zip(expected, values)]
+    return "\n".join(lines), examples
 UNKNOWN_INPUT_TOKENS = 40_000
 UNKNOWN_OUTPUT_TOKENS = {"low": 2_000, "high": 20_000, "claude": 4_000}
 BUDGETS = {
@@ -90,7 +130,7 @@ def budget(recipe: str) -> dict:
 
 
 def prepare_crop(path: Path, camera: pd.Series, output: Path, max_side: int,
-                 width_mm: int = 100) -> None:
+                 width_mm: int = 100, offset_mm: int = 0) -> None:
     """A calibrated center crop; 100 mm at ``max_side=768`` is byte-identical to the original."""
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source).convert("RGB")
@@ -101,6 +141,13 @@ def prepare_crop(path: Path, camera: pd.Series, output: Path, max_side: int,
     if not 1 <= side <= min(image.size):
         raise ValueError(f"{width_mm}mm crop does not fit")
     left, top = (image.width - side) // 2, (image.height - side) // 2
+    if offset_mm:  # Shift along the long side of the photograph.
+        if image.width >= image.height:
+            left += round(offset_mm * ppm)
+        else:
+            top += round(offset_mm * ppm)
+        if left < 0 or top < 0 or left + side > image.width or top + side > image.height:
+            raise ValueError("Tile does not fit")
     crop = image.crop((left, top, left + side, top + side))
     if side > max_side:
         crop = crop.resize((max_side, max_side), Image.Resampling.LANCZOS)
@@ -119,7 +166,14 @@ def request_context(recipe: str, truth: pd.DataFrame, photos: pd.DataFrame, quer
         views = views.loc[keep]
     if views.empty:
         raise ValueError("Query requires at least one photo")
-    prompt, examples = build_prompt(truth, query_id, len(views))
+    offsets = spec.get("tile_offsets_mm")
+    query_images = len(views) * (len(offsets) if offsets else 1)
+    prompt, examples = seeded_prompt(truth, query_id, query_images, spec.get("seed", 0))
+    if offsets:
+        original = "Each attached image is a 100 mm square center crop."
+        if prompt.count(original) != 1:
+            raise ValueError("Prompt crop sentence changed")
+        prompt = prompt.replace(original, "Each attached image is a 100 mm square crop.")
     width = spec.get("width_mm", 100)
     if width != 100:
         original = "Each attached image is a 100 mm square center crop."
@@ -128,11 +182,16 @@ def request_context(recipe: str, truth: pd.DataFrame, photos: pd.DataFrame, quer
         prompt = prompt.replace(original, f"Each attached image is a {width} mm square center crop.")
     if query_id in examples:
         raise ValueError("Held-out soil cannot be an example")
+    query_rows = [row for _, row in views.iterrows()]
+    if offsets:
+        query_rows = [pd.concat([row, pd.Series({"offset_mm": offset})])
+                      for row in query_rows for offset in offsets]
     rows = [index.loc[(index.split == "train") & (index.sample_id == sample_id)].iloc[0]
-            for sample_id in examples] + [row for _, row in views.iterrows()]
+            for sample_id in examples] + query_rows
     selection = {"examples": examples,
-                 "image_sources": [{**file_record(Path(row.path)), "camera": row.camera}
-                                   for row in rows]}
+                 "image_sources": [{**file_record(Path(row.path)), "camera": row.camera,
+                                    **({"offset_mm": int(row["offset_mm"])} if "offset_mm" in row
+                                       else {})} for row in rows]}
     return prompt, selection, rows
 
 
@@ -141,7 +200,7 @@ def render_images(recipe: str, rows, cameras: pd.DataFrame, folder: Path) -> lis
     for number, row in enumerate(rows, 1):
         output = folder / f"image_{number:02d}.png"
         prepare_crop(Path(row.path), cameras.loc[row.camera], output, RECIPES[recipe]["max_side"],
-                     RECIPES[recipe].get("width_mm", 100))
+                     RECIPES[recipe].get("width_mm", 100), int(row.get("offset_mm", 0)))
         images.append(output)
     return images
 
@@ -355,6 +414,8 @@ def runtime_identity(recipe: str) -> dict:
     paths = [Path(__file__).resolve(), PLAN.resolve()]
     if recipe in ROUND2:
         paths.append(ROUND2_PLAN.resolve())
+    if recipe in ROUND3:
+        paths.append(ROUND3_PLAN.resolve())
     root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
     code = [file_record(path) for path in paths]
     for path, record in zip(paths, code, strict=True):
@@ -385,12 +446,13 @@ def run_recipe(recipe: str, config_path: str = "configs/data.yaml") -> dict:
         raise ValueError("The declaration requires 24 distinct holdouts and ten distinct test soils")
     identity = runtime_identity(recipe)
     spec = RECIPES[recipe]
-    if spec["max_side"] == 768 and spec.get("width_mm", 100) == 100:
+    if (spec["max_side"] == 768 and spec.get("width_mm", 100) == 100
+            and spec.get("seed", 0) == 0 and not spec.get("tile_offsets_mm")):
         verify = (verify_reruns_match_original if spec["views"] == "camera"
                   else lambda *args: verify_matches_all_views(recipe, *args))
         with TemporaryDirectory(prefix="soilgrain-october2-") as temporary:
             verify(truth, sample, photos, cameras, Path(temporary))
-    output = (cfg.artifacts_dir / "experiments" / "october2" / recipe).resolve()
+    output = (cfg.artifacts_dir / "experiments" / round_dir(recipe) / recipe).resolve()
     output.mkdir(parents=True, exist_ok=True)
     with (output / ".lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -569,10 +631,11 @@ def recipe_mean(name: str, config_path: str = "configs/data.yaml") -> dict:
     components, minimum = MEANS[name]
     cfg, truth, sample, _photos, _cameras, sources = load_inputs(config_path)
     _verified_sources(sources)
-    base = cfg.artifacts_dir / "experiments" / "october2"
+    base = cfg.artifacts_dir / "experiments"
     curves, pinned, excluded = [], [], []
     for recipe in components:
-        summary_path, failure_path = base / recipe / "summary.json", base / recipe / "failure.json"
+        folder = base / round_dir(recipe) / recipe
+        summary_path, failure_path = folder / "summary.json", folder / "failure.json"
         if summary_path.exists() == failure_path.exists():
             raise ValueError(f"{recipe} must have finished as exactly one of eligible or failed")
         if failure_path.exists():
@@ -593,7 +656,7 @@ def recipe_mean(name: str, config_path: str = "configs/data.yaml") -> dict:
         curves.append(np.vstack([curve_array(oof.set_index("sample_id").loc[truth.sample_id]),
                                  curve_array(test.set_index("sample_id").loc[sample.sample_id])]))
         pinned += [summary["oof"], summary["submission"]]
-    output = base / name
+    output = base / round_dir(name) / name
     if len(curves) < minimum:
         output.mkdir(parents=True, exist_ok=True)
         save_once(output / "failure.json", json_bytes({"eligible": False, "experiment": name,

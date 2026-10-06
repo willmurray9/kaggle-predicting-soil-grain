@@ -240,3 +240,31 @@ def test_wide_recipes_omit_only_the_declared_non_soil_photo(tmp_path, monkeypatc
     assert excluded not in [source["sha256"] for source in selection["image_sources"]]
     _prompt, _selection, rows = october2.request_context("all_views_b_vlm", truth, photos, "T")
     assert len(rows) == 8 + 3
+
+
+def test_seeded_panels_change_only_example_lines_and_exclude_the_query(tmp_path):
+    from soilgrain.visual_language import build_prompt
+    truth, _sample, _photos = soil_data(tmp_path)
+    assert october2.seeded_prompt(truth, "S0", 2, 0) == build_prompt(truth, "S0", 2)
+    original, _ = build_prompt(truth, "S0", 2)
+    prompt, examples = october2.seeded_prompt(truth, "S0", 2, 3)
+    assert "S0" not in examples and len(set(examples)) == 8
+    changed = [i for i, (a, b) in enumerate(zip(original.splitlines(), prompt.splitlines())) if a != b]
+    assert changed and set(changed) <= set(range(1, 9))
+
+
+def test_tiles_shift_along_the_long_side_and_count_in_the_prompt(tmp_path):
+    source = tmp_path / "source.png"
+    Image.effect_noise((1000, 500), 40).convert("RGB").save(source)
+    camera = pd.Series({"ppm": 4.0, "width": 1000, "height": 500})
+    october2.prepare_crop(source, camera, tmp_path / "center.png", 768)
+    october2.prepare_crop(source, camera, tmp_path / "left.png", 768, 100, -50)
+    assert (np.asarray(Image.open(tmp_path / "left.png"))
+            == np.asarray(Image.open(source).crop((100, 50, 500, 450)))).all()
+    with pytest.raises(ValueError, match="Tile does not fit"):
+        october2.prepare_crop(source, camera, tmp_path / "far.png", 768, 100, -80)
+    truth, _sample, photos = soil_data(tmp_path)
+    prompt, selection, rows = october2.request_context("tiled_all_views_a_vlm", truth, photos, "T")
+    assert len(rows) == 8 + 6 and "remaining 6 query" in prompt
+    assert "100 mm square crop." in prompt and "center crop" not in prompt
+    assert [s.get("offset_mm") for s in selection["image_sources"][8:]] == [-50, 50] * 3

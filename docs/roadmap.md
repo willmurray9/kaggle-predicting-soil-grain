@@ -18,7 +18,9 @@ Panel bagging set the VLM family's best local whole-soil EMD, **39.24**, against
 panel locally. Public scores for the all-photo family now cluster between 33.4 and
 39.4, so the 30.22376 draw looks like a favourable outlier on three soils. For
 final selection, panel bagging needs private EMD at least 2.49 lower to beat
-`56778295` under the 30/70 weighting; its local edge is 5.13. Earlier rounds:
+`56778295` under the 30/70 weighting. Its mean local edge is 5.13, but it improves
+only 11/24 soils: H668 and H405 supply 79% of the gain, and the gain is negative
+without the top three soils. Earlier rounds:
 [October 2 second round](october2-round2-results.md) and the [submission log](submissions.md).
 Any further run needs a new daily allowance and a new declaration.
 

@@ -16,7 +16,7 @@ The [declaration](october6-plan.md) and producing code were committed as `f04a22
 
 The all-photo GPT family now has nine public scores, from 30.22 to 41.17. Seven of them, all from today and October 2, fall between 33.4 and 39.4; the rest are the 30.22 draw itself and the 41.17 wide-crop mean. Today's local improvements (46.1 → 39.2) did not move public scores below 36. The single 30.22376 draw looks increasingly like a favourable outlier on three public soils rather than the family's typical result.
 
-For final-submission choice: panel bagging gives up 5.81 public EMD against `56778295`. Under `0.30·public + 0.70·private`, it beats that submission if its private EMD is at least **2.49 lower**. Its local whole-soil EMD is **5.13 lower** (39.24 vs 44.37), the first candidate whose local edge exceeds its break-even. Local validation has transferred unevenly, so this is evidence, not proof.
+For final-submission choice: panel bagging gives up 5.81 public EMD against `56778295`. Under `0.30·public + 0.70·private`, it beats that submission if its private EMD is at least **2.49 lower**. Its mean local whole-soil EMD is **5.13 lower** (39.24 vs 44.37), but the gain is **concentrated, not broad**. Only 11 of 24 soils improve, and the median soil worsens by 2.29. H668 and H405 supply 79% of the net gain, and the gain turns negative once the top three soils (H668, H405, H126) are excluded. These are fines-rich soils, the pattern of the September 23 full-context recipe, whose local gain did not transfer publicly. This mean local edge is therefore weak evidence for the hidden soils.
 
 ## Local evidence
 

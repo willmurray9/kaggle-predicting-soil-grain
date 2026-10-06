@@ -3,6 +3,27 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-10-06 — example-panel bagging and side tiles, allowance exhausted
+
+The [October 6 round](october6-results.md) averaged predictions over random
+example panels and added two 100 mm side tiles per photo. Recipes, queue and
+predictions were frozen before any public result.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Example-panel bagged mean | `56885854` | 39.24408 | 36.03861 |
+| 2 | Panel + tiled coverage mean | `56885862` | 39.87939 | 36.15340 |
+| 3 | Tiled two-draw mean | `56885866` | 42.51267 | 38.77302 |
+| 4 | Tiled draw A | `56885873` | 40.93262 | 39.42952 |
+| 5 | Tiled draw B | `56885883` | 44.40751 | 38.12980 |
+
+**Stopped: five of five daily slots used; 41 lifetime submissions, all complete.
+Best remains 30.22376** (`56778295`). Declaration and producing code: `f04a22a`
+(CI passed). Pre-upload record: `2992529`. Frozen selection:
+`d7a33b6a42f7574a16c3be87dcc156884d3da7d2d1c333a88f776f88ea64e947`.
+All 660 tests passed. An independent audit verified all 206 requests, the
+images and every score before upload.
+
 ## 2026-10-02 — second round: averaged draws and wider crops, allowance exhausted
 
 The [second round](october2-round2-results.md) averaged independent all-photo

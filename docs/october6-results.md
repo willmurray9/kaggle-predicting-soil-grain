@@ -2,6 +2,22 @@
 
 The [declaration](october6-plan.md) and producing code were committed as `f04a22a` before any model request; CI passed. The goal is to beat **30.22376** (`56778295`) or use today's five slots. The user declined leaderboard probing.
 
+## Official results — allowance exhausted, best unchanged
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Example-panel bagged mean | `56885854` | 39.24408 | 36.03861 |
+| 2 | Panel + tiled coverage mean | `56885862` | 39.87939 | 36.15340 |
+| 3 | Tiled two-draw mean | `56885866` | 42.51267 | 38.77302 |
+| 4 | Tiled draw A | `56885873` | 40.93262 | 39.42952 |
+| 5 | Tiled draw B | `56885883` | 44.40751 | 38.12980 |
+
+**Stopped: five of five daily slots used; 41 lifetime submissions, all complete. Best remains 30.22376** (`56778295`). The final check was at **16:31:32 UTC**. The queue and predictions never changed after public feedback.
+
+The all-photo GPT family now has nine public scores, from 30.22 to 41.17. Seven of them, all from today and October 2, fall between 33.4 and 39.4; the rest are the 30.22 draw itself and the 41.17 wide-crop mean. Today's local improvements (46.1 → 39.2) did not move public scores below 36. The single 30.22376 draw looks increasingly like a favourable outlier on three public soils rather than the family's typical result.
+
+For final-submission choice: panel bagging gives up 5.81 public EMD against `56778295`. Under `0.30·public + 0.70·private`, it beats that submission if its private EMD is at least **2.49 lower**. Its local whole-soil EMD is **5.13 lower** (39.24 vs 44.37), the first candidate whose local edge exceeds its break-even. Local validation has transferred unevenly, so this is evidence, not proof.
+
 ## Local evidence
 
 Six GPT recipes completed 24 whole-soil holdouts and ten test soils: **206 dispatches**. Two first attempts failed, with an identical client error before any response: Codex timed out refreshing its model list (`ERROR codex_models_manager … timeout`). Their declared second dispatches succeeded. A recipe whose second attempt is valid is eligible; this matches the October 2 plan's definition and round 2's precedent. Six test requests recovered from WebSocket disconnects under the transport policy.

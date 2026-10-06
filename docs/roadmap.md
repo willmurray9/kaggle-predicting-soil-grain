@@ -5,24 +5,22 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — October 2 (both rounds)
+## Latest status — October 6
 
-**Public best: 30.22376**, from the [first October 2 round](october2-results.md).
-The visual-language model is shown every photo of each soil instead of one per
-camera, which improves on 37.62858 by 19.68%. The [second round](october2-round2-results.md)
-used the remaining four slots on averaged draws and wider crops. Public scores
-were 33.37513 (100 mm three-draw mean), 36.95005 (six-draw mean),
-41.17472 (150 mm three-draw mean) and 42.00414 (Claude three-draw mean).
-**All 36 lifetime submissions are complete; today's allowance is exhausted.**
+**Public best remains 30.22376** (`56778295`), the single all-photo GPT draw from
+[October 2](october2-results.md). The [October 6 round](october6-results.md)
+used all five slots: example-panel bagged mean **36.03861**, panel + tiled mean
+**36.15340**, tiled mean **38.77302**, and tiled draws **39.42952** and **38.12980**.
+**41 lifetime submissions are complete; today's allowance is exhausted.**
 
-Locally, 150 mm crops improved every draw: 41.86 for the mean versus 44.37 for
-the uploaded draw, helping 17/24 soils. Publicly they ranked worst among the GPT
-candidates, whose public order reversed their local order on these three soils. Fresh 100 mm draws were
-also weaker publicly than the uploaded one, so its 30.22376 includes draw luck.
-The public score covers three soils; private performance of every candidate is
-unknown. When choosing final submissions, consider both the public best and the
-strongest locally validated candidate. Any further run needs a new daily
-allowance and a new declaration.
+Panel bagging set the VLM family's best local whole-soil EMD, **39.24**, against
+44.37 for the uploaded winner. Every alternative example panel beat the seed-0
+panel locally. Public scores for the all-photo family now cluster between 33.4 and
+39.4, so the 30.22376 draw looks like a favourable outlier on three soils. For
+final selection, panel bagging needs private EMD at least 2.49 lower to beat
+`56778295` under the 30/70 weighting; its local edge is 5.13. Earlier rounds:
+[October 2 second round](october2-round2-results.md) and the [submission log](submissions.md).
+Any further run needs a new daily allowance and a new declaration.
 
 ## Model progression
 

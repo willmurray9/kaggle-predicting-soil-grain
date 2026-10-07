@@ -38,6 +38,7 @@ CLAUDE_SYSTEM = ("You estimate soil grain size distributions from attached photo
 PLAN = Path("docs/october2-plan.md")
 ROUND2_PLAN = Path("docs/october2-round2-plan.md")
 ROUND3_PLAN = Path("docs/october6-plan.md")
+ROUND4_PLAN = Path("docs/october7-plan.md")
 ORIGINAL = Path("artifacts/experiments/visual_language")
 ORIGINAL_LEDGER_SHA256 = "dd4d650236ea87303248170937587129de988ef7f181e063af9abbaa1d6b86b3"
 QUERIES = 34
@@ -75,6 +76,22 @@ ROUND3 = {
                                     "round_dir": "october6"} for d in ("a", "b")},
 }
 RECIPES.update(ROUND3)
+# October 7 (docs/october7-plan.md): match query resolution to the examples, and map every
+# camera's mean exposure (examples included) to the training mean.
+# Per-camera gains map each camera's mean 100 mm crop luminance to the training mean (129.615);
+# computed once from unlabelled crops of every photo and frozen here.
+EXPOSURE_GAINS = {"Motorola Edge": 1.0283, "Motorola Edge 60 Fusion": 0.8248, "Samsung A52": 0.9776,
+                  "iPhone 14": 0.8333, "iPhone 16": 0.7799}
+_BASE = {"provider": "codex", "reasoning": "low", "views": "all", "round_dir": "october7"}
+ROUND4 = {
+    **{f"all_views_{d}_vlm": {**_BASE, "max_side": 768} for d in ("d", "e")},
+    **{f"matched_all_views_{d}_vlm": {**_BASE, "max_side": 460} for d in ("a", "b")},
+    **{f"exposure_all_views_{d}_vlm": {**_BASE, "max_side": 768, "exposure_gains": EXPOSURE_GAINS}
+       for d in ("a", "b")},
+    **{f"aligned_all_views_{d}_vlm": {**_BASE, "max_side": 460, "exposure_gains": EXPOSURE_GAINS}
+       for d in ("a", "b")},
+}
+RECIPES.update(ROUND4)
 # Coordinatewise means of independent draws: (components, minimum eligible components).
 MEANS = {
     "all_views_draw_mean": (("all_views_vlm", "all_views_b_vlm", "all_views_c_vlm"), 2),
@@ -91,11 +108,21 @@ MEANS = {
     "coverage_panel_mean": (("panel_bagged_mean", "tiled_mean"), 2),
 }
 ROUND3_MEANS = ("panel_bagged_mean", "tiled_mean", "coverage_panel_mean")
+MEANS.update({
+    "aligned_mean": (("aligned_all_views_a_vlm", "aligned_all_views_b_vlm"), 2),
+    "matched_mean": (("matched_all_views_a_vlm", "matched_all_views_b_vlm"), 2),
+    "exposure_mean": (("exposure_all_views_a_vlm", "exposure_all_views_b_vlm"), 2),
+    "all_views_five_draw_mean": (("all_views_vlm", "all_views_b_vlm", "all_views_c_vlm",
+                                  "all_views_d_vlm", "all_views_e_vlm"), 4),
+})
+ROUND4_MEANS = ("aligned_mean", "matched_mean", "exposure_mean", "all_views_five_draw_mean")
 
 
 def round_dir(name: str) -> str:
     if name in RECIPES:
         return RECIPES[name].get("round_dir", "october2")
+    if name in ROUND4_MEANS:
+        return "october7"
     return "october6" if name in ROUND3_MEANS else "october2"
 
 
@@ -130,7 +157,7 @@ def budget(recipe: str) -> dict:
 
 
 def prepare_crop(path: Path, camera: pd.Series, output: Path, max_side: int,
-                 width_mm: int = 100, offset_mm: int = 0) -> None:
+                 width_mm: int = 100, offset_mm: int = 0, gain: float | None = None) -> None:
     """A calibrated center crop; 100 mm at ``max_side=768`` is byte-identical to the original."""
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source).convert("RGB")
@@ -151,6 +178,9 @@ def prepare_crop(path: Path, camera: pd.Series, output: Path, max_side: int,
     crop = image.crop((left, top, left + side, top + side))
     if side > max_side:
         crop = crop.resize((max_side, max_side), Image.Resampling.LANCZOS)
+    if gain is not None:  # Camera exposure gain after resizing: round half to even, clip to 0-255.
+        scaled = np.clip(np.rint(np.asarray(crop, dtype=float) * gain), 0, 255).astype(np.uint8)
+        crop = Image.fromarray(scaled, mode="RGB")
     crop.info.clear()
     crop.save(output, format="PNG")
 
@@ -199,8 +229,10 @@ def render_images(recipe: str, rows, cameras: pd.DataFrame, folder: Path) -> lis
     images = []
     for number, row in enumerate(rows, 1):
         output = folder / f"image_{number:02d}.png"
+        gains = RECIPES[recipe].get("exposure_gains")
         prepare_crop(Path(row.path), cameras.loc[row.camera], output, RECIPES[recipe]["max_side"],
-                     RECIPES[recipe].get("width_mm", 100), int(row.get("offset_mm", 0)))
+                     RECIPES[recipe].get("width_mm", 100), int(row.get("offset_mm", 0)),
+                     gains[row.camera] if gains else None)
         images.append(output)
     return images
 
@@ -416,6 +448,8 @@ def runtime_identity(recipe: str) -> dict:
         paths.append(ROUND2_PLAN.resolve())
     if recipe in ROUND3:
         paths.append(ROUND3_PLAN.resolve())
+    if recipe in ROUND4:
+        paths.append(ROUND4_PLAN.resolve())
     root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
     code = [file_record(path) for path in paths]
     for path, record in zip(paths, code, strict=True):
@@ -447,7 +481,8 @@ def run_recipe(recipe: str, config_path: str = "configs/data.yaml") -> dict:
     identity = runtime_identity(recipe)
     spec = RECIPES[recipe]
     if (spec["max_side"] == 768 and spec.get("width_mm", 100) == 100
-            and spec.get("seed", 0) == 0 and not spec.get("tile_offsets_mm")):
+            and spec.get("seed", 0) == 0 and not spec.get("tile_offsets_mm")
+            and not spec.get("exposure_gains")):
         verify = (verify_reruns_match_original if spec["views"] == "camera"
                   else lambda *args: verify_matches_all_views(recipe, *args))
         with TemporaryDirectory(prefix="soilgrain-october2-") as temporary:

@@ -268,3 +268,27 @@ def test_tiles_shift_along_the_long_side_and_count_in_the_prompt(tmp_path):
     assert len(rows) == 8 + 6 and "remaining 6 query" in prompt
     assert "100 mm square crop." in prompt and "center crop" not in prompt
     assert [s.get("offset_mm") for s in selection["image_sources"][8:]] == [-50, 50] * 3
+
+
+def test_exposure_gain_scales_after_resize_and_is_absent_by_default(tmp_path):
+    source = tmp_path / "source.png"
+    Image.effect_noise((1000, 900), 40).convert("RGB").save(source)
+    camera = pd.Series({"ppm": 8.0, "width": 1000, "height": 900})
+    october2.prepare_crop(source, camera, tmp_path / "plain.png", 460)
+    october2.prepare_crop(source, camera, tmp_path / "none.png", 460, 100, 0, None)
+    october2.prepare_crop(source, camera, tmp_path / "gain.png", 460, 100, 0, 0.8)
+    assert (tmp_path / "plain.png").read_bytes() == (tmp_path / "none.png").read_bytes()
+    plain = np.asarray(Image.open(tmp_path / "plain.png"), dtype=float)
+    gained = np.asarray(Image.open(tmp_path / "gain.png"), dtype=float)
+    np.testing.assert_array_equal(gained, np.clip(np.rint(plain * 0.8), 0, 255))
+
+
+def test_october7_recipes_keep_the_prompt_and_route_outputs():
+    for recipe in ("matched_all_views_a_vlm", "exposure_all_views_a_vlm", "aligned_all_views_b_vlm",
+                   "all_views_d_vlm"):
+        spec = october2.RECIPES[recipe]
+        assert spec["views"] == "all" and spec.get("seed", 0) == 0 and october2.round_dir(recipe) == "october7"
+    assert october2.round_dir("all_views_five_draw_mean") == "october7"
+    assert october2.round_dir("all_views_vlm") == "october2"
+    assert set(october2.EXPOSURE_GAINS) == {"Motorola Edge", "Motorola Edge 60 Fusion", "Samsung A52",
+                                            "iPhone 14", "iPhone 16"}

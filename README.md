@@ -4,8 +4,8 @@ Learning-first scaffold for the Kaggle competition [Predicting Soil Grain Size D
 
 Current best: **30.22376 public EMD**, using an isolated visual-language model
 shown every photo of each soil (2 October 2026). See the [winning round](docs/october2-results.md)
-the [follow-up round](docs/october2-round2-results.md), and the
-[October 6 round](docs/october6-results.md).
+the [follow-up round](docs/october2-round2-results.md), the
+[October 6 round](docs/october6-results.md) and the [October 7 round](docs/october7-results.md).
 
 The pipeline provides:
 

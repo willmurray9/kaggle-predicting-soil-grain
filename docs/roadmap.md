@@ -5,23 +5,25 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — October 6
+## Latest status — October 7
 
-**Public best remains 30.22376** (`56778295`), the single all-photo GPT draw from
-[October 2](october2-results.md). The [October 6 round](october6-results.md)
-used all five slots: example-panel bagged mean **36.03861**, panel + tiled mean
-**36.15340**, tiled mean **38.77302**, and tiled draws **39.42952** and **38.12980**.
-**41 lifetime submissions are complete; today's allowance is exhausted.**
+**Public best remains 30.22376** (`56778295`). The [October 7 round](october7-results.md)
+used all five slots on test-query alignment:
 
-Panel bagging set the VLM family's best local whole-soil EMD, **39.24**, against
-44.37 for the uploaded winner. Every alternative example panel beat the seed-0
-panel locally. Public scores for the all-photo family now cluster between 33.4 and
-39.4, so the 30.22376 draw looks like a favourable outlier on three soils. For
-final selection, panel bagging needs private EMD at least 2.49 lower to beat
-`56778295` under the 30/70 weighting. Its mean local edge is 5.13, but it improves
-only 11/24 soils: H668 and H405 supply 79% of the gain, and the gain is negative
-without the top three soils. Earlier rounds:
-[October 2 second round](october2-round2-results.md) and the [submission log](submissions.md).
+- aligned mean **39.98396**;
+- matched-resolution mean **32.70180**;
+- exposure mean **35.88845**;
+- five-draw mean of the winning recipe **35.51707**;
+- a fresh single draw of the winning recipe **40.51026**.
+
+**46 lifetime submissions are complete; today's allowance is exhausted.**
+
+The fresh draw confirms that 30.22 was a favourable single draw: identical requests
+span at least 30.2–40.5 on the three public soils. Downscaling test queries to the
+examples' ~460 px gave the best averaged public score so far (32.70). Exposure
+scaling did not help. For final selection, `matched_mean` needs private EMD only
+about 1.06 lower than `56778295` to break even under the 30/70 weighting. Earlier:
+[October 6](october6-results.md) and the [submission log](submissions.md).
 Any further run needs a new daily allowance and a new declaration.
 
 ## Model progression

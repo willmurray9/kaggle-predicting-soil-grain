@@ -3,6 +3,30 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-10-07 — test-query alignment and base redraws, allowance exhausted
+
+The [October 7 round](october7-results.md) rendered test queries like the
+labelled examples (460 px resolution, per-camera exposure) and added base
+redraws. A Codex client notice rejected the first run wholesale; a declared
+amendment accepted only that notice and reran in a fresh folder. All
+predictions and the queue were frozen before any public result.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Aligned mean (460 px + exposure) | `56917684` | 47.83571 | 39.98396 |
+| 2 | Matched-resolution mean | `56917695` | 46.77172 | 32.70180 |
+| 3 | Exposure mean | `56917701` | 45.64139 | 35.88845 |
+| 4 | Five-draw mean of the winning recipe | `56917712` | 45.99039 | 35.51707 |
+| 5 | Fresh single draw of the winning recipe | `56917730` | 46.81365 | 40.51026 |
+
+**Stopped: five of five daily slots used; 46 lifetime submissions, all complete.
+Best remains 30.22376** (`56778295`). Producing code `2492581` (CI passed);
+pre-upload record `fc637ea`; frozen selection
+`a8f27bdba6451a15a078485bb7155f575c3c0279b41004b5f5910bfc053550db`.
+663 tests passed; an independent audit verified all 272 rerun requests and
+3,472 images before upload. A fresh draw of the winning recipe scoring 40.51
+confirms that 30.22 was a favourable draw.
+
 ## 2026-10-06 — example-panel bagging and side tiles, allowance exhausted
 
 The [October 6 round](october6-results.md) averaged predictions over random

@@ -2,6 +2,24 @@
 
 The [declaration](october7-plan.md) was committed as `6e5a910` before any model request. The goal is to beat **30.22376** (`56778295`) or use today's five slots, testing whether test queries rendered like the labelled examples help. The user declined leaderboard probing.
 
+## Official results — allowance exhausted, best unchanged
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Aligned mean (460 px + exposure) | `56917684` | 47.83571 | 39.98396 |
+| 2 | **Matched-resolution mean (460 px)** | `56917695` | 46.77172 | **32.70180** |
+| 3 | Exposure mean | `56917701` | 45.64139 | 35.88845 |
+| 4 | Five-draw mean of the winning recipe | `56917712` | 45.99039 | 35.51707 |
+| 5 | Fresh single draw of the winning recipe | `56917730` | 46.81365 | 40.51026 |
+
+**Stopped: five of five daily slots used; 46 lifetime submissions, all complete. Best remains 30.22376** (`56778295`). The final check was at **17:39:31 UTC**. The queue and predictions never changed after public feedback.
+
+**The winner's 30.22 was a lucky draw.** A fresh single draw of the identical recipe scores **40.51** publicly. The five-draw mean, which includes the 30.22 draw, scores **35.52**. Single draws of one recipe therefore span at least 30.2–40.5 on these three soils.
+
+**Matched resolution is the strongest averaged candidate so far.** Its two-draw mean scores **32.70**, 2.82 better than the five-draw base mean. It changes only test queries, which are downscaled to the examples' ~460 px. Exposure alone scored 35.89. Combined with matched resolution, exposure scored 39.98, so exposure scaling does not appear to help. With two draws per candidate and three public soils, these differences are within plausible noise.
+
+For final selection, `matched_mean` gives up 2.48 public EMD against `56778295`. Under `0.30·public + 0.70·private` it needs private EMD only about **1.06 lower** to break even. Local validation cannot measure its test-only change. Unlike the winner, it is a two-draw average, so less of its score is a single draw's luck.
+
 ## First run rejected, amended rerun
 
 The first run stopped all eight recipes as ineligible after 32 dispatches and about 0.64M input tokens. Since October 6, Codex CLI 0.154.0 emits a notice about managed account settings it does not recognize: "Ignoring unknown `features` requirement `ultrafast_mode` …". The declared audit rejects every unrecognized client item, so every attempt was rejected regardless of its answer. Re-validating the preserved attempts showed:

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import re
 import fcntl
 import json
 import subprocess
@@ -18,13 +19,15 @@ from PIL import Image, ImageOps
 
 from soilgrain.config import load_config
 from soilgrain.constants import CANONICAL_GRAIN_LABELS
-from soilgrain.evidence_visual_language import response_usage as codex_response_usage
+from soilgrain.evidence_visual_language import (
+    response_usage as codex_response_usage, stderr_transport_usage, transport_events,
+)
 from soilgrain.metrics import emd_score
 from soilgrain.retrieval_visual_language import file_record, json_bytes, save_once
 from soilgrain.search_inputs import _verified_sources, load_search_inputs
 from soilgrain.submission import validate_submission
 from soilgrain.targets import curve_array, ordered_grain_columns, validate_cumulative_curves
-from soilgrain.visual_language import SCHEMA, build_prompt, parse_prediction
+from soilgrain.visual_language import SCHEMA, audit_events, build_prompt, parse_prediction
 
 
 CODEX = "/opt/homebrew/bin/codex"
@@ -82,7 +85,10 @@ RECIPES.update(ROUND3)
 # computed once from unlabelled crops of every photo and frozen here.
 EXPOSURE_GAINS = {"Motorola Edge": 1.0283, "Motorola Edge 60 Fusion": 0.8248, "Samsung A52": 0.9776,
                   "iPhone 14": 0.8333, "iPhone 16": 0.7799}
-_BASE = {"provider": "codex", "reasoning": "low", "views": "all", "round_dir": "october7"}
+# The first October 7 run (artifacts/experiments/october7/) was rejected wholesale by a new client
+# notice; the amended rerun accepts only that notice and writes to october7r/.
+_BASE = {"provider": "codex", "reasoning": "low", "views": "all", "round_dir": "october7r",
+         "allow_requirements_notice": True}
 ROUND4 = {
     **{f"all_views_{d}_vlm": {**_BASE, "max_side": 768} for d in ("d", "e")},
     **{f"matched_all_views_{d}_vlm": {**_BASE, "max_side": 460} for d in ("a", "b")},
@@ -122,7 +128,7 @@ def round_dir(name: str) -> str:
     if name in RECIPES:
         return RECIPES[name].get("round_dir", "october2")
     if name in ROUND4_MEANS:
-        return "october7"
+        return "october7r"
     return "october6" if name in ROUND3_MEANS else "october2"
 
 
@@ -330,9 +336,37 @@ def extract_claude_response(folder: Path) -> None:
         save_once(folder / "response.json", json.dumps(results[0]["structured_output"]).encode())
 
 
+# A content-independent client notice about managed account settings that Codex 0.154.0 does not
+# recognize; accepted only for recipes declared with ``allow_requirements_notice``.
+REQUIREMENTS_NOTICE = re.compile(
+    r"Ignoring unknown `features` requirement `[a-z_]+` from requirements layers: "
+    r"enterprise-managed requirements .+")
+
+
+def codex_usage_allowing_notice(folder: Path) -> dict:
+    """``evidence_visual_language.response_usage`` after removing requirements notices."""
+    events = [json.loads(line) for line in (folder / "events.jsonl").read_text().splitlines()]
+    kept = [event for event in events
+            if not (event.get("type") == "item.completed"
+                    and event.get("item", {}).get("type") == "error"
+                    and REQUIREMENTS_NOTICE.fullmatch(event["item"].get("message", "")))]
+    filtered, transport = transport_events(kept)
+    usage = audit_events(filtered)
+    messages = [event["item"]["text"] for event in filtered
+                if event.get("type") == "item.completed"
+                and event.get("item", {}).get("type") == "agent_message"]
+    response = (folder / "response.json").read_text()
+    if len(messages) != 1 or messages[0].strip() != response.strip():
+        raise ValueError("Require exactly one final message matching the response file")
+    parse_prediction(response)
+    return {**usage, "transport_events": transport, "requirements_notices": len(events) - len(kept),
+            **stderr_transport_usage(folder / "stderr.txt")}
+
+
 def validated(recipe: str, folder: Path) -> dict:
     if RECIPES[recipe]["provider"] == "codex":
-        usage = codex_response_usage(folder)
+        usage = (codex_usage_allowing_notice(folder) if RECIPES[recipe].get("allow_requirements_notice")
+                 else codex_response_usage(folder))
     else:
         extract_claude_response(folder)
         usage = claude_response_usage(folder)

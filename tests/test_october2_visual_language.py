@@ -287,8 +287,36 @@ def test_october7_recipes_keep_the_prompt_and_route_outputs():
     for recipe in ("matched_all_views_a_vlm", "exposure_all_views_a_vlm", "aligned_all_views_b_vlm",
                    "all_views_d_vlm"):
         spec = october2.RECIPES[recipe]
-        assert spec["views"] == "all" and spec.get("seed", 0) == 0 and october2.round_dir(recipe) == "october7"
-    assert october2.round_dir("all_views_five_draw_mean") == "october7"
+        assert spec["views"] == "all" and spec.get("seed", 0) == 0 and october2.round_dir(recipe) == "october7r"
+    assert october2.round_dir("all_views_five_draw_mean") == "october7r"
     assert october2.round_dir("all_views_vlm") == "october2"
     assert set(october2.EXPOSURE_GAINS) == {"Motorola Edge", "Motorola Edge 60 Fusion", "Samsung A52",
                                             "iPhone 14", "iPhone 16"}
+
+
+def codex_stream(tmp_path, extra_errors):
+    folder = tmp_path / "attempt"
+    folder.mkdir(parents=True)
+    response = json.dumps({"cdf": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100]})
+    events = [{"type": "thread.started"}]
+    events += [{"type": "item.completed", "item": {"type": "error", "message": m}} for m in extra_errors]
+    events += [{"type": "turn.started"},
+               {"type": "item.completed", "item": {"type": "agent_message", "text": response}},
+               {"type": "turn.completed", "usage": {"input_tokens": 10, "output_tokens": 3,
+                                                    "reasoning_output_tokens": 1}}]
+    (folder / "events.jsonl").write_text("\n".join(json.dumps(e) for e in events))
+    (folder / "response.json").write_text(response)
+    (folder / "stderr.txt").write_text("")
+    return folder
+
+
+def test_requirements_notice_is_the_only_new_error_item_accepted(tmp_path):
+    notice = ("Ignoring unknown `features` requirement `ultrafast_mode` from requirements layers: "
+              "enterprise-managed requirements unrestricted-coding-assistant-codex (x)")
+    usage = october2.codex_usage_allowing_notice(codex_stream(tmp_path / "a", [notice, notice]))
+    assert usage["requirements_notices"] == 2 and usage["input_tokens"] == 10
+    for bad in ("Selected model is at capacity.", "Ignoring unknown thing"):
+        with pytest.raises(ValueError):
+            october2.codex_usage_allowing_notice(codex_stream(tmp_path / bad[:8], [bad]))
+    with pytest.raises(ValueError):  # Earlier recipes keep the strict validator.
+        october2.codex_response_usage(codex_stream(tmp_path / "b", [notice]))

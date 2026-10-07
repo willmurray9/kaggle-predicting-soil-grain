@@ -72,3 +72,22 @@ Round scripts in `artifacts/experiments/october7/`:
 ## Limits
 
 Expect about 5M Codex input tokens; no capacity purchase or reset. Local LOO cannot measure the test-domain effect of these changes, so public scores on three soils are the only, very noisy, test-domain signal. They cannot establish private performance. Hosted aliases are mutable, and external-model prize eligibility remains unverified.
+
+## Amendment before the rerun (17:15 UTC)
+
+The first run was preserved in `artifacts/experiments/october7/` and is never reused. All eight recipes stopped as ineligible, after 32 dispatches and about 0.6M input tokens.
+
+**Why it failed.** Since October 6, Codex CLI 0.154.0 emits a notice before every answer: "Ignoring unknown `features` requirement `ultrafast_mode` from requirements layers: enterprise-managed requirements …". The account's managed settings gained a feature this client version does not recognize. The declared audit rejects any unrecognized client item, so every attempt was rejected regardless of its answer.
+
+Re-validating the preserved attempts with the amended rule shows:
+
+- 30 were otherwise valid;
+- 2 were genuine `Selected model is at capacity` turn failures, which the amended validator still rejects.
+
+**The amendment** applies only to the October 7 recipes:
+
+- An `item.completed` error item is accepted only if it fully matches `Ignoring unknown \`features\` requirement \`[a-z_]+\` from requirements layers: enterprise-managed requirements .+`. This parallels the long-accepted "Code Mode is unavailable" notice. The number of notices is recorded.
+- All other checks are unchanged: one completed turn, one final message matching the response, no tool use, and the September 23 transport and stderr rules.
+- The same eight recipes rerun as fresh requests in `artifacts/experiments/october7r/`, under the same budgets and two-dispatch rule.
+- To reduce capacity failures, four recipes run at a time: base redraws and aligned first, then matched and exposure.
+- The candidates, queue, drop rule and round scripts are unchanged except that they read `october7r/`.

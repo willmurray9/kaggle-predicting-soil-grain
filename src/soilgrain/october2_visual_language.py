@@ -42,6 +42,7 @@ PLAN = Path("docs/october2-plan.md")
 ROUND2_PLAN = Path("docs/october2-round2-plan.md")
 ROUND3_PLAN = Path("docs/october6-plan.md")
 ROUND4_PLAN = Path("docs/october7-plan.md")
+ROUND5_PLAN = Path("docs/october8-plan.md")
 ORIGINAL = Path("artifacts/experiments/visual_language")
 ORIGINAL_LEDGER_SHA256 = "dd4d650236ea87303248170937587129de988ef7f181e063af9abbaa1d6b86b3"
 QUERIES = 34
@@ -98,6 +99,10 @@ ROUND4 = {
        for d in ("a", "b")},
 }
 RECIPES.update(ROUND4)
+# October 8 (docs/october8-plan.md): six fresh draws replicating the matched-resolution recipe.
+ROUND5 = {f"matched_all_views_{d}_vlm": {**_BASE, "max_side": 460, "round_dir": "october8"}
+          for d in ("c", "d", "e", "f", "g", "h")}
+RECIPES.update(ROUND5)
 # Coordinatewise means of independent draws: (components, minimum eligible components).
 MEANS = {
     "all_views_draw_mean": (("all_views_vlm", "all_views_b_vlm", "all_views_c_vlm"), 2),
@@ -122,11 +127,23 @@ MEANS.update({
                                   "all_views_d_vlm", "all_views_e_vlm"), 4),
 })
 ROUND4_MEANS = ("aligned_mean", "matched_mean", "exposure_mean", "all_views_five_draw_mean")
+_NEW_MATCHED = tuple(f"matched_all_views_{d}_vlm" for d in ("c", "d", "e", "f", "g", "h"))
+MEANS.update({
+    "matched_new_six_mean": (_NEW_MATCHED, 5),
+    "matched_eight_draw_mean": (("matched_all_views_a_vlm", "matched_all_views_b_vlm") + _NEW_MATCHED, 6),
+    "matched_cd_mean": (("matched_all_views_c_vlm", "matched_all_views_d_vlm"), 2),
+    "matched_ef_mean": (("matched_all_views_e_vlm", "matched_all_views_f_vlm"), 2),
+    "matched_gh_mean": (("matched_all_views_g_vlm", "matched_all_views_h_vlm"), 2),
+})
+ROUND5_MEANS = ("matched_new_six_mean", "matched_eight_draw_mean", "matched_cd_mean",
+                "matched_ef_mean", "matched_gh_mean")
 
 
 def round_dir(name: str) -> str:
     if name in RECIPES:
         return RECIPES[name].get("round_dir", "october2")
+    if name in ROUND5_MEANS:
+        return "october8"
     if name in ROUND4_MEANS:
         return "october7r"
     return "october6" if name in ROUND3_MEANS else "october2"
@@ -484,6 +501,8 @@ def runtime_identity(recipe: str) -> dict:
         paths.append(ROUND3_PLAN.resolve())
     if recipe in ROUND4:
         paths.append(ROUND4_PLAN.resolve())
+    if recipe in ROUND5:
+        paths.append(ROUND5_PLAN.resolve())
     root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
     code = [file_record(path) for path in paths]
     for path, record in zip(paths, code, strict=True):

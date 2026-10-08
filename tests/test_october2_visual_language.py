@@ -320,3 +320,16 @@ def test_requirements_notice_is_the_only_new_error_item_accepted(tmp_path):
             october2.codex_usage_allowing_notice(codex_stream(tmp_path / bad[:8], [bad]))
     with pytest.raises(ValueError):  # Earlier recipes keep the strict validator.
         october2.codex_response_usage(codex_stream(tmp_path / "b", [notice]))
+
+
+def test_october8_replications_route_new_draws_and_keep_earlier_ones():
+    for d in "cdefgh":
+        recipe = f"matched_all_views_{d}_vlm"
+        spec = october2.RECIPES[recipe]
+        assert spec["max_side"] == 460 and spec["views"] == "all" and spec["allow_requirements_notice"]
+        assert october2.round_dir(recipe) == "october8"
+    assert october2.round_dir("matched_all_views_a_vlm") == "october7r"
+    assert october2.round_dir("matched_eight_draw_mean") == "october8"
+    components, minimum = october2.MEANS["matched_eight_draw_mean"]
+    assert len(components) == 8 and minimum == 6 and components[:2] == (
+        "matched_all_views_a_vlm", "matched_all_views_b_vlm")

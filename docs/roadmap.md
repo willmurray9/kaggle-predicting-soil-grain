@@ -14,7 +14,7 @@ noise. The eight-draw mean scored **36.94112** and the two-draw replications
 **37.92174 / 38.62621 / 39.03290**. **51 lifetime submissions are complete;
 today's allowance is exhausted.**
 
-Since October 2, 20 averaged or altered versions of the all-photo VLM recipe
+Since October 2, 18 averaged or altered versions of the all-photo VLM recipe
 have scored 32.7–42.0 publicly, and a fresh single draw of the winner scored
 40.51. Single-draw luck dominates the three public soils, and local differences
 are within draw noise. Further variants of this recipe are unlikely to beat

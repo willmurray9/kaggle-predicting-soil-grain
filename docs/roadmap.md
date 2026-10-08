@@ -5,26 +5,22 @@ There are 24 labeled soils, regardless of how many photos or crops we create.
 The fixed starting point is the [first image baseline](baseline-results.md):
 **45.24 EMD**, versus **89.89** for the leave-one-sample-out mean. Lower is better.
 
-## Latest status — October 7
+## Latest status — October 8
 
-**Public best remains 30.22376** (`56778295`). The [October 7 round](october7-results.md)
-used all five slots on test-query alignment:
+**Public best remains 30.22376** (`56778295`). The [October 8 round](october8-results.md)
+replicated matched resolution with six fresh draws. The replication mean scored
+**38.35526**, worse than the base five-draw mean (35.52), so October 7's 32.70 was
+noise. The eight-draw mean scored **36.94112** and the two-draw replications
+**37.92174 / 38.62621 / 39.03290**. **51 lifetime submissions are complete;
+today's allowance is exhausted.**
 
-- aligned mean **39.98396**;
-- matched-resolution mean **32.70180**;
-- exposure mean **35.88845**;
-- five-draw mean of the winning recipe **35.51707**;
-- a fresh single draw of the winning recipe **40.51026**.
-
-**46 lifetime submissions are complete; today's allowance is exhausted.**
-
-The fresh draw confirms that 30.22 was a favourable single draw: identical requests
-span at least 30.2–40.5 on the three public soils. Downscaling test queries to the
-examples' ~460 px gave the best averaged public score so far (32.70). Exposure
-scaling did not help. For final selection, `matched_mean` needs private EMD only
-about 1.06 lower than `56778295` to break even under the 30/70 weighting. Earlier:
-[October 6](october6-results.md) and the [submission log](submissions.md).
-Any further run needs a new daily allowance and a new declaration.
+Since October 2, 20 averaged or altered versions of the all-photo VLM recipe
+have scored 32.7–42.0 publicly, and a fresh single draw of the winner scored
+40.51. Single-draw luck dominates the three public soils, and local differences
+are within draw noise. Further variants of this recipe are unlikely to beat
+30.22 except by chance. On current evidence, keep `56778295` as the primary
+final selection. A materially different approach would need a new plan; any
+further run needs a new daily allowance and a new declaration.
 
 ## Model progression
 

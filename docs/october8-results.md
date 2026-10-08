@@ -2,6 +2,22 @@
 
 The [declaration](october8-plan.md) and producing code were committed as `f57c47b` before any model request; CI passed. This round tests whether the October 7 matched-resolution result (32.70180) replicates. The goal remains to beat **30.22376** (`56778295`) or use today's five slots. The user declined leaderboard probing.
 
+## Official results — allowance exhausted, best unchanged
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Six-new-draw matched mean (replication) | `56962817` | 47.31392 | 38.35526 |
+| 2 | Eight-draw matched mean | `56962836` | 47.16900 | 36.94112 |
+| 3 | Matched draws c+d | `56962849` | 46.83523 | 37.92174 |
+| 4 | Matched draws e+f | `56962870` | 47.42507 | 38.62621 |
+| 5 | Matched draws g+h | `56962898` | 48.17550 | 39.03290 |
+
+**Stopped: five of five daily slots used; 51 lifetime submissions, all complete. Best remains 30.22376** (`56778295`). The final check was at **16:38:07 UTC**. The queue and predictions never changed after public feedback.
+
+**Under the rule declared before any result, matched resolution is not consistent with a benefit.** The replication mean scored 38.36, worse than the base five-draw mean (35.52). October 7's 32.70 is therefore treated as noise. All three two-draw replications (37.9–39.0) also landed above it, as regression to the mean predicted. The eight-draw mean's better 36.94 comes from draws a and b, already selected on public score.
+
+**Final selection.** The declared advice covered only the supported case, so it does not apply. Across five rounds, every averaged or altered version of the all-photo recipe scored 32.7–42.0 publicly. Locally, averaging five base draws barely beats a typical single draw: 45.99 against a single-draw mean of 46.16. A five-draw mean would need private EMD about 2.27 lower to offset its 5.29 public deficit against `56778295`. On current evidence, keeping `56778295` as the primary final selection is the better expected choice. Its private score is still a single draw's, so it is uncertain.
+
 ## Local evidence
 
 Six fresh matched-resolution draws (c–h) completed 24 whole-soil holdouts and ten test soils.

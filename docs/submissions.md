@@ -3,6 +3,26 @@
 Competition: [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos).
 Results can be inspected on the authenticated [submissions page](https://www.kaggle.com/competitions/soil-grain-size-from-photos/submissions).
 
+## 2026-10-08 — matched-resolution replication, allowance exhausted
+
+The [October 8 round](october8-results.md) tested whether October 7's
+matched-resolution score (32.70) replicates, using six fresh draws. The
+interpretation rule and queue were declared before any result.
+
+| Order | Candidate | Submission ref | Local EMD ↓ | Public EMD ↓ |
+| ---: | --- | --- | ---: | ---: |
+| 1 | Six-new-draw matched mean (replication) | `56962817` | 47.31392 | 38.35526 |
+| 2 | Eight-draw matched mean | `56962836` | 47.16900 | 36.94112 |
+| 3 | Matched draws c+d | `56962849` | 46.83523 | 37.92174 |
+| 4 | Matched draws e+f | `56962870` | 47.42507 | 38.62621 |
+| 5 | Matched draws g+h | `56962898` | 48.17550 | 39.03290 |
+
+**Stopped: five of five daily slots used; 51 lifetime submissions, all complete.
+Best remains 30.22376** (`56778295`). The replication did not hold (38.36 vs the
+base five-draw mean's 35.52), so 32.70 is treated as noise. Producing code
+`f57c47b` (CI passed); pre-upload record `1bedd1c`; frozen selection
+`e99dfa512f5430a2c5d7fab0f9d353e83c4b26d89bd21637a77d63e5971b7048`.
+
 ## 2026-10-07 — test-query alignment and base redraws, allowance exhausted
 
 The [October 7 round](october7-results.md) rendered test queries like the
